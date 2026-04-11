@@ -43,6 +43,9 @@ If the site is going to win `markdown syntax` traffic, these are the pages that 
 - code blocks,
 - line breaks,
 - footnotes,
+- task lists and checkboxes,
+- image sizing limits,
+- table alignment and export behavior,
 - image paths and alt text,
 - and anchor-link behavior.
 
@@ -72,10 +75,13 @@ If your file needs to travel, choose the form that survives the broadest path.
 - [Markdown code blocks: fenced vs. indented](/syntax/markdown-code-blocks-fenced-vs-indented/)
 - [Markdown blockquotes, paragraphs, and line breaks](/syntax/markdown-blockquotes-line-breaks-and-paragraphs/)
 - [Markdown footnotes: where they work and where they fail](/syntax/markdown-footnotes-where-they-work-and-where-they-fail/)
+- [Markdown task lists, checkboxes, and portability](/syntax/markdown-task-lists-checkboxes-and-portability/)
 - [Markdown anchors and heading links that stay stable](/syntax/markdown-anchors-and-heading-links-that-stay-stable/)
 - [Markdown comments, hidden text, and HTML comments](/syntax/markdown-comments-hidden-text-and-html-comments/)
 - [Markdown image syntax: local vs. remote paths](/syntax/markdown-image-syntax-local-vs-remote-paths/)
+- [Markdown image size and resizing: when Markdown is not enough](/syntax/markdown-image-size-and-resizing-when-markdown-is-not-enough/)
 - [Markdown image alt text and accessibility basics](/syntax/markdown-image-alt-text-and-accessibility-basics/)
+- [Markdown table alignment and column formatting that survives export](/syntax/markdown-table-alignment-and-column-formatting-that-survives-export/)
 - [Markdown tables that survive mobile, PDF, and image export](/syntax/markdown-tables-that-survive-mobile-pdf-and-image-export/)
 
 ## The safest operating model
@@ -87,6 +93,7 @@ If you want Markdown that survives across repos, docs sites, static site generat
 - use fenced code blocks instead of indented blocks in mixed-content documents,
 - keep nested lists shallow and test task lists outside GitHub,
 - treat tables as convenience structures, not universal layout containers,
+- treat image sizing as a rendering decision unless portability is irrelevant,
 - and assume line-break behavior is renderer-sensitive until tested.
 
 ## Highest-yield entry pages
@@ -96,6 +103,8 @@ If a new reader lands on this section from search, these are the strongest first
 - [Markdown cheat sheet with standard examples](/syntax/markdown-cheat-sheet-with-standard-examples/) for copyable syntax in one place,
 - [Markdown links: inline, reference, and autolinks](/syntax/markdown-links-inline-vs-reference-and-autolinks/) for one of the most frequent real-world syntax problems,
 - [Markdown code blocks: fenced vs. indented](/syntax/markdown-code-blocks-fenced-vs-indented/) for portability across docs and developer workflows,
+- [Markdown image size and resizing: when Markdown is not enough](/syntax/markdown-image-size-and-resizing-when-markdown-is-not-enough/) for one of the most common questions that standard syntax alone does not solve,
+- [Markdown task lists, checkboxes, and portability](/syntax/markdown-task-lists-checkboxes-and-portability/) for a high-volume GitHub-era extension question,
 - and [Markdown comments, hidden text, and HTML comments](/syntax/markdown-comments-hidden-text-and-html-comments/) for a surprisingly common question that many generic Markdown guides answer poorly.
 
 ## What this section should help you do

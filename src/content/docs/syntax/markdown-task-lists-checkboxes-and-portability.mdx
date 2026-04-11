@@ -1,0 +1,161 @@
+---
+title: Markdown task lists, checkboxes, and portability
+description: How Markdown task lists work, why checkboxes are a GitHub-style extension rather than core CommonMark, and what to do when checklist state has to survive beyond one renderer.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Explains whether Markdown checkboxes are standard, where task lists work reliably, and how to avoid building checklists that silently degrade outside GitHub-style renderers.
+readerTakeaway: You should leave with a practical rule for when Markdown task lists are safe, when they are only renderer-specific sugar, and when the checklist state belongs outside Markdown entirely.
+primaryKeyword: markdown task list
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Documentation teams
+  - Developers
+  - Technical writers
+keyQuestions:
+  - Are Markdown task lists part of CommonMark or only GitHub-style Markdown?
+  - Where do checkbox lists render reliably and where do they degrade into plain bullets?
+  - What should teams do when checklist state has to survive docs, export, email, or screenshots?
+notFor:
+  - Teams that control one internal renderer and do not care about portability
+  - Pure UI checklist products that are not storing canonical content in Markdown
+  - Readers looking for a general to-do app recommendation
+updateTriggers:
+  - Changes in GitHub task-list support or authoring rules
+  - CommonMark or renderer changes that materially affect task-list portability
+  - New export or publishing environments that normalize or break checklist syntax differently
+---
+
+## Quick answer
+
+Markdown task lists are **widely used but not universally portable**. In practice, checkbox syntax such as `- [ ]` and `- [x]` belongs to the GitHub Flavored Markdown ecosystem and other compatible renderers. It is not something you should assume every Markdown parser will preserve as an interactive checklist.
+
+If the checkbox state itself matters, treat Markdown task lists as a presentation layer, not as your only source of truth.
+
+## Copyable examples
+
+### Unchecked items
+
+```md
+- [ ] Write the draft
+- [ ] Review code samples
+- [ ] Publish the guide
+```
+
+### Checked items
+
+```md
+- [x] Draft complete
+- [x] Review complete
+- [ ] Publish pending
+```
+
+### Nested task lists
+
+```md
+- [ ] Publish the release note
+  - [x] Confirm screenshots
+  - [x] Verify code block formatting
+  - [ ] Update changelog links
+```
+
+These examples are common and useful, but the portability question starts after the syntax is written.
+
+## Standards boundary checked April 11, 2026
+
+This is the practical boundary that matters:
+
+| Source | Current signal | What it means |
+| --- | --- | --- |
+| [CommonMark 0.31.2 spec](https://spec.commonmark.org/0.31.2/) | Core CommonMark defines lists, paragraphs, emphasis, code blocks, and links, but does not standardize GitHub-style task list behavior as a core syntax feature | A CommonMark-compatible renderer may show the raw `- [ ]` text instead of a styled checkbox |
+| [GitHub Flavored Markdown spec](https://github.github.com/gfm/) | GFM explicitly documents task-list items as an extension | GitHub, and renderers that intentionally support GFM, can style and preserve checklist semantics |
+| [GitHub Docs: basic writing and formatting syntax](https://docs.github.com/en/get-started/writing-on-github) | GitHub teaches task lists as a normal authoring pattern | Many users now assume task lists are "standard Markdown" because GitHub made them common |
+
+The important rule is simple: **checkbox syntax is familiar, but it is still a portability choice**.
+
+## When task lists are the right tool
+
+Task lists are a strong fit when:
+
+- the document primarily lives on GitHub or a GFM-compatible docs platform;
+- the checklist is mainly for human scanning, not for strict workflow automation;
+- the state does not have to sync with a database or workflow engine;
+- the team wants a lightweight way to show progress in issues, release notes, migration plans, or editorial checklists.
+
+In those environments, task lists are readable, cheap, and immediately useful.
+
+## Where task lists break or degrade
+
+The problems usually appear in four places:
+
+### 1. Strict or partial Markdown renderers
+
+Some renderers only treat the checkbox markers as literal text in list items. The content remains readable, but the expected UI disappears.
+
+### 2. Email, PDF, and image export workflows
+
+Export pipelines often flatten task lists into static bullets or inconsistent symbols. That means the list may still be legible, but the visual meaning of complete vs incomplete can become weaker.
+
+### 3. Reused canonical content
+
+If the same Markdown file feeds a docs site, an internal knowledge base, a newsletter draft, and an image workflow, task lists can become the first extension that exposes renderer differences.
+
+### 4. Workflow state that actually matters
+
+When "checked" means "shipped," "legally reviewed," or "approved for release," storing the only state in Markdown becomes fragile. Version history helps, but Markdown is not a workflow database.
+
+## The practical portability rule
+
+Use Markdown task lists when:
+
+- the checklist is editorial or instructional,
+- the GFM rendering path is known,
+- and losing styled checkboxes would be annoying but not dangerous.
+
+Do **not** rely on Markdown task lists alone when:
+
+- the checklist state drives approvals, release gates, or compliance;
+- the file must render cleanly across many unknown environments;
+- or the team needs structured completion metadata instead of visible `[x]` markers.
+
+That is the line between "good Markdown convenience" and "wrong source of operational truth."
+
+## If the checklist state matters, split content from status
+
+A reliable pattern is:
+
+1. keep the explanatory checklist in Markdown,
+2. keep authoritative state in the system that owns the workflow,
+3. and regenerate or summarize the state into Markdown when needed.
+
+This gives you the readability of Markdown without pretending checkbox syntax is a workflow engine.
+
+## What to do in real publishing systems
+
+For real publishing, use one of these approaches:
+
+- **Docs or repo checklists:** Use Markdown task lists directly.
+- **Editorial workflows:** Store editorial state elsewhere, publish a readable checklist in Markdown.
+- **Multi-channel export:** Assume task lists may degrade and test the output.
+- **Image or screenshot workflows:** If visual clarity matters, render and inspect the final output rather than trusting the source syntax alone.
+
+## Implementation checklist
+
+Use task lists confidently only after these checks:
+
+- the target renderer is known to support GFM-style task lists;
+- nested lists still read clearly after export;
+- checked vs unchecked state remains visible in the real output medium;
+- no critical approval or release state depends only on Markdown markers;
+- and the team can explain which checklist data is canonical and which is only presentation.
+
+## Compare next
+
+- [Markdown tables that survive mobile, PDF, and image export](/syntax/markdown-tables-that-survive-mobile-pdf-and-image-export/)
+- [Markdown image size and resizing: when Markdown is not enough](/syntax/markdown-image-size-and-resizing-when-markdown-is-not-enough/)
+- [Markdown extensions vs portable Markdown: where to draw the line](/fundamentals/markdown-extensions-vs-portable-markdown-where-to-draw-the-line/)
+- [CommonMark vs GFM vs renderer differences](/fundamentals/commonmark-vs-gfm-vs-renderer-differences/)

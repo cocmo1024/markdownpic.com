@@ -1,0 +1,199 @@
+---
+title: "Markdown extensions vs portable Markdown: where to draw the line"
+description: How to decide when GitHub-style Markdown extensions are worth using and when a Markdown file should stay closer to portable CommonMark.
+referenceType: fundamental
+adProfile: fundamental
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Helps teams decide how far to lean into GFM features, inline HTML, and renderer-specific behavior before portability starts to collapse.
+readerTakeaway: You should leave with a practical policy for what belongs in portable Markdown, what belongs in extensions, and when layout or workflow logic should move out of the source file.
+primaryKeyword: markdown extensions vs commonmark
+searchIntent: learn
+decisionStage: solution-aware
+targetRoles:
+  - Documentation teams
+  - Developers
+  - Technical writers
+  - Content systems owners
+keyQuestions:
+  - When should a team prefer portable Markdown over convenient extensions?
+  - Which features are usually safe extensions and which ones create long-term friction?
+  - How should teams split source content from renderer-specific presentation logic?
+notFor:
+  - Single-renderer internal notes with no portability requirement
+  - Readers who only need one syntax example and not a policy decision
+  - Pure HTML publishing systems that are not using Markdown as a canonical source
+updateTriggers:
+  - Changes in CommonMark, GFM, or GitHub Docs guidance
+  - New renderer behaviors that make popular extensions more or less portable
+  - Workflow changes that increase reuse across docs, blogs, exports, and visual derivatives
+---
+
+## Quick answer
+
+Use the most portable Markdown that still lets the document do its real job.
+
+That usually means:
+
+- keep canonical content close to CommonMark when reuse matters,
+- allow GFM extensions when they clearly improve readability and the render path is known,
+- and move layout, sizing, or workflow state out of the Markdown source when they become renderer-specific.
+
+The wrong goal is "never use extensions." The right goal is "know which layer owns which responsibility."
+
+## The three-layer model
+
+Most Markdown problems become easier when you separate three layers:
+
+### 1. Portable source
+
+This is the content you want to survive:
+
+- across repos,
+- docs tools,
+- static site generators,
+- AI reuse,
+- exports,
+- and time.
+
+Headings, links, paragraphs, emphasis, lists, and code blocks belong here.
+
+### 2. Helpful extensions
+
+These are features that improve authoring or reading but increase renderer dependence:
+
+- tables,
+- task lists,
+- footnotes,
+- strikethrough,
+- some heading anchor conventions,
+- and other GitHub-style conveniences.
+
+These are often worth using, but only when the team understands the portability cost.
+
+### 3. Presentation or workflow logic
+
+This layer should usually **not** live in raw Markdown:
+
+- image sizing,
+- layout control,
+- complex embeds,
+- approval state,
+- dynamic UI behavior,
+- or workflow automation.
+
+That work belongs in HTML, templates, CSS, or the surrounding product system.
+
+## Standards boundary checked April 11, 2026
+
+| Layer | Practical anchor | Why it matters |
+| --- | --- | --- |
+| Core portable Markdown | [CommonMark 0.31.2 spec](https://spec.commonmark.org/0.31.2/) | Defines the closest thing Markdown has to a broadly shared base behavior |
+| Common practical extensions | [GitHub Flavored Markdown spec](https://github.github.com/gfm/) | Explains why tables, task lists, and autolink behavior feel standard to many authors |
+| Real-world authoring expectations | [GitHub Docs](https://docs.github.com/en/get-started/writing-on-github) | Shows how GitHub teaches Markdown features that many users then expect elsewhere |
+
+The mistake is not using extensions. The mistake is forgetting which features are extensions at all.
+
+## When to stay closer to portable Markdown
+
+Lean toward portable Markdown when:
+
+- the same content will be reused across many renderers;
+- the file is meant to remain durable for years;
+- the team wants AI systems to consume a predictable source layer;
+- or export, migration, and repurposing matter as much as the first renderer.
+
+Portable Markdown creates fewer downstream surprises.
+
+## When extensions are worth it
+
+Extensions are worth the cost when:
+
+- they solve a real reader problem,
+- the renderer path is known,
+- the team accepts the dependency,
+- and the feature meaning survives even if styling degrades.
+
+For example:
+
+- a table can be worth using in a GitHub-first docs system;
+- a task list can be worth using for editorial checklists;
+- a footnote can be worth using in a long-form educational article.
+
+But those are healthy only when the render environment is part of the decision.
+
+## The features that most often cause trouble
+
+These are the common boundary lines:
+
+### Usually safe to keep portable
+
+- headings,
+- links,
+- emphasis,
+- lists,
+- fenced code blocks,
+- blockquotes,
+- images without size controls.
+
+### Useful but renderer-sensitive
+
+- tables,
+- task lists,
+- footnotes,
+- autolink expectations,
+- strikethrough,
+- some heading-ID behavior.
+
+### Better moved out of Markdown
+
+- image width and height,
+- complex page layout,
+- approval state,
+- dynamic data,
+- UI controls,
+- or workflow logic.
+
+## The policy that scales best
+
+The best long-term content policy is usually:
+
+1. prefer CommonMark-compatible source,
+2. allow a shortlist of documented extensions,
+3. forbid renderer-specific layout hacks in the source layer,
+4. and move presentation concerns into the publishing system.
+
+That gives authors freedom without turning the content repository into a pile of special cases.
+
+## Why this matters more in the AI era
+
+AI systems make Markdown more valuable as a canonical source format precisely because Markdown is simple, inspectable, and reusable.
+
+That value drops when every file becomes tightly coupled to one renderer's quirks. A clean source layer is easier to:
+
+- summarize,
+- transform,
+- reuse,
+- export,
+- audit,
+- and repurpose into new products or media.
+
+That is the real reason portable Markdown matters now.
+
+## Implementation checklist
+
+Your Markdown standard is probably healthy when:
+
+- the team can name which features are portable and which are extensions;
+- the allowed extension list is small and intentional;
+- layout and workflow logic do not leak into ordinary source files;
+- important pages still read correctly when styling is reduced;
+- and AI or export workflows can consume the source without custom cleanup.
+
+## Compare next
+
+- [CommonMark vs GFM vs renderer differences](/fundamentals/commonmark-vs-gfm-vs-renderer-differences/)
+- [Markdown task lists, checkboxes, and portability](/syntax/markdown-task-lists-checkboxes-and-portability/)
+- [Markdown table alignment and column formatting that survives export](/syntax/markdown-table-alignment-and-column-formatting-that-survives-export/)
+- [Markdown image size and resizing: when Markdown is not enough](/syntax/markdown-image-size-and-resizing-when-markdown-is-not-enough/)

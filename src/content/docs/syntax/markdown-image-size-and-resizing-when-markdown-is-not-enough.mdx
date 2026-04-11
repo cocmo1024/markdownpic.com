@@ -1,0 +1,184 @@
+---
+title: "Markdown image size and resizing: when Markdown is not enough"
+description: Why standard Markdown image syntax has no native width or height controls, when HTML is the right fallback, and how to handle image sizing without breaking portability.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: high
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Explains why Markdown image syntax does not reliably support resizing, and gives a practical decision framework for when to stay in standard Markdown, when to use HTML, and when to move sizing into the rendering layer.
+readerTakeaway: You should leave knowing how to insert images safely, when width and height need HTML or rendering support, and how to preserve both portability and presentation quality.
+primaryKeyword: markdown image size
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Technical writers
+  - Documentation teams
+  - Developers
+keyQuestions:
+  - Can Markdown resize images using standard syntax alone?
+  - When is an HTML image tag the right fallback?
+  - How should teams handle image sizing when Markdown files feed docs, blogs, and visual export workflows?
+notFor:
+  - Readers looking only for CSS tutorials unrelated to Markdown
+  - Teams rendering content through one locked internal pipeline with no portability concerns
+  - Users who only need basic image insertion without layout control
+updateTriggers:
+  - Changes in major Markdown renderers that add or remove image-size support
+  - Common docs toolchains changing how they expose image sizing controls
+  - New Markdown-to-image or export workflows that materially shift best practices
+---
+
+## Quick answer
+
+Standard Markdown image syntax does **not** include a universal width or height control.
+
+This works almost everywhere:
+
+```md
+![Architecture diagram](./diagram.png)
+```
+
+But this does **not** have a standardized way to set image size in portable Markdown. Once width, height, alignment, or responsive behavior matters, you are usually leaving pure Markdown and entering one of these layers:
+
+- HTML in Markdown,
+- renderer-specific extensions,
+- CSS or template styling,
+- or a downstream export tool.
+
+## The most important rule
+
+If the file must remain portable, keep standard Markdown image syntax as the canonical source and let presentation happen in the rendering layer whenever possible.
+
+The moment you start forcing layout in the source file, portability usually gets worse.
+
+## What standard Markdown gives you
+
+Standard image insertion is simple:
+
+```md
+![Screenshot of settings panel](./settings-panel.png)
+```
+
+That gives you:
+
+- alt text,
+- a path to the image,
+- and broad compatibility.
+
+It does **not** guarantee:
+
+- width,
+- height,
+- alignment,
+- captions,
+- lazy loading behavior,
+- or responsive layout.
+
+## Why "Markdown image resize" is so confusing
+
+People search for "markdown image size" expecting a single syntax trick, but the real answer depends on the renderer.
+
+Three different things often get mixed together:
+
+1. **Portable image syntax**: plain Markdown image insertion.
+2. **Renderer-specific formatting**: custom syntax or attributes that only work in one system.
+3. **Presentation control**: HTML, CSS, templates, or export tooling.
+
+Most confusion comes from treating these as the same problem.
+
+## The portable baseline
+
+Use standard Markdown image syntax when:
+
+- the document is a source file,
+- the image only needs to appear correctly,
+- the renderer or theme already handles responsive layout,
+- and width control is not a hard requirement.
+
+This is the healthiest default for docs, repos, and long-lived content.
+
+## When HTML is the right fallback
+
+Use HTML when:
+
+- image size is part of the meaning,
+- the target renderer permits inline HTML,
+- and portability across strict renderers is less important than layout control.
+
+Example:
+
+```html
+<img src="./diagram.png" alt="Architecture diagram" width="640" />
+```
+
+This gives you explicit sizing, but it changes the tradeoff:
+
+- you gain layout control,
+- you lose some portability,
+- and you now depend more heavily on renderer behavior and sanitization rules.
+
+## When HTML is still not enough
+
+Even HTML tags are not a universal answer. Problems still appear when:
+
+- the renderer sanitizes HTML,
+- the target output is email or another restricted environment,
+- the image must adapt across desktop, mobile, PDF, and screenshots,
+- or the content will later be repurposed into visual assets.
+
+In those cases, the healthier move is often to keep the Markdown source simple and push layout into the site theme or export system.
+
+## The best production rule
+
+Use this decision ladder:
+
+1. **Use standard Markdown** when only insertion matters.
+2. **Use HTML** when one renderer is known and size control is genuinely required.
+3. **Use site or template styling** when layout should be handled globally.
+4. **Use a visual export workflow** when the output is a share asset, not canonical source content.
+
+That keeps source clarity and presentation control from fighting each other.
+
+## How image sizing should work in a serious content system
+
+In a healthy publishing system:
+
+- Markdown stores the canonical content,
+- image metadata lives close to the content,
+- the web renderer decides responsive behavior,
+- and social/image outputs are derived from that source rather than hard-coded into the Markdown.
+
+This is one of the reasons Markdown remains useful in the AI era: it works best as a clean source layer, not as a hand-built layout file.
+
+## Where the companion tool fits
+
+If the goal is not "resize this image in the article" but "turn Markdown into a polished visual asset," then the companion tool at [tool.markdownpic.com](https://tool.markdownpic.com/) belongs **after** the source layer, not inside it.
+
+The right sequence is:
+
+1. write portable Markdown,
+2. render or style it correctly for the web,
+3. generate visual derivatives for distribution only when needed.
+
+That avoids mixing canonical content with one-off layout hacks.
+
+## Implementation checklist
+
+Your image approach is probably healthy when:
+
+- standard Markdown is the default,
+- alt text is present,
+- local vs remote paths are deliberate,
+- size control is handled by HTML or rendering only when necessary,
+- and the source file still reads clearly without hidden layout dependencies.
+
+If the Markdown file is full of renderer-specific image hacks, the content layer is doing too much.
+
+## Compare next
+
+- [Markdown image syntax: local vs remote paths](/syntax/markdown-image-syntax-local-vs-remote-paths/)
+- [Markdown image alt text and accessibility basics](/syntax/markdown-image-alt-text-and-accessibility-basics/)
+- [Markdown to image workflows for docs, social, and AI content](/guides/markdown-to-image-workflows-for-docs-social-and-ai-content/)
+- [Markdown extensions vs portable Markdown: where to draw the line](/fundamentals/markdown-extensions-vs-portable-markdown-where-to-draw-the-line/)

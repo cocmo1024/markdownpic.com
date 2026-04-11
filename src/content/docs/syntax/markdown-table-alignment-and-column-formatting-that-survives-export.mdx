@@ -1,0 +1,156 @@
+---
+title: Markdown table alignment and column formatting that survives export
+description: How Markdown table alignment works, where GFM tables stop being portable, and how to keep column formatting readable across docs, mobile, PDF, and image export.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Explains how Markdown table alignment works, which parts depend on GFM rather than core CommonMark, and how to avoid building tables that collapse under export or narrow layouts.
+readerTakeaway: You should leave with copyable alignment syntax, a rule for when to keep using Markdown tables, and a practical line for when HTML, images, or a different presentation format are safer.
+primaryKeyword: markdown table alignment
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Documentation teams
+  - Technical writers
+  - Developers
+keyQuestions:
+  - How do left, center, and right alignment markers work in Markdown tables?
+  - Are aligned tables part of CommonMark or only GitHub-style Markdown?
+  - When do Markdown tables stop being the right format for real publishing?
+notFor:
+  - Spreadsheet design questions unrelated to Markdown
+  - Teams rendering only one private docs UI where layout constraints do not matter
+  - Readers looking for general HTML table tutorials
+updateTriggers:
+  - Changes in GitHub table rendering or authoring guidance
+  - Renderer changes affecting table support or alignment
+  - New export environments that materially change Markdown table behavior
+---
+
+## Quick answer
+
+Markdown table alignment is controlled by the colon markers in the separator row:
+
+- `:---` for left alignment,
+- `:---:` for center alignment,
+- `---:` for right alignment.
+
+That syntax is useful, but it is **not** a core CommonMark feature. It belongs to GitHub-style Markdown and compatible renderers. If the content has to survive export, mobile layouts, or image conversion, the bigger decision is often not alignment syntax but whether the content should stay in a Markdown table at all.
+
+## Copyable alignment example
+
+```md
+| Column | Meaning | Budget |
+| :--- | :---: | ---: |
+| Syntax page | Left aligned | 120 |
+| Cheat sheet | Center aligned label | 40 |
+| Export workflow | Notes on the right | 300 |
+```
+
+In a GFM-compatible renderer, the first column will be left aligned, the second centered, and the third right aligned.
+
+## Standards boundary checked April 11, 2026
+
+| Source | Current signal | What it means |
+| --- | --- | --- |
+| [CommonMark 0.31.2 spec](https://spec.commonmark.org/0.31.2/) | Core CommonMark does not define pipe-table syntax as a standard table feature | A strict CommonMark renderer is not required to understand your table |
+| [GitHub Flavored Markdown spec](https://github.github.com/gfm/) | GFM includes tables as an extension, including alignment markers | GitHub-style renderers are the main reason table syntax feels "standard" today |
+| [GitHub Docs: basic writing and formatting syntax](https://docs.github.com/en/get-started/writing-on-github) | GitHub documents table authoring as a normal supported feature | Many Markdown users learn table syntax through GitHub rather than through CommonMark |
+
+That means Markdown tables are common, useful, and legitimate, but still **portability-sensitive**.
+
+## What alignment markers actually do
+
+The separator row defines alignment only. It does not fix:
+
+- column width,
+- wrapping behavior,
+- overflow on mobile,
+- or whether a renderer will preserve the table at all.
+
+This is why aligned tables can still look bad even when the syntax is technically correct.
+
+## When Markdown tables are the right format
+
+Use Markdown tables when:
+
+- the comparison is compact,
+- each cell contains short text,
+- the table is mostly for scanning rather than dense analysis,
+- and the output environment is known to support GFM tables.
+
+Markdown tables are excellent for:
+
+- feature comparisons,
+- command summaries,
+- syntax comparisons,
+- and short decision matrices.
+
+## When tables stop being healthy
+
+Markdown tables become fragile when:
+
+- cells need long paragraphs,
+- code blocks or nested lists appear inside cells,
+- many columns must fit on mobile,
+- the content later becomes a PDF, screenshot, or social image,
+- or the source file needs to stay highly portable across many renderers.
+
+At that point, the problem is no longer "how do I align the columns?" The problem is that the content structure no longer fits a Markdown table.
+
+## Export-safe table rules
+
+If the goal is a table that survives multiple outputs, use these rules:
+
+1. Keep columns few and narrow.
+2. Keep cell text short and scannable.
+3. Avoid using tables for layout.
+4. Do not put important narrative explanation inside one crowded cell.
+5. Test the real output, not only the source renderer.
+
+These five rules matter more than alignment syntax.
+
+## When HTML is the better answer
+
+Move to HTML or a custom rendering layer when you need:
+
+- fixed widths,
+- captions,
+- row groups,
+- responsive wrappers,
+- more complex cell structure,
+- or deterministic export control.
+
+Markdown tables are a content convenience. They are not a robust layout system.
+
+## When an image or visual export is better
+
+Sometimes the audience does not need a copyable table. They need a stable visual comparison. In those cases, the healthier flow is:
+
+- keep the canonical information in Markdown or structured source,
+- render the comparison for the web,
+- and export a visual asset only for distribution.
+
+That preserves search value while avoiding ugly portable-table failures.
+
+## Implementation checklist
+
+Your Markdown table is probably healthy when:
+
+- the target renderer is confirmed to support GFM tables;
+- every column still reads on a narrow viewport;
+- the information remains understandable when wrapping occurs;
+- no critical detail is hidden inside a crowded cell;
+- and the content would still make sense if rendered as a stacked mobile layout.
+
+If those conditions are false, the format is the problem, not the alignment markers.
+
+## Compare next
+
+- [Markdown tables that survive mobile, PDF, and image export](/syntax/markdown-tables-that-survive-mobile-pdf-and-image-export/)
+- [Markdown task lists, checkboxes, and portability](/syntax/markdown-task-lists-checkboxes-and-portability/)
+- [Markdown image size and resizing: when Markdown is not enough](/syntax/markdown-image-size-and-resizing-when-markdown-is-not-enough/)
+- [Markdown extensions vs portable Markdown: where to draw the line](/fundamentals/markdown-extensions-vs-portable-markdown-where-to-draw-the-line/)

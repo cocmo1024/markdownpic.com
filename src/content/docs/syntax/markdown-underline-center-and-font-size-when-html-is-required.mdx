@@ -1,0 +1,140 @@
+---
+title: "Markdown underline, center, and font size: when HTML is required"
+description: A practical guide to the three formatting requests Markdown does not solve well natively, and how to decide when HTML is justified.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: medium
+reviewCadence: Monthly review
+contentStatus: cornerstone
+problemSolved: Explains why underline, centered text, and custom font size are not standard Markdown features and how teams should handle those needs without breaking portability unnecessarily.
+readerTakeaway: You should leave with a clear boundary between portable Markdown and HTML-dependent presentation needs.
+primaryKeyword: markdown underline
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Developers
+  - Writers
+  - Documentation teams
+---
+
+# Markdown underline, center, and font size: when HTML is required
+
+Three of the most common Markdown formatting requests are also three of the clearest signs that someone is asking Markdown to become a layout language:
+
+- underline text,
+- center content,
+- change font size.
+
+The short answer is simple: core Markdown does not define native syntax for these. The useful answer is knowing when to stop fighting Markdown and move into HTML or renderer-level styling.
+
+## Quick answer
+
+If you need underline, centered layout, or custom font sizes, you usually need:
+
+- raw HTML,
+- CSS in the publishing layer,
+- or a renderer-specific extension.
+
+These are not portable Markdown features. If portability matters, the safer move is usually to re-express the meaning through headings, emphasis, blockquotes, lists, or page structure instead of custom styling.
+
+## Why Markdown does not solve these directly
+
+Markdown was designed to make plain-text documents easy to read and write. It standardizes content structure far better than visual layout. That is why it gives you:
+
+- headings,
+- emphasis,
+- links,
+- code,
+- lists,
+- blockquotes,
+
+but not full presentation controls.
+
+Underline, alignment, and font size belong to the rendering layer, not the source-text layer.
+
+## Underline: usually an HTML choice
+
+There is no native Markdown underline syntax.
+
+People often use:
+
+```html
+<u>underlined text</u>
+```
+
+That can work where raw HTML is allowed, but it reduces portability immediately. It also raises a design question: if the meaning is emphasis, underline is often a weaker portable choice than:
+
+- bold,
+- italics,
+- headings,
+- or clearer section structure.
+
+Use underline only when the output environment explicitly needs it and the renderer is controlled.
+
+## Centered text: not a Markdown feature
+
+Markdown does not define alignment for plain paragraphs. Centering usually depends on:
+
+```html
+<p align="center">Centered text</p>
+```
+
+or a surrounding HTML block with CSS.
+
+This is acceptable in tightly controlled publishing systems, but it is not safe for broadly reusable Markdown. In many cases, centered text is simply a layout wish that should live in the theme or CSS layer, not in the Markdown file itself.
+
+## Font size: also presentation, not source
+
+Custom font sizes usually need HTML or CSS:
+
+```html
+<span style="font-size: 1.25rem;">Larger text</span>
+```
+
+This is the least portable of the three patterns because many renderers:
+
+- strip inline styles,
+- sanitize HTML,
+- or re-style the final document anyway.
+
+If font size matters, it is usually better to:
+
+- promote the text to a heading,
+- move it into a callout block,
+- or handle it in the site theme rather than the source.
+
+## What is safe to do instead
+
+If the file has to travel, use this fallback logic:
+
+| Desired effect | More portable replacement |
+| --- | --- |
+| Underline | Bold, italics, or a heading |
+| Center alignment | Section structure, blockquote, or layout-level theme styling |
+| Larger text | Heading hierarchy or callout/admonition block |
+
+This keeps the Markdown semantically clear even if the final renderer changes.
+
+## When HTML is justified
+
+HTML is justified when all of these are true:
+
+- the renderer is known and controlled,
+- the visual requirement is real,
+- the team accepts reduced portability,
+- and the HTML pattern is documented instead of improvised.
+
+It becomes debt when authors use HTML ad hoc just to make a one-off visual tweak.
+
+## A practical rule
+
+Use Markdown for meaning. Use HTML or CSS for presentation.
+
+If you are trying to push presentation choices directly into Markdown source, the better question is usually whether the publishing system should own that styling instead.
+
+## Related pages
+
+- [Markdown text color, highlight, and callouts: what is portable](/syntax/markdown-text-color-highlight-and-callouts-what-is-portable/)
+- [HTML in Markdown: when to use it and when it becomes debt](/fundamentals/html-in-markdown-when-to-use-it-and-when-it-becomes-debt/)
+- [Markdown links vs HTML links: when to switch](/syntax/markdown-links-vs-html-links-when-to-switch/)
+- [Markdown extensions vs portable Markdown: where to draw the line](/fundamentals/markdown-extensions-vs-portable-markdown-where-to-draw-the-line/)

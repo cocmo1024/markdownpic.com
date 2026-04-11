@@ -1,0 +1,111 @@
+---
+title: "Mermaid diagrams in Markdown: where they render and where they don't"
+description: A practical guide to Mermaid in Markdown, why it is not standard Markdown syntax, and how to decide whether diagram blocks are safe in your publishing stack.
+referenceType: fundamental
+adProfile: fundamental
+commercialIntent: medium
+reviewCadence: Monthly review
+contentStatus: growing
+problemSolved: Explains where Mermaid diagram blocks fit in Markdown workflows and why teams should treat them as renderer-dependent features instead of universal Markdown.
+readerTakeaway: You should leave with a clearer boundary between Markdown source, fenced code blocks, and diagram rendering layers such as Mermaid.
+primaryKeyword: markdown mermaid
+searchIntent: learn
+decisionStage: solution-aware
+targetRoles:
+  - Developers
+  - Technical writers
+  - Documentation teams
+---
+
+# Mermaid diagrams in Markdown: where they render and where they don't
+
+Mermaid is one of the clearest examples of something that feels like "Markdown syntax" once you have used it for a while, even though it is not standard Markdown at all. What Markdown actually provides is the fenced code block. Mermaid rendering happens later, in the platform that decides to interpret that block as a diagram.
+
+## Quick answer
+
+Mermaid in Markdown is usually written like this:
+
+````md
+```mermaid
+graph TD
+  A --> B
+```
+````
+
+The fenced block is standard-enough Markdown behavior in many renderers. The **diagram rendering is not**. Mermaid works only where the platform explicitly supports it.
+
+## What Markdown is responsible for
+
+Markdown's job here is small:
+
+- preserve the fenced block,
+- preserve the info string such as `mermaid`,
+- and treat the block as source text.
+
+Markdown itself does not know how to draw a diagram. The renderer or documentation platform decides whether that block becomes:
+
+- a live diagram,
+- a styled code block,
+- or ignored formatting.
+
+## Why this matters
+
+Teams get into trouble when they assume Mermaid is portable simply because the Markdown file looks clean. The source may be portable as text, but the rendered behavior is not guaranteed across:
+
+- GitHub,
+- docs platforms,
+- static site generators,
+- note-taking apps,
+- export pipelines,
+- Markdown-to-image tools.
+
+That means Mermaid belongs in the same category as math rendering and advanced callout systems: useful, but renderer-dependent.
+
+## When Mermaid is a good fit
+
+Mermaid is a strong choice when:
+
+- the publishing environment clearly supports it,
+- diagrams benefit from living as text in source control,
+- authors need fast iteration without separate binary diagram files,
+- and the team accepts renderer dependence.
+
+It is especially useful in internal docs, developer docs, and versioned systems where text-based change history matters.
+
+## When Mermaid becomes risky
+
+Mermaid becomes risky when:
+
+- the same Markdown needs to render across many environments;
+- export to PDF, email, or image is part of the workflow;
+- the platform support is inconsistent;
+- authors assume every Markdown renderer will behave like GitHub or their docs site.
+
+The source may still be readable, but the published result may degrade unpredictably.
+
+## A better way to think about Mermaid
+
+Treat Mermaid as a **diagram extension layered on top of Markdown**, not as Markdown itself.
+
+That framing leads to better decisions:
+
+- keep diagrams simple enough that fallback to code is still understandable,
+- document where Mermaid is officially supported in your workflow,
+- and decide in advance what the fallback should be when rendering is unavailable.
+
+## What to do when portability is the top priority
+
+If portability matters most, consider:
+
+- keeping Mermaid only in environments that officially support it,
+- exporting diagrams as images for channels that do not,
+- or maintaining a dual strategy where the source stays text-based but the publish layer controls the final visual form.
+
+This is often healthier than pretending one Markdown file will render identically everywhere.
+
+## Related pages
+
+- [Markdown math and diagrams: where standard syntax stops](/fundamentals/markdown-math-and-diagrams-where-standard-syntax-stops/)
+- [CommonMark vs. GFM vs. renderer differences](/fundamentals/commonmark-vs-gfm-vs-renderer-differences/)
+- [Markdown code blocks: fenced vs. indented](/syntax/markdown-code-blocks-fenced-vs-indented/)
+- [Markdown extensions vs portable Markdown: where to draw the line](/fundamentals/markdown-extensions-vs-portable-markdown-where-to-draw-the-line/)

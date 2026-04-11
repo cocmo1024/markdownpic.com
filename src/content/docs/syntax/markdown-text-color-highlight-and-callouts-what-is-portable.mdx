@@ -1,0 +1,154 @@
+---
+title: "Markdown text color, highlight, and callouts: what is portable"
+description: A practical guide to what Markdown can do natively for emphasis, what requires extensions or HTML, and which approaches stay portable across renderers.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: medium
+reviewCadence: Monthly review
+contentStatus: cornerstone
+problemSolved: Explains how to handle text color, highlighting, and callout-style emphasis without confusing Markdown syntax, renderer extensions, and raw HTML hacks.
+readerTakeaway: You should leave knowing which emphasis patterns are native Markdown, which rely on renderer-specific extensions, and which choices damage portability fastest.
+primaryKeyword: markdown text color
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Developers
+  - Technical writers
+  - Documentation teams
+---
+
+# Markdown text color, highlight, and callouts: what is portable
+
+One of the most common Markdown questions is also one of the easiest to answer badly: "How do I color text in Markdown?" Most short answers skip the important distinction between:
+
+- what Markdown supports natively,
+- what some renderers add through extensions,
+- and what only works because raw HTML is being tolerated.
+
+If the file needs to survive more than one environment, that distinction matters more than the visual trick itself.
+
+## Quick answer
+
+Plain Markdown does **not** have native syntax for colored text. If your goal is portable source, the safest options are:
+
+- standard emphasis such as bold and italics,
+- semantic structure such as headings, lists, and blockquotes,
+- or renderer-supported callout/admonition blocks where the platform clearly documents them.
+
+Text color usually requires raw HTML or a renderer-specific feature. That means it is a formatting decision, not a standard Markdown feature.
+
+## What Markdown can do natively
+
+Markdown already gives you a few strong emphasis tools:
+
+| Need | Portable Markdown option | Notes |
+| --- | --- | --- |
+| Strong emphasis | `**bold**` | Widely portable |
+| Secondary emphasis | `*italic*` | Widely portable |
+| Inline distinction | `` `code` `` | Good for commands, paths, and literals |
+| Warning or note-like grouping | `> blockquote` | Portable but visually limited |
+| Section-level hierarchy | Headings and lists | Often more useful than styling text directly |
+
+If the goal is clarity rather than decoration, these tools are usually enough.
+
+## Where highlighting starts to get fuzzy
+
+People often use "highlight" to mean different things:
+
+1. visual marker-style background color,
+2. bolded or emphasized wording,
+3. an admonition or callout block,
+4. syntax highlighting inside code fences.
+
+Only the last of those is broadly common in Markdown ecosystems, and even that depends on the renderer. Marker-style inline highlight is **not** part of core Markdown.
+
+## Common approaches and their tradeoffs
+
+### 1. Raw HTML spans
+
+People often use:
+
+```html
+<span style="color:red;">Important</span>
+```
+
+This can work in some renderers, but it creates three problems fast:
+
+- many renderers sanitize inline styles,
+- some environments strip raw HTML entirely,
+- and source files become presentation-heavy instead of content-first.
+
+Use this only when renderer lock-in is acceptable.
+
+### 2. Double-equals highlight syntax
+
+Some tools support:
+
+```md
+==highlighted text==
+```
+
+This is not part of CommonMark. Some editors or docs systems support it, others do not. It can be useful inside a controlled stack, but it is not a portable default.
+
+### 3. Callouts or admonitions
+
+Many docs platforms support structured callouts such as:
+
+- note
+- warning
+- tip
+- danger
+
+These are often much healthier than inline color because they:
+
+- keep meaning explicit,
+- are easier to style consistently,
+- and tend to degrade more predictably.
+
+But they are still renderer or framework features, not core Markdown syntax.
+
+## What to use when portability matters
+
+If you expect the file to move between GitHub, docs tools, site generators, note apps, and export pipelines, the safest pattern is:
+
+1. keep inline emphasis semantic;
+2. use headings or lists to separate importance levels;
+3. use blockquotes or documented admonitions for larger callouts;
+4. avoid raw inline styles unless the source is intentionally tied to one renderer.
+
+This keeps the Markdown readable even when the visual layer changes.
+
+## When raw HTML is still reasonable
+
+Raw HTML can be justified when:
+
+- the file is published in one controlled renderer;
+- the design requirement is real, not cosmetic;
+- the HTML pattern is documented and reused consistently;
+- and the team accepts the portability tradeoff.
+
+It becomes bad debt when every author invents one-off styling just to make a paragraph look louder.
+
+## A better question than "How do I color text?"
+
+The healthier question is:
+
+**What meaning am I trying to communicate, and what is the most portable way to encode that meaning?**
+
+If the answer is warning, note, important term, code literal, or section emphasis, Markdown usually already has a better tool than raw color.
+
+## Safe operating model
+
+Use this rule set:
+
+- for inline emphasis, stay with bold, italics, inline code, and links;
+- for structured warnings or notes, prefer documented callout/admonition systems;
+- for true visual styling, use HTML only inside controlled renderer environments;
+- and if the file must travel, assume text color is not a safe default.
+
+## Related pages
+
+- [Markdown emphasis, inline code, and escaping](/syntax/markdown-emphasis-inline-code-and-escaping/)
+- [Markdown links vs HTML links: when to switch](/syntax/markdown-links-vs-html-links-when-to-switch/)
+- [HTML in Markdown: when to use it and when it becomes debt](/fundamentals/html-in-markdown-when-to-use-it-and-when-it-becomes-debt/)
+- [Markdown extensions vs portable Markdown: where to draw the line](/fundamentals/markdown-extensions-vs-portable-markdown-where-to-draw-the-line/)

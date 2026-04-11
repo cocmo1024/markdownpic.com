@@ -1,0 +1,104 @@
+---
+title: "Markdown horizontal rules, page breaks, and section dividers"
+description: A practical guide to thematic breaks in Markdown, where they work well, and why page breaks usually belong to the export layer instead.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: medium
+reviewCadence: Monthly review
+contentStatus: growing
+problemSolved: Clarifies the difference between Markdown thematic breaks and document page breaks so authors stop mixing structural separators with export-specific layout behavior.
+readerTakeaway: You should leave with a reliable rule for horizontal rules in source Markdown and a clearer idea of when page breaks require HTML, CSS, or export tooling.
+primaryKeyword: markdown horizontal line
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Writers
+  - Developers
+  - Documentation teams
+---
+
+# Markdown horizontal rules, page breaks, and section dividers
+
+Authors often search for "Markdown horizontal line" when they are actually trying to solve one of two different problems:
+
+- create a visible section divider in the source document,
+- force a page break in PDF, print, or export output.
+
+Markdown handles the first problem reasonably well. It does **not** standardize the second.
+
+## Quick answer
+
+Use a thematic break such as:
+
+```md
+---
+```
+
+when you need a portable section divider. Use export-layer tools, CSS, or HTML when you need a real page break. A horizontal rule in Markdown is structural separation, not print pagination.
+
+## The Markdown feature you are actually using
+
+In CommonMark, this pattern is a **thematic break**. It marks a transition between sections. Common forms include:
+
+```md
+---
+***
+___
+```
+
+If written correctly, renderers typically turn these into `<hr>` elements.
+
+## When thematic breaks are a good fit
+
+Horizontal rules work well when:
+
+- you want to separate sections in a long note or article,
+- a visual transition helps readability,
+- the document is staying in HTML-like renderers,
+- or you want a simple divider that remains readable in plain text.
+
+They are useful because they stay close to Markdown's intended purpose: lightweight document structure.
+
+## Why they are not page breaks
+
+Page breaks are about output pagination. That depends on:
+
+- PDF generation,
+- print CSS,
+- Word export,
+- or a specific renderer's layout engine.
+
+Markdown itself does not know where a page begins or ends. That is why authors who use `---` expecting print pagination often get inconsistent results.
+
+## The common confusion
+
+These are different problems:
+
+| Need | Correct layer |
+| --- | --- |
+| Visual section separation | Markdown thematic break |
+| Force next printed page | CSS / export tool / HTML-based print logic |
+| Slide break in presentation tooling | Renderer or presentation extension |
+
+Treating them as the same thing is what creates broken exports.
+
+## When HTML or CSS is necessary
+
+If you truly need a page break, the correct solution is usually outside plain Markdown:
+
+- print CSS,
+- export templates,
+- a docs or publishing tool with pagination rules,
+- or renderer-specific HTML.
+
+That means page break behavior is not a Markdown syntax question. It is a publishing-system question.
+
+## Safe operating model
+
+Use thematic breaks to separate ideas. Do not use them as fake pagination. If the output must respect page boundaries, solve that where pagination actually exists: the renderer, stylesheet, or export engine.
+
+## Related pages
+
+- [What Markdown is good for and where it breaks](/fundamentals/what-markdown-is-and-where-it-breaks/)
+- [HTML in Markdown: when to use it and when it becomes debt](/fundamentals/html-in-markdown-when-to-use-it-and-when-it-becomes-debt/)
+- [Markdown blockquotes, paragraphs, and line breaks](/syntax/markdown-blockquotes-line-breaks-and-paragraphs/)

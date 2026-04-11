@@ -1,0 +1,115 @@
+---
+title: "Markdown links vs HTML links: when to switch"
+description: When normal Markdown links are enough, when raw HTML links become necessary, and how that choice affects portability and publishing reliability.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Explains when to stay with Markdown link syntax and when to switch to raw HTML without creating renderer or portability problems.
+readerTakeaway: You should leave with a decision rule for choosing Markdown links or HTML links based on portability, attributes, and downstream rendering behavior.
+primaryKeyword: markdown links vs html links
+searchIntent: compare
+decisionStage: implementation
+targetRoles:
+  - Developers
+  - Technical writers
+  - Documentation teams
+  - Markdown learners
+keyQuestions:
+  - When should I use Markdown links instead of HTML links?
+  - What do I gain by switching to raw HTML?
+  - What portability risks come with HTML inside Markdown?
+notFor:
+  - Readers looking for CSS link styling or JavaScript link handling
+updateTriggers:
+  - Major sanitization changes in mainstream Markdown renderers
+  - GitHub or CommonMark guidance changes affecting inline HTML
+---
+
+## Quick answer
+
+Use normal **Markdown links** by default. Switch to **raw HTML links** only when you need attributes or behavior that plain Markdown link syntax cannot express cleanly, such as `target`, `rel`, custom classes, or richer embedded markup.
+
+If portability matters, Markdown links are usually safer.
+
+## Standard examples
+
+### Markdown link
+
+```md
+[MarkdownPic](https://markdownpic.com/)
+```
+
+### HTML link inside Markdown
+
+```html
+<a href="https://tool.markdownpic.com/" target="_blank" rel="noopener noreferrer">
+  Open the MarkdownPic tool
+</a>
+```
+
+## Why Markdown links should be the default
+
+Markdown links are better for most content because they are:
+
+- shorter,
+- easier to read in source,
+- more portable across renderers,
+- and less likely to be sanitized or rewritten unexpectedly.
+
+For docs, blogs, READMEs, and note systems, that is usually enough.
+
+## When HTML links become justified
+
+HTML links become reasonable when you need something Markdown does not express well, such as:
+
+- `target="_blank"`,
+- `rel="noopener noreferrer"`,
+- explicit classes or data attributes,
+- or more complex wrapped markup inside the link body.
+
+That is a real use case, but it should be treated as an exception, not the normal path.
+
+## The portability cost
+
+The moment you move into raw HTML, you are no longer relying purely on Markdown semantics. You are now depending on how the renderer treats inline HTML.
+
+That creates several risks:
+
+- one renderer keeps the HTML intact while another sanitizes it,
+- a docs system strips attributes,
+- a note app renders it visually but exports it poorly,
+- or a Markdown-to-image workflow treats it differently than a browser-based output.
+
+## The practical decision rule
+
+Stay with Markdown links when:
+
+- the link only needs anchor text and a URL,
+- the file should stay portable,
+- and the content will move across unknown renderers.
+
+Switch to HTML links when:
+
+- the destination behavior genuinely requires attributes,
+- the rendering environment is controlled,
+- and the extra behavior matters more than portability.
+
+## Where teams overuse HTML
+
+The common mistake is dropping into HTML too early because it feels more powerful.
+
+That usually makes the Markdown source:
+
+- harder to scan,
+- less portable,
+- and more dependent on local renderer behavior.
+
+MarkdownPic's default bias should be: use Markdown until HTML is clearly necessary.
+
+## Related pages
+
+- [Markdown links: inline, reference, and autolinks](/syntax/markdown-links-inline-vs-reference-and-autolinks/)
+- [Markdown anchors and heading links that stay stable](/syntax/markdown-anchors-and-heading-links-that-stay-stable/)
+- [CommonMark vs. GFM vs. renderer differences](/fundamentals/commonmark-vs-gfm-vs-renderer-differences/)

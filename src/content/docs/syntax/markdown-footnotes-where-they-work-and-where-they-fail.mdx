@@ -1,0 +1,94 @@
+---
+title: "Markdown footnotes: where they work and where they fail"
+description: How Markdown footnotes behave across CommonMark-adjacent tools, GitHub-style environments, and publishing systems, including where they stop being safe.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Explains when Markdown footnotes are safe to use, when they are renderer-specific, and what to do when portability matters more than elegance.
+readerTakeaway: You should leave with a practical rule for using footnotes only where the renderer supports them and a fallback plan when portability matters.
+primaryKeyword: markdown footnotes
+searchIntent: learn
+decisionStage: implementation
+targetRoles:
+  - Writers
+  - Technical writers
+  - Documentation teams
+  - Markdown learners
+keyQuestions:
+  - Are footnotes part of standard Markdown?
+  - Where do Markdown footnotes work reliably?
+  - What is the safer fallback when footnotes are not portable?
+notFor:
+  - Readers seeking citation management for LaTeX or academic publishing systems
+updateTriggers:
+  - GFM or major renderer changes in footnote support
+  - Significant editor support changes affecting footnote syntax
+---
+
+## Quick answer
+
+Markdown footnotes are useful, but they are not the safest portable syntax feature. Treat them as a renderer-dependent extension unless you control the output environment and know footnotes are supported.
+
+## Standard example
+
+```md
+Here is a sentence with a footnote.[^1]
+
+[^1]: This is the footnote text.
+```
+
+## Why footnotes feel deceptive
+
+Footnotes look clean in well-supported renderers, so people assume they are universally safe. They are not.
+
+The real issue is that footnotes sit in the zone where:
+
+- some tools support them well,
+- some tools ignore them,
+- and some tools partially support them but produce awkward output in export.
+
+That makes them different from headings, links, or plain lists.
+
+## When footnotes are a good choice
+
+Footnotes are reasonable when:
+
+- the publishing environment is known,
+- the audience benefits from reduced in-line clutter,
+- the content is still primarily HTML or docs-page output,
+- and you have tested the actual renderer.
+
+They are especially defensible in long-form essays, technical notes, or editorial content where side comments would otherwise interrupt the flow.
+
+## When footnotes are a poor choice
+
+Footnotes are a poor choice when:
+
+- the file must remain highly portable,
+- the content will move through multiple unknown renderers,
+- screenshots or image exports are important,
+- or the note must remain easy to read in raw plain text.
+
+In those cases, a short in-line note or a clearly labeled “Notes” section is often safer.
+
+## The fallback pattern
+
+If footnotes are not safe enough for the workflow, use:
+
+- a short parenthetical note,
+- an end-of-section note block,
+- or a “Notes” subsection with normal links and references.
+
+That is less elegant, but usually more stable.
+
+## Recommended operating rule
+
+Use footnotes only when the rendering path is known and the gain in readability is real. Otherwise, prefer normal prose and explicit note sections.
+
+## Related pages
+
+- [CommonMark vs. GFM vs. renderer differences](/fundamentals/commonmark-vs-gfm-vs-renderer-differences/)
+- [Markdown blockquotes, paragraphs, and line breaks](/syntax/markdown-blockquotes-line-breaks-and-paragraphs/)
+- [Markdown links vs HTML links: when to switch](/syntax/markdown-links-vs-html-links-when-to-switch/)

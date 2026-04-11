@@ -1,0 +1,93 @@
+---
+title: Markdown image alt text and accessibility basics
+description: How to write meaningful alt text in Markdown, when decorative images should stay quiet, and how accessibility intersects with publishing and image workflows.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Explains how to write alt text in Markdown that helps users and remains practical across docs, blogs, and Markdown-to-image workflows.
+readerTakeaway: You should leave knowing what alt text should describe, what it should omit, and how Markdown image choices affect accessibility.
+primaryKeyword: markdown image alt text
+searchIntent: learn
+decisionStage: implementation
+targetRoles:
+  - Writers
+  - Technical writers
+  - Documentation teams
+  - Developers
+keyQuestions:
+  - How do I write alt text for Markdown images?
+  - What should good alt text actually say?
+  - How does alt text relate to export and image-driven workflows?
+notFor:
+  - Readers seeking advanced ARIA patterns for fully custom web apps
+updateTriggers:
+  - Major accessibility guidance changes for image descriptions
+  - Important MarkdownPic export changes affecting image context
+---
+
+## Quick answer
+
+Markdown alt text should describe the image's purpose in context, not mechanically repeat that an image exists. If the image conveys essential information, the alt text should help the reader understand that information. If the image is decorative, the better answer may be to avoid treating it as content in the first place.
+
+## Standard example
+
+```md
+![Comparison chart showing Typora, VS Code, and Obsidian ranked by publishing fit](./images/editor-comparison-chart.png)
+```
+
+That is stronger than:
+
+```md
+![Image of chart](./images/editor-comparison-chart.png)
+```
+
+## What good alt text does
+
+Good alt text:
+
+- communicates the useful content of the image,
+- stays specific to the surrounding page,
+- and avoids filler phrases like “image of” unless that distinction matters.
+
+The goal is not to describe every visual pixel. The goal is to preserve the content value that would otherwise be lost.
+
+## What poor alt text does
+
+Poor alt text usually falls into one of three patterns:
+
+- too vague to be useful,
+- too long and overloaded with unnecessary detail,
+- or duplicated from nearby visible captions without adding value.
+
+All three weaken the page.
+
+## How this connects to Markdown workflows
+
+In Markdown systems, image accessibility is often neglected because the syntax is small:
+
+```md
+![alt text](image.png)
+```
+
+But the small syntax hides an important editorial decision. The alt text is part of the content quality, not a decorative afterthought.
+
+## The export limitation
+
+When Markdown becomes a long image or screenshot, the accessibility story changes because the output may no longer expose alt text the way HTML does.
+
+That is one more reason to keep HTML as the primary, indexable, accessible layer and treat image output as a derivative channel rather than the main knowledge layer.
+
+## Recommended operating rule
+
+- Write alt text that explains the image's purpose.
+- Keep it specific but not bloated.
+- Do not leave important images with placeholder alt text.
+- Do not rely on image derivatives to carry the full accessibility burden of the original page.
+
+## Related pages
+
+- [Markdown image syntax: local vs. remote paths](/syntax/markdown-image-syntax-local-vs-remote-paths/)
+- [Markdown to image workflows for docs, social, and AI content](/guides/markdown-to-image-workflows-for-docs-social-and-ai-content/)
+- [Markdown tables that survive mobile, PDF, and image export](/syntax/markdown-tables-that-survive-mobile-pdf-and-image-export/)

@@ -1,0 +1,98 @@
+---
+title: Markdown anchors and heading links that stay stable
+description: How heading anchors and fragment links behave in Markdown publishing systems, and how to avoid fragile links that break after edits or renderer changes.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Explains how Markdown heading anchors and fragment links are generated, why they break, and how to write documents that keep anchor links stable over time.
+readerTakeaway: You should leave with a practical rule for writing heading structures and links that survive normal editing and platform changes.
+primaryKeyword: markdown heading anchor links
+searchIntent: learn
+decisionStage: implementation
+targetRoles:
+  - Developers
+  - Technical writers
+  - Documentation teams
+  - Markdown learners
+keyQuestions:
+  - How are heading anchors generated in Markdown?
+  - Why do fragment links break after edits?
+  - How can teams keep anchor links stable?
+notFor:
+  - Readers configuring SPA routing or JavaScript scroll libraries
+updateTriggers:
+  - Major renderer changes in heading-slug generation
+  - Significant docs-platform changes affecting fragment IDs
+---
+
+## Quick answer
+
+Heading links in Markdown usually depend on renderer-generated anchor IDs. That means the link can break if the heading text changes, if the slugging rules differ across platforms, or if duplicate headings are handled differently.
+
+The safest rule is to keep headings clear, stable, and distinct, and to avoid treating renderer-generated fragment IDs as permanent API contracts unless the platform explicitly guarantees them.
+
+## Standard example
+
+```md
+## Markdown code blocks
+
+See [Markdown code blocks](#markdown-code-blocks).
+```
+
+That may work in one renderer and still break elsewhere if slug rules differ.
+
+## Why anchor links break
+
+Anchor links usually fail because:
+
+- the heading text changes,
+- punctuation is handled differently,
+- duplicate headings get numbered differently,
+- or the renderer generates IDs differently than expected.
+
+The more dynamic the publishing system, the more careful you need to be.
+
+## The practical stability rule
+
+Anchor links stay more stable when headings are:
+
+- short,
+- descriptive,
+- distinct from one another,
+- and not overloaded with punctuation or repeated phrases.
+
+A clean heading structure is not just editorially better. It also reduces anchor-link fragility.
+
+## When to trust heading anchors
+
+Heading anchors are reasonable when:
+
+- the content lives in one controlled docs system,
+- the heading text is stable,
+- and the links are mostly local navigation rather than long-lived external references.
+
+They become risky when:
+
+- external pages depend on the fragment,
+- the document is edited often,
+- or the same Markdown moves across multiple renderers.
+
+## Safer alternatives
+
+When anchor stability matters more, consider:
+
+- linking to the page rather than a deep fragment,
+- using a manually managed HTML anchor only if the renderer allows it safely,
+- or reducing the need for deep fragments by improving page structure and nearby context.
+
+## Recommended operating rule
+
+Use heading fragments for helpful navigation, but do not assume they are permanent unless the platform explicitly stabilizes them. Keep headings clean and avoid needless churn in section titles.
+
+## Related pages
+
+- [Markdown headings: ATX vs. Setext](/syntax/markdown-headings-atx-vs-setext/)
+- [Markdown links: inline, reference, and autolinks](/syntax/markdown-links-inline-vs-reference-and-autolinks/)
+- [Markdown links vs HTML links: when to switch](/syntax/markdown-links-vs-html-links-when-to-switch/)

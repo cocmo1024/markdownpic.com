@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://markdownpic.com/sitemap-index.xml
+Host: markdownpic.com

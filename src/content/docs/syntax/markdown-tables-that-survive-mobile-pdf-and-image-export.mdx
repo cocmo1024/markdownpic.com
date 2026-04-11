@@ -1,0 +1,59 @@
+---
+title: Markdown tables that survive mobile, PDF, and image export
+description: How to write Markdown tables that stay readable across docs sites, mobile devices, PDFs, and long-image export workflows.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Shows how to make Markdown tables survive narrow screens, export layers, and screenshot workflows without becoming unreadable.
+readerTakeaway: You should leave with concrete rules for when to keep a table, when to split it, and when to rewrite it as a list or comparison block.
+primaryKeyword: markdown table mobile export
+searchIntent: design
+decisionStage: implementation
+targetRoles:
+  - Documentation leads
+  - Technical writers
+  - Developers
+---
+
+Markdown tables usually fail because authors ask one format to serve three incompatible jobs:
+
+- a desktop doc page,
+- a phone screen,
+- and a visual export.
+
+## Quick answer
+
+Keep tables only when the rows are short and the comparison really depends on columns. If the content is verbose, turn the table into sections, cards, or repeated comparison blocks instead.
+
+## The practical limit
+
+A Markdown table stops being robust when:
+
+- cells contain paragraphs,
+- code examples become long,
+- URLs are unbreakable,
+- or the number of columns exceeds what a small viewport can display without horizontal scrolling.
+
+## The mobile rule
+
+If the reader has to pan sideways to understand a decision, the table should probably be rewritten.
+
+Good Markdown tables:
+
+- shortlist a few tools,
+- compare a few attributes,
+- or summarize narrow differences.
+
+Bad Markdown tables:
+
+- try to hold full decision logic,
+- long prose,
+- or implementation instructions.
+
+## Export implication
+
+PDF and image export are less forgiving than web pages because the layout is more fixed. A table that is barely readable in HTML usually becomes actively bad in screenshots.
+
+Use a short table for scanning, then explain the decision below the table in normal Markdown prose. That gives you both fast comparison value and export resilience.

@@ -1,0 +1,73 @@
+---
+title: How to write an email link in Markdown
+description: How to write an email link in Markdown with mailto syntax, what breaks across renderers and exports, and how to keep the result portable.
+referenceType: post
+adProfile: post
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Shows the safest way to create email links in Markdown and explains where mailto links fail or stop mattering.
+readerTakeaway: You should leave with the correct Markdown syntax for email links, a reliable decision rule, and a clear understanding of image-export limitations.
+primaryKeyword: how to write an email link in markdown
+searchIntent: learn
+decisionStage: implementation
+targetRoles:
+  - Writers
+  - Developers
+  - Documentation teams
+---
+
+## Quick answer
+
+If you want the most portable and explicit form, write the email link as a normal Markdown link whose URL uses the `mailto:` scheme:
+
+```md
+[Email us](mailto:hello@example.com)
+```
+
+That works more reliably than hoping a renderer auto-links a naked email address.
+
+## Why `mailto:` is the safest form
+
+Markdown does not have a special “email link” primitive. It has links. An email address becomes a link only when the renderer or the author turns it into one.
+
+Using `mailto:` gives you:
+
+- explicit intent,
+- consistent link text,
+- predictable behavior across HTML outputs,
+- and cleaner reuse in docs sites, blogs, and READMEs.
+
+## The other form people use
+
+Some environments also auto-link angle-bracket email addresses:
+
+```md
+<hello@example.com>
+```
+
+That can work, but it is less portable because the behavior depends more on the renderer.
+
+## When plain text is actually better
+
+Sometimes you should not create a clickable email link at all.
+
+Examples:
+
+- a long image export,
+- a visual card,
+- a public screenshot where copyability matters more than clickability,
+- or a place where spam harvesting risk is more important than convenience.
+
+In those cases, visible plain text may be the better answer.
+
+## Image export boundary
+
+A `mailto:` link only matters while the output is still HTML or another interactive format. Once the content becomes a PNG or long image, the link is visual only. That is why Markdown-to-image workflows often need a different decision:
+
+- clickable link for HTML,
+- visible address or contact line for image assets.
+
+## Best practice
+
+Use `mailto:` when the Markdown is staying interactive. Use visible text when the content is being flattened into a static visual asset.

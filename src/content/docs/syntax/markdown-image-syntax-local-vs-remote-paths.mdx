@@ -1,0 +1,53 @@
+---
+title: "Markdown image syntax: local vs. remote paths"
+description: When to use relative image paths, when to use remote URLs, and how the choice affects portability, SEO, publishing, and Markdown-to-image workflows.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Explains how to choose between local and remote image references in Markdown without breaking portability or publishing workflows.
+readerTakeaway: You should leave with a decision rule for when local image paths are correct, when remote URLs are safer, and how image export changes the tradeoff.
+primaryKeyword: markdown image path local vs remote
+searchIntent: select
+decisionStage: shortlist
+targetRoles:
+  - Developers
+  - Technical writers
+  - Blog operators
+  - Docs engineers
+---
+
+## Quick answer
+
+Use **local relative paths** when the Markdown file and its images are meant to travel together inside the same repository or note system. Use **remote URLs** when the Markdown is meant to be portable across platforms, copied into CMSs, published publicly, or reused in AI-assisted content pipelines.
+
+## When local relative paths are correct
+
+Local paths are best when:
+
+- the Markdown lives in Git with its assets,
+- the same folder structure will be preserved,
+- the content is mostly consumed in the same environment,
+- or offline durability matters more than portability.
+
+## When remote URLs are safer
+
+Remote URLs are safer when:
+
+- the Markdown will be copied into multiple systems,
+- images need to render outside the original filesystem,
+- or the content will be reused by editors, CMSs, export tools, or AI workflows that do not share local folder context.
+
+## Markdown-to-image effect
+
+If the Markdown is going into [the tool](https://tool.markdownpic.com/) or any image export workflow, remote assets often reduce friction because the renderer does not need the original local directory structure.
+
+If the content will feed:
+
+- public publishing,
+- cross-platform reuse,
+- AI ingestion,
+- or image export outside the original repo,
+
+default toward remote URLs.

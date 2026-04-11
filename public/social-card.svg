@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <rect width="1200" height="630" fill="#F5F7FC"/>
+  <rect x="40" y="40" width="1120" height="550" rx="32" fill="white" stroke="#D8E4FF"/>
+  <circle cx="1030" cy="128" r="120" fill="#EEF4FF"/>
+  <circle cx="1076" cy="172" r="64" fill="#DFF8F1"/>
+  <text x="96" y="174" fill="#2A6DF4" font-family="Arial, sans-serif" font-size="28" font-weight="700" letter-spacing="3">MARKDOWNPIC</text>
+  <text x="96" y="292" fill="#111C38" font-family="Arial, sans-serif" font-size="84" font-weight="700">Markdown encyclopedia</text>
+  <text x="96" y="366" fill="#111C38" font-family="Arial, sans-serif" font-size="84" font-weight="700">plus image tool workflows</text>
+  <text x="96" y="446" fill="#4A5571" font-family="Arial, sans-serif" font-size="34">Syntax. Editors. Publishing systems. AI-ready Markdown operations.</text>
+  <rect x="96" y="494" width="246" height="58" rx="29" fill="#2A6DF4"/>
+  <text x="142" y="531" fill="white" font-family="Arial, sans-serif" font-size="28" font-weight="700">markdownpic.com</text>
+</svg>

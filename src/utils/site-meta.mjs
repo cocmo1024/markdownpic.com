@@ -1,0 +1,43 @@
+export const siteMeta = {
+	name: 'MarkdownPic',
+	shortName: 'MarkdownPic',
+	domain: 'markdownpic.com',
+	siteUrl: 'https://markdownpic.com',
+	description:
+		'Markdown encyclopedia for syntax, editors, publishing systems, AI-assisted workflows, and Markdown-to-image operations.',
+	tagline:
+		'Structured Markdown reference for syntax decisions, editor comparisons, publishing workflows, and image-first content systems.',
+	email: 'cqq365@gmail.com',
+	languageTag: 'en-US',
+	ogLocale: 'en_US',
+	themeColor: '#2a6df4',
+	backgroundColor: '#f5f7fc',
+	faviconPath: '/favicon.svg',
+	ogImagePath: '/social-card.svg',
+	ogImageAlt:
+		'MarkdownPic social share card for Markdown syntax, editors, publishing workflows, and Markdown-to-image tooling.',
+	icon192Path: '/favicon.svg',
+	icon512Path: '/favicon.svg',
+	appleTouchIconPath: '/favicon.svg',
+	repoUrl: '',
+	indexNowKey: 'e8244d4b-4b52-4fe7-b459-5a6ea4ee0a7d',
+	keywords: [
+		'markdown guide',
+		'markdown syntax',
+		'markdown editors',
+		'markdown workflow',
+		'markdown to image',
+		'markdown publishing',
+	],
+	sectionLabels: {
+		fundamentals: 'Fundamentals',
+		guides: 'Guides',
+		syntax: 'Syntax',
+		editors: 'Editors',
+		publishing: 'Publishing',
+		workflows: 'Workflows',
+		comparisons: 'Editors & Tooling',
+		faq: 'FAQ',
+		posts: 'Posts',
+	},
+};

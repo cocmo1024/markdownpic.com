@@ -22,7 +22,7 @@ hero:
       variant: secondary
       attrs:
         target: _blank
-        rel: noreferrer
+        rel: noopener noreferrer
 ---
 
 import { Card, CardGrid, LinkCard, Steps } from '@astrojs/starlight/components';
@@ -77,6 +77,8 @@ import { Card, CardGrid, LinkCard, Steps } from '@astrojs/starlight/components';
 	<LinkCard
 		title="Use the tool"
 		href="https://tool.markdownpic.com/"
+		target="_blank"
+		rel="noopener noreferrer"
 		description="Open the Markdown-to-image tool when the workflow calls for shareable long images, polished screenshots, or visual snippets."
 	/>
 	<LinkCard
@@ -158,5 +160,5 @@ import { Card, CardGrid, LinkCard, Steps } from '@astrojs/starlight/components';
 	<span aria-hidden="true"> / </span>
 	<a href="/terms-of-use/">Terms</a>
 	<span aria-hidden="true"> / </span>
-	<a href="https://tool.markdownpic.com/">Tool</a>
+	<a href="https://tool.markdownpic.com/" target="_blank" rel="noopener noreferrer">Tool</a>
 </p>

@@ -16,6 +16,15 @@ targetRoles:
   - Technical writers
   - Content strategists
   - AI operators
+keyQuestions:
+  - How should AI fit around Markdown instead of replacing it?
+  - What should stay canonical and what can be generated?
+  - How do teams prevent AI workflows from creating content drift?
+notFor:
+  - Teams looking for prompt-only workflows without a maintained source layer
+updateTriggers:
+  - Significant model and prompt tooling changes
+  - Changes in MarkdownPic tooling that affect content reuse and export
 ---
 
 ## Quick answer
@@ -24,22 +33,94 @@ Markdown works well in AI workflows when it stays the **canonical source**, not 
 
 That means AI can help summarize, restructure, transform, or repackage Markdown content, but the Markdown itself should remain the stable editorial asset that can be reviewed, versioned, published, and reused.
 
-## Better model
+## The three-layer model
 
-Use AI around the Markdown source, not instead of it.
+The cleanest model has three layers:
 
-### Canonical layer
+### 1. Canonical layer
 
 One Markdown source file or content entry.
 
-### Working layer
+This is the maintained version that:
 
-AI-generated alternatives, summaries, rewrites, or transformations.
+- lives in Git or a controlled content system,
+- receives final human edits,
+- and anchors future updates.
 
-### Distribution layer
+### 2. Working layer
+
+AI-generated alternatives, summaries, rewrites, extractive snippets, checklists, or transformation drafts.
+
+This layer is useful, but it should not quietly become the source of truth.
+
+### 3. Distribution layer
 
 HTML pages, images, social snippets, newsletters, and other outputs derived from the canonical Markdown.
 
-## Where the tool fits
+## Where teams break the workflow
 
-The tool is useful at the distribution layer when Markdown needs to become a visual explainer, a long screenshot, a card-like share asset, or a refined image derivative for channels that reward visuals more than raw text.
+The failure pattern is predictable:
+
+- AI creates a draft,
+- someone edits the draft in a side document,
+- a visual snippet gets made from that side document,
+- and the original Markdown never gets reconciled.
+
+Now there are multiple versions of the same idea and nobody knows which one is current.
+
+## What AI should do well here
+
+AI is useful when it helps with:
+
+- summarization,
+- restructuring,
+- example generation,
+- outline expansion,
+- formatting cleanup,
+- and multi-channel adaptation.
+
+AI is much less useful when it is allowed to create unmanaged parallel sources.
+
+## The operating rule that keeps quality high
+
+Every AI-assisted output should answer one question:
+
+**Did this improve the canonical Markdown, or did it just create another copy?**
+
+If the answer is the second one, the workflow is starting to fail.
+
+## Where the MarkdownPic tool fits
+
+The tool at [tool.markdownpic.com](https://tool.markdownpic.com/) belongs in the distribution layer.
+
+That means:
+
+- research and source content stay in Markdown,
+- approved text becomes the site page,
+- selected sections become long images or visual assets,
+- and the visual output does not replace the maintained source.
+
+## A practical workflow
+
+1. Collect notes in Markdown.
+2. Use AI to cluster, summarize, or restructure the draft.
+3. Review and normalize the approved Markdown.
+4. Publish the HTML page from that source.
+5. Export selected sections into images or derivative assets when distribution needs them.
+
+That workflow gives AI a useful role without sacrificing editorial control.
+
+## What to avoid
+
+Avoid workflows where:
+
+- prompts become the only historical record,
+- AI output bypasses review,
+- images become the main archive instead of the Markdown source,
+- or multiple publishing destinations are edited separately after generation.
+
+## Related pages
+
+- [Markdown for docs, blogs, and AI-ready content systems](/publishing/markdown-for-docs-blogs-and-ai-ready-content-systems/)
+- [Markdown to image workflows for docs, social, and AI content](/guides/markdown-to-image-workflows-for-docs-social-and-ai-content/)
+- [Workflows](/workflows/)

@@ -15,6 +15,15 @@ targetRoles:
   - Writers
   - Developers
   - Documentation teams
+keyQuestions:
+  - What is the correct Markdown syntax for an email link?
+  - Are angle-bracket email links reliable?
+  - What happens to email links in screenshots and image exports?
+notFor:
+  - Readers looking for advanced email-automation or tracking-link setups
+updateTriggers:
+  - Meaningful renderer behavior changes around autolinks
+  - Major MarkdownPic export behavior changes that affect interactive links
 ---
 
 ## Quick answer
@@ -29,7 +38,7 @@ That works more reliably than hoping a renderer auto-links a naked email address
 
 ## Why `mailto:` is the safest form
 
-Markdown does not have a special “email link” primitive. It has links. An email address becomes a link only when the renderer or the author turns it into one.
+Markdown does not have a special email-link primitive. It has links. An email address becomes a link only when the renderer or the author turns it into one.
 
 Using `mailto:` gives you:
 
@@ -63,11 +72,21 @@ In those cases, visible plain text may be the better answer.
 
 ## Image export boundary
 
-A `mailto:` link only matters while the output is still HTML or another interactive format. Once the content becomes a PNG or long image, the link is visual only. That is why Markdown-to-image workflows often need a different decision:
+A `mailto:` link only matters while the output is still HTML or another interactive format. Once the content becomes a PNG or long image, the link is visual only.
+
+That is why Markdown-to-image workflows often need a different decision:
 
 - clickable link for HTML,
 - visible address or contact line for image assets.
 
-## Best practice
+## Recommended rule
 
 Use `mailto:` when the Markdown is staying interactive. Use visible text when the content is being flattened into a static visual asset.
+
+If the file needs to move across several renderers, do not rely on automatic email linking.
+
+## Related pages
+
+- [Markdown links: inline, reference, and autolinks](/syntax/markdown-links-inline-vs-reference-and-autolinks/)
+- [Markdown to image workflows for docs, social, and AI content](/guides/markdown-to-image-workflows-for-docs-social-and-ai-content/)
+- [Markdown image syntax: local vs. remote paths](/syntax/markdown-image-syntax-local-vs-remote-paths/)

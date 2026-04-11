@@ -1,0 +1,81 @@
+---
+title: "Markdown links: inline, reference, and autolinks"
+description: How inline links, reference links, and autolinks differ, and which form is safest for portability, reuse, and long documents.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Explains which Markdown link form to use based on document length, reuse, readability, and renderer portability.
+readerTakeaway: You should leave with a decision rule for when to use inline links, reference links, or autolinks, plus safe copyable examples.
+primaryKeyword: markdown links
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Developers
+  - Technical writers
+  - Documentation teams
+---
+
+## Quick answer
+
+Use **inline links** as the default. Use **reference links** when the same URL repeats, when long URLs hurt readability, or when you want easier maintenance. Use **autolinks** only when the renderer supports them and the plain URL form is acceptable.
+
+## Standard examples
+
+### Inline link
+
+```md
+[MarkdownPic](https://markdownpic.com/)
+```
+
+### Reference-style link
+
+```md
+[MarkdownPic][site]
+
+[site]: https://markdownpic.com/
+```
+
+### Autolink
+
+```md
+<https://markdownpic.com/>
+```
+
+## Which form is best
+
+### Inline links
+
+Best when:
+
+- the link appears once,
+- readability stays good,
+- and the document is short to medium length.
+
+### Reference links
+
+Best when:
+
+- the same destination appears multiple times,
+- URLs are long,
+- or the document is maintained like source code and link targets may change.
+
+### Autolinks
+
+Best when:
+
+- the literal URL is useful to show,
+- or the Markdown is intentionally minimal.
+
+They are not the best choice when you need descriptive anchor text.
+
+## Recommended rule
+
+Use inline links first. Move to reference links when maintenance or readability clearly benefits. Reserve autolinks for cases where showing the literal URL is part of the point.
+
+## Related pages
+
+- [Markdown image syntax: local vs. remote paths](/syntax/markdown-image-syntax-local-vs-remote-paths/)
+- [Markdown blockquotes, paragraphs, and line breaks](/syntax/markdown-blockquotes-line-breaks-and-paragraphs/)

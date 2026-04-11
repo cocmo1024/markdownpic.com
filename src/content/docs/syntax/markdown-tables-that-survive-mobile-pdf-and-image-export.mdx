@@ -15,17 +15,38 @@ targetRoles:
   - Documentation leads
   - Technical writers
   - Developers
+keyQuestions:
+  - When is a Markdown table still the right format?
+  - When should a table be rewritten for mobile or export?
+  - How should teams prevent tables from breaking in PDFs and image outputs?
+notFor:
+  - Readers choosing CSS table styling frameworks
+updateTriggers:
+  - Major renderer behavior changes for tables
+  - Significant MarkdownPic export-layout changes
 ---
 
 Markdown tables usually fail because authors ask one format to serve three incompatible jobs:
 
 - a desktop doc page,
 - a phone screen,
-- and a visual export.
+- and a fixed visual export.
 
 ## Quick answer
 
-Keep tables only when the rows are short and the comparison really depends on columns. If the content is verbose, turn the table into sections, cards, or repeated comparison blocks instead.
+Keep tables only when the rows are short and the comparison genuinely depends on columns. If the content is verbose, turn the table into sections, cards, or repeated comparison blocks instead.
+
+## Standard example
+
+```md
+| Editor  | Best fit              | Weak point              |
+| ------- | --------------------- | ----------------------- |
+| Typora  | Focused writing       | Less repo-native        |
+| VS Code | Publishing workflows  | More setup              |
+| Obsidian| Knowledge systems     | Publishing is less direct |
+```
+
+That works because the cells are short and the reader can compare three attributes quickly.
 
 ## The practical limit
 
@@ -35,6 +56,8 @@ A Markdown table stops being robust when:
 - code examples become long,
 - URLs are unbreakable,
 - or the number of columns exceeds what a small viewport can display without horizontal scrolling.
+
+Once that happens, the table is doing too much.
 
 ## The mobile rule
 
@@ -52,8 +75,34 @@ Bad Markdown tables:
 - long prose,
 - or implementation instructions.
 
-## Export implication
+## PDF and image export implications
 
-PDF and image export are less forgiving than web pages because the layout is more fixed. A table that is barely readable in HTML usually becomes actively bad in screenshots.
+PDF and image export are less forgiving than web pages because the layout is more fixed. A table that is barely readable in HTML usually becomes actively bad in screenshots or long images.
 
 Use a short table for scanning, then explain the decision below the table in normal Markdown prose. That gives you both fast comparison value and export resilience.
+
+## The safer fallback structures
+
+When a table starts to break, move to one of these patterns:
+
+- repeated heading sections,
+- side-by-side comparison cards,
+- bullet-based shortlists,
+- or “best fit / poor fit / notes” blocks.
+
+Those structures survive more environments than oversized tables.
+
+## Recommended operating rule
+
+- Keep tables narrow.
+- Keep cells short.
+- Avoid putting core reasoning only inside the table.
+- Rewrite long logic as prose underneath the table.
+
+That is the difference between a table that helps scanning and a table that collapses in export.
+
+## Related pages
+
+- [Markdown lists: unordered, ordered, nested, and task lists](/syntax/markdown-lists-nested-lists-and-task-lists/)
+- [Markdown to image workflows for docs, social, and AI content](/guides/markdown-to-image-workflows-for-docs-social-and-ai-content/)
+- [Markdown image syntax: local vs. remote paths](/syntax/markdown-image-syntax-local-vs-remote-paths/)

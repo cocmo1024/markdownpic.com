@@ -1,0 +1,94 @@
+---
+title: Markdown blockquotes, paragraphs, and line breaks
+description: How blockquotes, paragraphs, and line breaks work in Markdown, including where renderer differences create surprising output.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Explains how Markdown treats paragraphs, blockquotes, and line breaks so copied text does not collapse or render unexpectedly.
+readerTakeaway: You should leave knowing how to structure normal paragraphs, quoted sections, and intentional line breaks without depending on fragile renderer behavior.
+primaryKeyword: markdown line break blockquote
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Writers
+  - Technical writers
+  - Developers
+keyQuestions:
+  - How do line breaks work in Markdown?
+  - How should blockquotes be written?
+  - Why do copied paragraphs sometimes collapse into one block?
+notFor:
+  - Readers trying to design custom quote styling in CSS
+updateTriggers:
+  - CommonMark paragraph or blockquote parsing changes
+  - Major renderer differences in line-break handling
+---
+
+## Quick answer
+
+In Markdown, normal paragraphs are separated by a blank line. Blockquotes start with `>`. Line breaks are more sensitive: some renderers require two trailing spaces or an explicit break syntax, while others are more forgiving.
+
+If portability matters, assume line breaks are the fragile part and structure the prose so it does not depend on renderer-specific behavior.
+
+## Standard examples
+
+### Paragraphs
+
+```md
+First paragraph.
+
+Second paragraph.
+```
+
+### Blockquote
+
+```md
+> This is a quoted paragraph.
+> It stays inside the same quote block.
+```
+
+### Hard line break with two trailing spaces
+
+```md
+Line one.  
+Line two.
+```
+
+## Paragraphs: the safe rule
+
+If you want a new paragraph, insert a blank line. Do not depend on how a specific renderer handles single newlines inside a paragraph.
+
+That keeps the source clear and avoids surprises when the Markdown moves to another environment.
+
+## Blockquotes: the safe rule
+
+Use `>` at the start of each quoted line or paragraph block. This is simple, readable, and portable.
+
+Nested blockquotes are possible, but most documentation and publishing workflows should keep them rare because source readability drops fast.
+
+## Line breaks: where people get burned
+
+The most common Markdown line-break mistakes are:
+
+- expecting a single newline to force a visible break,
+- copying poetry, addresses, or captions without testing the renderer,
+- or using HTML breaks in a context meant to stay portable.
+
+If the visual line break is essential, confirm the exact renderer behavior instead of assuming every platform matches GitHub.
+
+## Recommended operating rule
+
+- Use blank lines for real paragraph separation.
+- Use blockquotes only when you are quoting or calling out a distinct statement.
+- Use explicit, tested line-break syntax only when a visible line break is semantically important.
+
+That rule produces Markdown that survives platform changes much better.
+
+## Related pages
+
+- [Markdown code blocks: fenced vs. indented](/syntax/markdown-code-blocks-fenced-vs-indented/)
+- [Markdown lists: unordered, ordered, nested, and task lists](/syntax/markdown-lists-nested-lists-and-task-lists/)
+- [CommonMark vs. GFM vs. renderer differences](/fundamentals/commonmark-vs-gfm-vs-renderer-differences/)

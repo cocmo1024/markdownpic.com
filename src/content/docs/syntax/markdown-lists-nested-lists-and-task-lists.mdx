@@ -1,0 +1,125 @@
+---
+title: "Markdown lists: unordered, ordered, nested, and task lists"
+description: Correct Markdown syntax for bullet lists, numbered lists, nested lists, and task lists, including where GitHub-style checklists stop being portable.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Explains how to write Markdown lists that stay readable, render predictably, and avoid checklist portability mistakes.
+readerTakeaway: You should leave knowing how to structure normal lists cleanly, how deep nesting should go, and when task lists are a safe choice.
+primaryKeyword: markdown list syntax
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Developers
+  - Technical writers
+  - Project teams
+keyQuestions:
+  - How do unordered and ordered lists work in Markdown?
+  - What is the correct way to nest lists?
+  - Are Markdown task lists part of the standard?
+notFor:
+  - Readers looking for HTML list styling techniques
+updateTriggers:
+  - CommonMark list parsing changes
+  - GitHub task-list behavior changes
+---
+
+## Quick answer
+
+Use plain unordered and ordered lists for portable Markdown. Keep nesting shallow, indent consistently, and treat task lists as a **GitHub Flavored Markdown convenience**, not a universal Markdown feature.
+
+## Standard examples
+
+### Unordered list
+
+```md
+- First item
+- Second item
+- Third item
+```
+
+### Ordered list
+
+```md
+1. First step
+2. Second step
+3. Third step
+```
+
+### Nested list
+
+```md
+- Parent item
+  - Child item
+  - Child item
+- Another parent item
+```
+
+### Task list
+
+```md
+- [x] Completed item
+- [ ] Open item
+```
+
+## The portability rule
+
+Basic ordered and unordered lists are broadly safe. Task lists are not the same thing.
+
+Task lists are widely supported in GitHub and many GitHub-like renderers, but they should be treated as an extension rather than a guaranteed baseline.
+
+If the content must render consistently across unknown tools, assume normal lists are safer than task lists.
+
+## Nested lists: where people go wrong
+
+Nested lists fail most often because of:
+
+- inconsistent indentation,
+- mixing tabs and spaces,
+- paragraphs that are not clearly tied to the right list item,
+- and deep nesting that becomes unreadable in source.
+
+The cleanest operational rule is to keep nesting shallow unless hierarchy genuinely matters.
+
+## Ordered lists: practical note
+
+Many writers like to type:
+
+```md
+1. First
+1. Second
+1. Third
+```
+
+Some renderers will renumber that correctly. It is often accepted, but it is not the clearest source for every context. For portable, human-readable Markdown, explicit numbering is usually the safer editorial choice.
+
+## Task lists: when to use them
+
+Task lists are useful when:
+
+- the file lives on GitHub or in a renderer that clearly supports them,
+- the checklist behavior is part of the normal workflow,
+- and plain text fallback is acceptable if the checkbox UI disappears.
+
+Task lists are a poor choice when:
+
+- the file must stay renderer-agnostic,
+- the checklist is critical to the document's meaning,
+- or the output may move into systems that treat the syntax as plain text.
+
+## Recommended operating rule
+
+- Use unordered or ordered lists by default.
+- Nest only as far as the content truly needs.
+- Use task lists only when the rendering environment is known.
+
+That rule prevents most list-related portability problems.
+
+## Related pages
+
+- [CommonMark vs. GFM vs. renderer differences](/fundamentals/commonmark-vs-gfm-vs-renderer-differences/)
+- [Markdown blockquotes, paragraphs, and line breaks](/syntax/markdown-blockquotes-line-breaks-and-paragraphs/)
+- [Markdown headings: ATX vs. Setext](/syntax/markdown-headings-atx-vs-setext/)

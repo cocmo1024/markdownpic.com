@@ -1,6 +1,6 @@
 ---
 title: MarkdownPic
-description: Markdown encyclopedia for syntax, editors, publishing systems, AI-assisted workflows, and Markdown-to-image operations.
+description: Deep Markdown reference for syntax standards, CommonMark and GitHub cases, editor decisions, publishing systems, and Markdown-to-image workflows.
 template: splash
 referenceType: home
 adProfile: foundation
@@ -9,13 +9,13 @@ reviewCadence: Monthly review
 hero:
   title: |
     MarkdownPic
-  tagline: Structured Markdown reference for syntax decisions, editor comparisons, publishing workflows, and image-first content systems.
+  tagline: Markdown encyclopedia for syntax standards, working examples, renderer differences, editor decisions, and Markdown-to-image workflows.
   actions:
-    - text: Browse guides
-      link: /guides/
+    - text: Browse syntax
+      link: /syntax/
       icon: right-arrow
-    - text: Compare editors
-      link: /comparisons/obsidian-vs-typora-vs-vs-code-for-markdown-publishing/
+    - text: Standard examples
+      link: /syntax/markdown-headings-atx-vs-setext/
       variant: minimal
     - text: Open the tool
       link: https://tool.markdownpic.com/
@@ -28,14 +28,14 @@ hero:
 import { Card, CardGrid, LinkCard, Steps } from '@astrojs/starlight/components';
 
 <CardGrid stagger>
+	<Card title="Syntax" icon="list-format">
+		Reference pages for headings, links, emphasis, code blocks, lists, tables, blockquotes, and renderer-safe patterns that survive real publishing.
+	</Card>
 	<Card title="Fundamentals" icon="document">
-		Foundational pages on what Markdown is good for, where it breaks, and how to choose the right operating boundaries before tool selection.
+		Foundational pages on what Markdown is, what CommonMark standardizes, what GitHub extends, and where renderer differences start to matter.
 	</Card>
 	<Card title="Guides" icon="open-book">
 		Long-form Markdown guides built to solve publishing, export, image, and workflow problems instead of repeating syntax basics.
-	</Card>
-	<Card title="Syntax" icon="list-format">
-		Reference pages for links, images, tables, embeds, and portability edge cases that break across renderers, exports, and platforms.
 	</Card>
 	<Card title="Editors" icon="list-format">
 		Comparisons and fit analysis for Obsidian, Typora, VS Code, and adjacent tools used in serious Markdown publishing workflows.
@@ -55,14 +55,14 @@ import { Card, CardGrid, LinkCard, Steps } from '@astrojs/starlight/components';
 
 <div class="portal-links">
 	<LinkCard
-		title="Solve a Markdown problem"
-		href="/guides/"
-		description="Start with deeper guides for broken links, image handling, rendering gaps, publishing friction, and reuse workflows."
+		title="Learn Markdown syntax correctly"
+		href="/syntax/"
+		description="Start with syntax pages when the question is how Markdown should be written, interpreted, copied, or kept portable."
 	/>
 	<LinkCard
-		title="Check syntax behavior"
-		href="/syntax/"
-		description="Go directly to syntax pages when you need the safest Markdown form across renderers, exports, and platforms."
+		title="Understand standards and renderer differences"
+		href="/fundamentals/commonmark-vs-gfm-vs-renderer-differences/"
+		description="Use the standards path when you need to know whether a behavior comes from CommonMark, GitHub Flavored Markdown, or a local renderer."
 	/>
 	<LinkCard
 		title="Choose an editor"
@@ -82,7 +82,7 @@ import { Card, CardGrid, LinkCard, Steps } from '@astrojs/starlight/components';
 	<LinkCard
 		title="Review evergreen posts"
 		href="/posts/"
-		description="Access legacy-compatible post URLs that will continue absorbing search traffic without breaking old links."
+		description="Access legacy-compatible post URLs that stay live and continue collecting evergreen Markdown search traffic."
 	/>
 </div>
 
@@ -90,9 +90,14 @@ import { Card, CardGrid, LinkCard, Steps } from '@astrojs/starlight/components';
 
 <div class="portal-links">
 	<LinkCard
+		title="Markdown syntax standards and examples"
+		href="/syntax/"
+		description="A durable cluster around headings, links, lists, code blocks, tables, and renderer-safe Markdown patterns."
+	/>
+	<LinkCard
 		title="Markdown to image workflows"
 		href="/guides/markdown-to-image-workflows-for-docs-social-and-ai-content/"
-		description="A durable cluster around turning Markdown into shareable images without losing SEO, reuse, or editorial control."
+		description="A durable cluster around turning Markdown into shareable images without losing search value, reuse, or editorial control."
 	/>
 	<LinkCard
 		title="Editor comparisons that actually decide tools"
@@ -101,7 +106,7 @@ import { Card, CardGrid, LinkCard, Steps } from '@astrojs/starlight/components';
 	/>
 	<LinkCard
 		title="Portable Markdown syntax"
-		href="/syntax/markdown-image-syntax-local-vs-remote-paths/"
+		href="/syntax/markdown-code-blocks-fenced-vs-indented/"
 		description="A practical cluster on syntax choices that survive GitHub, docs, export tools, email, and image workflows."
 	/>
 	<LinkCard
@@ -116,24 +121,24 @@ import { Card, CardGrid, LinkCard, Steps } from '@astrojs/starlight/components';
 <div class="signal-strip">
 	<div>
 		<strong>Problem-first content</strong>
-		<p>Pages are structured to solve real Markdown, editor, or publishing decisions rather than inflate word count around basic definitions.</p>
+		<p>Pages are structured to solve real Markdown, syntax, editor, or publishing decisions rather than inflate word count around basic definitions.</p>
 	</div>
 	<div>
 		<strong>Long-lived search intent</strong>
-		<p>Syntax, workflow, editor fit, and publishing-system pages decay much slower than trend posts and therefore build stronger compounding traffic.</p>
+		<p>Syntax, standards, editor fit, and publishing-system pages decay much slower than trend posts and therefore build stronger compounding traffic.</p>
 	</div>
 	<div>
-		<strong>Tool-aware monetization</strong>
-		<p>The site can funnel traffic toward the MarkdownPic tool and adjacent products without turning reference pages into clutter.</p>
+		<strong>Standards-first structure</strong>
+		<p>The site is designed so people searching for Markdown syntax, examples, and differences can learn the standard, see the exact case, and then move into tooling and workflows.</p>
 	</div>
 </div>
 
 ## How to use MarkdownPic
 
 <Steps>
-	1. Start with the guide or syntax page that matches the exact Markdown problem you are trying to solve.
-	2. Move into editor or publishing comparisons only after the core content boundary is clear.
-	3. Use workflow pages when Markdown needs to support AI reuse, screenshots, docs, or multi-channel distribution.
+	1. Start with the syntax page or standards page that matches the exact Markdown behavior you need.
+	2. Move into guides when the problem expands from syntax into publishing, export, reuse, or migration.
+	3. Use editor and publishing sections when the remaining question is operational fit, not raw syntax.
 	4. Open the tool when the output needs to become a long image, polished screenshot, or visual asset.
 </Steps>
 

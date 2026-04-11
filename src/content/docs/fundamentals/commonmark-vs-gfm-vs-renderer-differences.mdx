@@ -1,0 +1,67 @@
+---
+title: CommonMark vs. GFM vs. renderer differences
+description: What CommonMark standardizes, what GitHub Flavored Markdown adds, and why Markdown still behaves differently across platforms.
+referenceType: fundamental
+adProfile: fundamental
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Explains why Markdown behavior changes across platforms and how to separate the standard from platform-specific additions.
+readerTakeaway: You should leave with a working model for distinguishing CommonMark, GitHub Flavored Markdown, and renderer-specific behavior before making portability decisions.
+primaryKeyword: commonmark vs gfm
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Developers
+  - Technical writers
+  - Documentation teams
+  - Markdown learners
+keyQuestions:
+  - What belongs to CommonMark and what belongs to GitHub Flavored Markdown?
+  - Why does Markdown still render differently across platforms?
+  - Which syntax choices are safest when portability matters?
+notFor:
+  - Readers who only need a quick syntax snippet and do not care about portability
+updateTriggers:
+  - Major CommonMark spec revisions
+  - GitHub documentation changes affecting GFM behavior
+---
+
+## Quick answer
+
+**CommonMark** is the closest thing Markdown has to a formal baseline specification. **GitHub Flavored Markdown (GFM)** starts from that baseline and adds practical features such as tables and task lists. A **renderer** is the actual implementation that decides what the Markdown file turns into.
+
+That means two files can both be called “Markdown” while still behaving differently, because the renderer is not identical.
+
+## Why this difference matters
+
+People usually discover the distinction only after something breaks:
+
+- a table works on GitHub but not in another renderer,
+- a task list becomes plain text outside GFM,
+- line breaks behave differently after copy-paste,
+- or a tool accepts raw HTML and another strips it.
+
+If the content is meant to travel, you need to know which layer you are relying on.
+
+## A practical model
+
+Use this mental model:
+
+- **CommonMark** for the baseline grammar and predictable core behavior.
+- **GFM** for GitHub-style extensions that many developers now expect.
+- **Renderer behavior** for everything implementation-specific, including sanitization, HTML handling, image resolution, and extension support.
+
+## What is usually safest
+
+When portability matters most:
+
+- favor CommonMark-safe syntax where possible,
+- treat GFM features as opt-in conveniences,
+- and assume renderer-specific features are local contracts, not universal Markdown.
+
+## Where to go next
+
+- Go to [Syntax](/syntax/) for concrete examples and safe patterns.
+- Go to [Markdown headings: ATX vs. Setext](/syntax/markdown-headings-atx-vs-setext/) if you want an immediate example of a standard choice.
+- Go to [Markdown lists: unordered, ordered, nested, and task lists](/syntax/markdown-lists-nested-lists-and-task-lists/) if task-list behavior is the current pain point.

@@ -16,36 +16,127 @@ targetRoles:
   - Developers
   - Documentation leads
   - Content operators
+keyQuestions:
+  - Which editor is best for Markdown publishing?
+  - When does Obsidian beat Typora or VS Code?
+  - Which editor works best when Markdown feeds a site, docs system, or image workflow?
+notFor:
+  - Readers choosing a general-purpose code editor for non-Markdown work
+updateTriggers:
+  - Major pricing or licensing changes
+  - Significant product changes in Obsidian, Typora, or VS Code Markdown workflows
 ---
 
 ## Quick answer
 
-- Choose **Typora** when the priority is a low-friction writing and preview experience.
+- Choose **Typora** when the priority is low-friction writing and immediate visual calm.
 - Choose **VS Code** when Markdown lives inside a repository, site, or developer publishing workflow.
 - Choose **Obsidian** when the real goal is a larger knowledge system that may later feed publishing and reuse.
 
-## What actually matters
+None of these tools is the universal best Markdown editor. The right choice depends on where the canonical Markdown lives and what happens to it after writing.
 
-Most comparison pages overvalue feature count. For Markdown publishing, the more important questions are:
+## The decision factors that actually matter
+
+Most editor comparisons overvalue feature count. For Markdown publishing, the more important questions are:
 
 1. Where does the canonical Markdown live?
 2. How cleanly are images handled?
 3. Does the workflow lead naturally into publishing?
 4. How much scripting or setup can the team tolerate?
-5. Will the same Markdown be reused for AI workflows, docs, or screenshots?
+5. Will the same Markdown be reused for docs, websites, screenshots, or AI workflows?
 
 ## Typora
 
-Typora is strongest when the problem is **writing friction**. It is weaker when the workflow grows more engineered, collaborative, or repo-driven.
+Typora is strongest when the problem is **writing friction**.
+
+### Best fit
+
+- solo writers,
+- quick article drafting,
+- clean preview-driven editing,
+- and teams that do not want plugin-heavy workflows.
+
+### Where it weakens
+
+- repository-native content operations,
+- complex content automation,
+- highly customizable publishing pipelines,
+- and workflows where the editor has to integrate deeply with build tooling.
+
+Typora helps you write better. It does less to help you run a content system.
 
 ## VS Code
 
-VS Code is strongest when the problem is **publishing operations**. It works well for static sites, docs repos, content under version control, and workflows where Markdown is one part of a larger build system.
+VS Code is strongest when the problem is **publishing operations**.
+
+### Best fit
+
+- static sites,
+- docs repos,
+- content under version control,
+- Markdown stored alongside code,
+- and workflows where linting, preview, scripts, and Git are part of the same system.
+
+### Where it weakens
+
+- writers who dislike code-editor ergonomics,
+- teams that want polished visual editing by default,
+- and workflows where writing calm matters more than extensibility.
+
+VS Code is usually the most operationally powerful choice, but not always the easiest writing environment.
 
 ## Obsidian
 
-Obsidian is strongest when the problem is **knowledge continuity**. It is a strong choice when notes, drafts, and long-term idea networks matter and the same Markdown may later become articles, docs, or AI-ready source material.
+Obsidian is strongest when the problem is **knowledge continuity**.
 
-## Practical decision rule
+### Best fit
 
-If the workflow starts in a knowledge base, Obsidian often wins. If it starts in a site repo, VS Code often wins. If it starts with writing quality and visual calm, Typora often wins.
+- research archives,
+- idea networks,
+- source notes that later become docs or posts,
+- and long-lived Markdown vaults that support writing over time.
+
+### Where it weakens
+
+- teams that need a clean publishing pipeline out of the box,
+- repo-native deployment workflows,
+- and environments where the note-taking layer should not become the operational center.
+
+Obsidian is strongest upstream. It is often less opinionated about the downstream publishing layer than VS Code-based systems.
+
+## A practical shortlist rule
+
+Choose **Typora** if the main risk is that writing feels slow and unpleasant.  
+Choose **VS Code** if the main risk is that publishing, assets, and version control will get messy.  
+Choose **Obsidian** if the main risk is that research, notes, and draft knowledge will fragment before publishing starts.
+
+## What matters for MarkdownPic readers
+
+For this site, the most important criterion is not the editor's feature list. It is whether the tool helps keep Markdown:
+
+- clean,
+- portable,
+- reusable,
+- and easy to push into publishing or image workflows later.
+
+That means:
+
+- **VS Code** usually wins for repo-backed publishing systems,
+- **Obsidian** usually wins for research-heavy knowledge systems,
+- **Typora** usually wins for focused drafting.
+
+## When the wrong choice hurts
+
+The wrong editor usually creates pain in one of three places:
+
+- image and asset handling becomes inconsistent,
+- the Markdown source stops lining up with the publishing system,
+- or drafts become trapped inside a personal workflow that the broader team cannot easily reuse.
+
+That is why editor choice should be downstream-aware, not just comfort-driven.
+
+## Related pages
+
+- [Markdown for docs, blogs, and AI-ready content systems](/publishing/markdown-for-docs-blogs-and-ai-ready-content-systems/)
+- [AI Markdown workflows for research notes, docs, and content reuse](/workflows/ai-markdown-workflows-for-research-notes-docs-and-content-reuse/)
+- [Markdown image syntax: local vs. remote paths](/syntax/markdown-image-syntax-local-vs-remote-paths/)

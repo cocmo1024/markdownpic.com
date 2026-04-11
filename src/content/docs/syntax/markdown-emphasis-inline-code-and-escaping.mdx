@@ -1,0 +1,85 @@
+---
+title: Markdown emphasis, inline code, and escaping
+description: Correct Markdown syntax for bold, italic, inline code, strikethrough, and escaping special characters without accidental formatting.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Explains how to write emphasis and inline code reliably and how to escape Markdown characters when formatting should not be interpreted.
+readerTakeaway: You should leave with working examples for bold, italic, inline code, strikethrough, and literal characters that would otherwise trigger formatting.
+primaryKeyword: markdown bold italic code
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Developers
+  - Technical writers
+---
+
+## Quick answer
+
+Use `**bold**`, `*italic*`, and backticks for inline code. Treat strikethrough as a GitHub-style extension rather than guaranteed core Markdown. When characters should stay literal, escape them with a backslash.
+
+## Standard examples
+
+### Bold and italic
+
+```md
+**bold**
+*italic*
+```
+
+### Inline code
+
+```md
+Use `npm run build` before deploy.
+```
+
+### Strikethrough
+
+```md
+~~deprecated text~~
+```
+
+### Escaping special characters
+
+```md
+\*not italic\*
+\# not a heading
+```
+
+## Why inline code deserves special treatment
+
+Inline code is not just visual formatting. It tells the reader that the enclosed text is literal and should not be interpreted as prose.
+
+That matters for:
+
+- commands,
+- filenames,
+- variable names,
+- syntax snippets,
+- and configuration keys.
+
+## Where people create accidental formatting
+
+Formatting mistakes usually happen when:
+
+- asterisks appear in plain text,
+- hash symbols appear at line starts,
+- backticks are used inside already-formatted spans,
+- or the writer uses strikethrough assuming every renderer will support it.
+
+The fix is to treat literal content and presentational emphasis as different jobs.
+
+## The portability rule
+
+Bold, italic, and inline code are broadly safe. Strikethrough is common, but it should still be treated more like a widely supported extension than a universal baseline.
+
+If the file must survive unknown renderers, use strong and emphasis confidently, use inline code where content is literal, and verify strikethrough only when it matters.
+
+## Related pages
+
+- [Markdown links: inline, reference, and autolinks](/syntax/markdown-links-inline-vs-reference-and-autolinks/)
+- [Markdown headings: ATX vs. Setext](/syntax/markdown-headings-atx-vs-setext/)
+- [CommonMark vs. GFM vs. renderer differences](/fundamentals/commonmark-vs-gfm-vs-renderer-differences/)

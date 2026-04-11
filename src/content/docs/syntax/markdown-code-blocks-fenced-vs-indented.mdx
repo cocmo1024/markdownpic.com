@@ -1,0 +1,105 @@
+---
+title: "Markdown code blocks: fenced vs. indented"
+description: When to use fenced code blocks, when indented blocks still work, and which format is safest for modern Markdown publishing.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Explains how to choose between fenced and indented code blocks without hurting portability, readability, or syntax-highlighting workflows.
+readerTakeaway: You should leave knowing that fenced code blocks are the modern default, where indented blocks still appear, and what examples to copy into production Markdown.
+primaryKeyword: markdown code block
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Developers
+  - Technical writers
+  - Markdown learners
+  - Documentation teams
+keyQuestions:
+  - Should I use triple backticks or indented blocks?
+  - Which Markdown code block style is safer?
+  - When does syntax highlighting require fenced blocks?
+notFor:
+  - Readers choosing syntax-highlighting themes or front-end code display libraries
+updateTriggers:
+  - CommonMark code-block behavior changes
+  - Major renderer changes affecting fenced code blocks
+---
+
+## Quick answer
+
+Use **fenced code blocks** for almost all modern Markdown work. Indented code blocks still exist, but fenced blocks are clearer, easier to edit, and better aligned with syntax-highlighting workflows.
+
+## Standard examples
+
+### Fenced code block
+
+````md
+```js
+console.log('Hello, world');
+```
+````
+
+### Indented code block
+
+```md
+    console.log('Hello, world');
+```
+
+## Why fenced blocks are the better default
+
+Fenced blocks win because they:
+
+- are explicit in source,
+- support language hints,
+- are easier to move around during editing,
+- and create fewer ambiguities when mixed with lists, quotes, and surrounding prose.
+
+If the file will live in docs, a site repo, or a publishing system, fenced blocks are usually the safest operational choice.
+
+## Where indented blocks still appear
+
+Indented blocks still work in many Markdown contexts, especially in older writing habits or very plain documents. But they create more edge cases when mixed with:
+
+- nested lists,
+- quoted content,
+- copied snippets,
+- and editors that auto-format indentation.
+
+That is why they are no longer the strongest default for serious Markdown publishing.
+
+## Language labels and syntax highlighting
+
+If you want reliable syntax highlighting, fenced blocks are the right tool because they allow a language label:
+
+````md
+```python
+def add(a, b):
+    return a + b
+```
+````
+
+Indented blocks usually do not carry that same clean, explicit language signal.
+
+## Common failure modes
+
+The typical mistakes are:
+
+- forgetting to close a fenced block,
+- using the wrong number of backticks when the content contains backticks,
+- or relying on indented blocks inside heavily nested content where indentation already has meaning.
+
+The fix is simple: default to fenced blocks and keep them visually obvious in the source.
+
+## Recommended operating rule
+
+- Use fenced blocks for almost everything.
+- Add a language label when the renderer benefits from it.
+- Use indented blocks only if you have a strong reason and know the surrounding structure is simple.
+
+## Related pages
+
+- [Markdown blockquotes, paragraphs, and line breaks](/syntax/markdown-blockquotes-line-breaks-and-paragraphs/)
+- [Markdown lists: unordered, ordered, nested, and task lists](/syntax/markdown-lists-nested-lists-and-task-lists/)
+- [Markdown tables that survive mobile, PDF, and image export](/syntax/markdown-tables-that-survive-mobile-pdf-and-image-export/)

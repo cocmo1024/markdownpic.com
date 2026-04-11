@@ -18,11 +18,46 @@ targetRoles:
   - Documentation leads
 ---
 
-Markdown guides should solve full workflows, not just isolated syntax fragments.
+Guides exist for problems that are bigger than a single syntax rule.
 
-Use this section when the real problem is closer to:
+If Syntax answers "how should this Markdown be written?" Guides answer:
 
-- turning Markdown into a repeatable publishing pipeline,
-- exporting Markdown into shareable images,
-- handling image assets without making content brittle,
-- or keeping Markdown reusable across docs, blogs, and AI-assisted content systems.
+- how Markdown should move through a workflow,
+- where Markdown should stop and tooling should begin,
+- how to keep content portable while still publishing aggressively,
+- and how to turn a pile of `.md` files into an operational system.
+
+## Start with Guides when
+
+Use this section when the question looks like one of these:
+
+- How do I turn Markdown into shareable images without wrecking reuse?
+- How should assets, exports, and URLs be organized?
+- How do I keep Markdown compatible across docs, blogs, screenshots, and AI systems?
+- How do I migrate from "notes and drafts" to a real publishing workflow?
+
+## Current high-value guide clusters
+
+- [Markdown to image workflows for docs, social, and AI content](/guides/markdown-to-image-workflows-for-docs-social-and-ai-content/)
+- More image, export, migration, and compatibility guides should grow from this base rather than fragment into shallow how-tos.
+
+## What a good guide should do
+
+A guide on MarkdownPic should not stop at definitions. It should:
+
+- define the actual workflow boundary,
+- explain the tradeoffs,
+- show where Markdown stays canonical,
+- identify where renderers or tools create hidden failure points,
+- and give the reader a safe operating model they can reuse.
+
+## When not to start here
+
+Do not start in Guides if the question is still just:
+
+- how headings work,
+- how links are written,
+- why a code fence failed,
+- or whether a list is valid Markdown.
+
+Those belong in [Syntax](/syntax/) first.

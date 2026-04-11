@@ -23,8 +23,12 @@ export default defineConfig({
 			],
 			sidebar: [
 				{
-					label: 'Markdown Reference',
+					label: 'Markdown Encyclopedia',
 					items: [
+						{
+							label: 'Syntax',
+							autogenerate: { directory: 'syntax' },
+						},
 						{
 							label: 'Fundamentals',
 							autogenerate: { directory: 'fundamentals' },
@@ -32,10 +36,6 @@ export default defineConfig({
 						{
 							label: 'Guides',
 							autogenerate: { directory: 'guides' },
-						},
-						{
-							label: 'Syntax',
-							autogenerate: { directory: 'syntax' },
 						},
 						{
 							label: 'Editors',

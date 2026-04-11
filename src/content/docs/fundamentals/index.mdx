@@ -17,6 +17,40 @@ targetRoles:
   - Documentation teams
 ---
 
-Markdown works best when its boundaries are understood early.
+Markdown looks simple because the visible syntax is small. The hard part starts later, when the same file needs to render on GitHub, in a docs site, inside a static site generator, through an export pipeline, or inside a Markdown-to-image tool.
 
-This section explains the conceptual layer underneath the syntax, editor, and publishing decisions elsewhere on the site.
+This section exists to answer the questions that come before individual syntax rules:
+
+- What is the Markdown standard actually trying to guarantee?
+- What belongs to CommonMark, and what belongs to GitHub Flavored Markdown?
+- Why does a file behave one way in one renderer and a different way in another?
+- When is Markdown still the right source format, and when is it not enough on its own?
+
+If those questions are unresolved, syntax pages alone will not solve the real problem.
+
+## Start here
+
+- Read [CommonMark vs. GFM vs. renderer differences](/fundamentals/commonmark-vs-gfm-vs-renderer-differences/) if your main problem is inconsistent behavior across platforms.
+- Read [What Markdown is good for and where it breaks](/fundamentals/what-markdown-is-and-where-it-breaks/) if your team is still deciding whether Markdown should be the canonical source.
+
+## What this section should give you
+
+By the time you leave Fundamentals, you should be able to:
+
+- separate the core Markdown standard from platform-specific additions,
+- understand why portability problems happen,
+- recognize when raw Markdown is enough and when HTML, metadata, or tooling needs to take over,
+- and make better choices in the syntax, editor, and publishing sections.
+
+## When this section matters most
+
+Fundamentals matter most when:
+
+- a team is choosing Markdown as a long-term content format,
+- someone keeps saying "but it works on GitHub" while another renderer breaks,
+- content is being reused across docs, blogs, repos, emails, and exports,
+- or an AI workflow is being layered on top of Markdown and the source model needs to stay stable.
+
+## What this section is not
+
+This section is not a cheat sheet for raw syntax. If you already know the conceptual boundary and just need a correct pattern for headings, links, lists, or code blocks, jump to [Syntax](/syntax/).

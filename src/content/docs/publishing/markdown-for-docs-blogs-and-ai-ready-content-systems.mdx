@@ -16,6 +16,15 @@ targetRoles:
   - Documentation leads
   - Developers
   - AI workflow builders
+keyQuestions:
+  - Why is Markdown still valuable as a content-system source layer?
+  - How should one Markdown source feed docs, blogs, images, and AI reuse?
+  - Where do teams lose the benefit of Markdown?
+notFor:
+  - Teams seeking a no-file, no-repository CMS-only workflow
+updateTriggers:
+  - Major changes in Markdown-based docs frameworks
+  - Significant changes in AI content tooling that affect canonical-source workflows
 ---
 
 ## Quick answer
@@ -30,11 +39,34 @@ It works especially well when it becomes the canonical content layer underneath:
 - image derivatives,
 - and AI-assisted summarization or reuse.
 
+## The core idea
+
+The system only works if Markdown stays the source and everything else stays downstream of that source.
+
+That means one Markdown entry should be able to feed:
+
+- a documentation page,
+- a blog post,
+- a newsletter draft,
+- a shareable long image,
+- or an AI transformation pipeline.
+
+If every destination gets its own disconnected copy, the advantage disappears.
+
 ## Where teams go wrong
 
-Teams lose the benefit of Markdown when they let every destination own its own copy. That creates docs in one system, blog posts in another, social snippets in another, and AI prompts disconnected from the original source.
+Teams lose the benefit of Markdown when they let every destination own its own version of the truth.
 
-## Better operating model
+The common failure pattern looks like this:
+
+- docs in one system,
+- blog posts in another,
+- social snippets in another,
+- and AI prompts disconnected from the original source.
+
+That creates content drift, duplicated editing, and uncertainty about what is current.
+
+## The better operating model
 
 Use Markdown as the source. Then derive:
 
@@ -42,4 +74,69 @@ Use Markdown as the source. Then derive:
 - blog pages,
 - newsletters,
 - long images via the tool,
-- and AI-assisted summaries from that source.
+- and AI-assisted summaries from that same source.
+
+The more outputs you support, the more valuable the canonical-source rule becomes.
+
+## What makes Markdown good at this
+
+Markdown is unusually effective as a system layer because it is:
+
+- readable in raw form,
+- stable in version control,
+- easy to transform,
+- and lightweight enough for both humans and software to work with.
+
+That combination matters when content has to live for a long time and move across tools.
+
+## The AI-era angle
+
+AI increases the value of a clean source layer.
+
+If the source Markdown is structured, current, and reviewable, AI can:
+
+- summarize it,
+- reframe it,
+- extract sections,
+- produce derivative outlines,
+- and help generate visual variants.
+
+If the source is fragmented across copies and inconsistent formatting, AI mostly amplifies the mess.
+
+## What belongs in the canonical source
+
+The source Markdown should usually contain:
+
+- the clean text,
+- stable headings,
+- image references with a documented strategy,
+- code samples,
+- and the version intended for long-term maintenance.
+
+What should not become the canonical source:
+
+- quick social copy,
+- one-off prompt output,
+- throwaway visual derivatives,
+- or platform-specific rewrites that only make sense in one channel.
+
+## Where MarkdownPic fits
+
+MarkdownPic is built around the assumption that Markdown should stay primary and image export should stay derivative.
+
+That is why syntax pages matter. That is why guides matter. And that is why the tool at [tool.markdownpic.com](https://tool.markdownpic.com/) is useful only when it sits after the canonical source, not instead of it.
+
+## Recommended operating rule
+
+If a team needs both search-facing content and visual distribution, the safest model is:
+
+1. write and review in Markdown,
+2. publish the indexable HTML version,
+3. export selected visuals from the same source,
+4. and let AI work around that source instead of replacing it.
+
+## Related pages
+
+- [What Markdown is good for and where it breaks](/fundamentals/what-markdown-is-and-where-it-breaks/)
+- [Markdown to image workflows for docs, social, and AI content](/guides/markdown-to-image-workflows-for-docs-social-and-ai-content/)
+- [AI Markdown workflows for research notes, docs, and content reuse](/workflows/ai-markdown-workflows-for-research-notes-docs-and-content-reuse/)

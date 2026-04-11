@@ -1,0 +1,86 @@
+---
+title: "Markdown headings: ATX vs. Setext"
+description: When to use hash-style headings, when setext headings still make sense, and which form is safest across Markdown renderers.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Explains how to choose between ATX and Setext headings without hurting portability or editing speed.
+readerTakeaway: You should leave knowing that ATX headings are usually the safest default, where Setext still fits, and what examples to copy for clean hierarchy.
+primaryKeyword: markdown headings
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Developers
+  - Technical writers
+  - Documentation teams
+keyQuestions:
+  - Should I use # headings or underline-style headings?
+  - Which heading style is most portable?
+  - Where do heading styles break in real editing workflows?
+notFor:
+  - Readers who only need a table of markdown symbols without explanation
+updateTriggers:
+  - CommonMark heading-related spec changes
+  - GitHub heading behavior changes
+---
+
+## Quick answer
+
+Use **ATX headings** with `#` for almost all modern Markdown work. They are clearer in source, easier to scan, and safer in long documents. Use **Setext headings** only when you intentionally want the old underline style for level 1 and level 2 headings.
+
+## Standard examples
+
+### ATX headings
+
+```md
+# Heading level 1
+## Heading level 2
+### Heading level 3
+```
+
+### Setext headings
+
+```md
+Heading level 1
+===============
+
+Heading level 2
+---------------
+```
+
+## Why ATX is the better default
+
+ATX headings win in most real workflows because:
+
+- they scale beyond level 2,
+- they are easier to edit during restructuring,
+- they are easier to read in plain text,
+- and they reduce ambiguity when content is copied, diffed, or rearranged.
+
+If your file will live in Git, docs tooling, AI-assisted workflows, or repeated revisions, ATX is usually the better operational choice.
+
+## When Setext still makes sense
+
+Setext headings still work when:
+
+- the document is short,
+- you only need a top-level heading and maybe one second-level heading,
+- or the source is intentionally styled for older editorial conventions.
+
+But the benefits are aesthetic more than operational.
+
+## Recommended rule
+
+For MarkdownPic readers, the safest rule is:
+
+- default to ATX,
+- allow Setext only for deliberate style reasons,
+- and never mix both casually in the same document unless the team has a documented reason.
+
+## Related pages
+
+- [CommonMark vs. GFM vs. renderer differences](/fundamentals/commonmark-vs-gfm-vs-renderer-differences/)
+- [Markdown links: inline, reference, and autolinks](/syntax/markdown-links-inline-vs-reference-and-autolinks/)

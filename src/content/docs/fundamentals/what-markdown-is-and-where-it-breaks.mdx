@@ -15,15 +15,120 @@ targetRoles:
   - Writers
   - Developers
   - Documentation teams
+  - Knowledge managers
+keyQuestions:
+  - What is Markdown actually good at?
+  - Where does Markdown become the wrong tool?
+  - How should teams decide when to keep Markdown and when to move to something richer?
+notFor:
+  - Readers who only want a symbol cheat sheet
+updateTriggers:
+  - Major CommonMark revisions
+  - Significant product shifts in mainstream Markdown editors or publishing platforms
 ---
 
-Markdown is strongest when you need a format that is:
+## Quick answer
+
+Markdown is strongest when you need content that is:
 
 - easy to write,
 - easy to diff,
 - easy to move,
-- and easy to publish into multiple downstream systems.
+- and easy to publish into more than one downstream system.
 
-It becomes weaker when the content needs rich layout control, complex embedded behavior, or tight WYSIWYG collaboration as the primary authoring mode.
+Markdown becomes weaker when the content needs precise layout control, complex embedded behavior, spreadsheet-like structure, or WYSIWYG collaboration as the primary authoring mode.
 
 The mistake is not using Markdown. The mistake is asking Markdown to do jobs it was never meant to do.
+
+## What Markdown is actually good for
+
+Markdown works best when the source needs to remain readable without the renderer.
+
+That makes it a strong fit for:
+
+- documentation stored in Git,
+- blogs and static-site content,
+- notes that later become articles or docs,
+- AI-ready source material that will be summarized or transformed,
+- and publishing systems where one source feeds multiple outputs.
+
+The reason is simple: Markdown preserves enough structure to be useful while staying light enough to edit quickly.
+
+## Why people keep choosing it
+
+Teams keep coming back to Markdown because it solves four operational problems well:
+
+1. **Source readability**. You can still understand the file in plain text.
+2. **Version control**. Changes remain visible and diffable.
+3. **Portability**. The file can move across tools more easily than proprietary editor formats.
+4. **Transformation**. Markdown is easy to turn into HTML, PDFs, docs pages, screenshots, or AI inputs.
+
+Those strengths compound when the same content has to be reused for more than one destination.
+
+## Where Markdown starts to break
+
+Markdown is not a layout system. It is also not a database, a page-builder, or a full collaborative design tool.
+
+It starts to break when you need:
+
+- pixel-precise layouts,
+- deeply nested interactive components,
+- structured relational data,
+- editorial workflows that depend on live visual collaboration,
+- or consistent behavior across renderers without testing.
+
+This is where many teams overreach. They assume Markdown can replace every other content format because it handled the first few pages well.
+
+## The most common failure modes
+
+### 1. Treating Markdown as universal
+
+Two tools can both say they support Markdown while still disagreeing on tables, line breaks, HTML, task lists, or extensions.
+
+That is why [CommonMark vs. GFM vs. renderer differences](/fundamentals/commonmark-vs-gfm-vs-renderer-differences/) matters before tool selection.
+
+### 2. Using Markdown for rich layout problems
+
+If the real need is advanced layout, design control, or application-like presentation, Markdown usually becomes an awkward intermediate instead of a strength.
+
+### 3. Letting every destination create its own source
+
+Markdown stops being useful when teams copy the same content into separate files for docs, blog pages, social content, and AI workflows. The value is in keeping one canonical source as long as possible.
+
+### 4. Ignoring image and asset behavior
+
+Markdown stays simple until images, attachments, code snippets, and export workflows start moving across systems. Then pathing and portability become real problems.
+
+## A practical decision rule
+
+Markdown is a good choice when most of these statements are true:
+
+- the source should remain readable as text,
+- the content will live in files or repositories,
+- the content may need to be reused later,
+- the team values portability more than perfect visual control,
+- and the structure is mostly headings, lists, code, links, images, quotes, and short tables.
+
+Markdown is a poor choice when most of these are true:
+
+- the output depends on complex layout,
+- the system is highly interactive,
+- the editing experience must be strongly visual,
+- the content structure is primarily relational or tabular,
+- or the final destination has little regard for Markdown as a source format.
+
+## Where Markdown fits in a modern stack
+
+The strongest operating model is:
+
+- Markdown as the canonical source,
+- HTML as the search-facing publishing layer,
+- and visual or platform-specific outputs as derivatives.
+
+That is the model behind this site. Syntax pages help you write the file correctly. Guides and workflows help you use that file as part of a larger publishing system.
+
+## What to read next
+
+- [CommonMark vs. GFM vs. renderer differences](/fundamentals/commonmark-vs-gfm-vs-renderer-differences/)
+- [Markdown syntax](/syntax/)
+- [Markdown for docs, blogs, and AI-ready content systems](/publishing/markdown-for-docs-blogs-and-ai-ready-content-systems/)

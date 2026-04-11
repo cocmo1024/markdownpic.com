@@ -16,6 +16,15 @@ targetRoles:
   - Developers
   - Documentation leads
   - AI content operators
+keyQuestions:
+  - What are the best Markdown editors right now?
+  - Which editor category is best for writers, developers, or knowledge systems?
+  - How should Markdown teams choose an editor for publishing, not just note-taking?
+notFor:
+  - Readers choosing a plain code editor for general software engineering work
+updateTriggers:
+  - Pricing and licensing changes
+  - Major product changes in core Markdown editors
 ---
 
 ## Quick answer
@@ -38,19 +47,55 @@ A serious Markdown editor now needs to be evaluated on:
 
 Markdown is not just for note-taking anymore. It is a source layer for blogs, docs, knowledge systems, and derivative assets.
 
+## The three editor categories that matter
+
+### Writer-first editors
+
+These tools optimize for reading and writing flow. Typora is the clearest example.
+
+Best when:
+
+- the author wants minimal interface drag,
+- the source is still fairly simple,
+- and the publishing system is downstream, not embedded in the editor itself.
+
+### Repo-first editors
+
+These tools optimize for content that lives inside a larger technical system. VS Code is the obvious example.
+
+Best when:
+
+- Markdown lives in Git,
+- publishing happens through a site or docs build,
+- and the same editor needs to support content operations as well as writing.
+
+### Knowledge-first editors
+
+These tools optimize for long-term note systems. Obsidian is the clearest example.
+
+Best when:
+
+- the value starts in idea development,
+- drafts and references need to stay connected,
+- and the publishing layer comes later.
+
 ## Typora
 
 Typora remains one of the best tools when the goal is smooth writing with minimal interface drag. It is useful for writers who care about clarity and do not want the editing surface to feel like a code environment.
+
+Its weakness is not quality. Its weakness is that it is less naturally centered on repo-driven publishing operations.
 
 ## VS Code
 
 VS Code is the strongest fit when Markdown publishing is tied to Git, static sites, documentation systems, or scripted pipelines.
 
-It wins on extensibility, version-control context, and integration with real publishing systems.
+It wins on extensibility, version-control context, and integration with real publishing systems. It is rarely the calmest writing surface, but it is often the strongest operations surface.
 
 ## Obsidian
 
 Obsidian becomes the best fit when the Markdown files are part of a larger thinking and retrieval system. It is especially strong when the same notes may later become articles, docs, or AI-ready source material.
+
+Its weakness is that publishing is not its most natural center of gravity. Teams often need a separate step to normalize vault content for public output.
 
 ## Final rule
 
@@ -59,3 +104,11 @@ Choose the editor that best matches the next system the Markdown needs to serve:
 - writer-first,
 - repo-first,
 - or knowledge-first.
+
+If that downstream system is ignored, the editor decision will look fine early and create pain later.
+
+## Related pages
+
+- [Obsidian vs Typora vs VS Code for Markdown publishing](/comparisons/obsidian-vs-typora-vs-vs-code-for-markdown-publishing/)
+- [Markdown for docs, blogs, and AI-ready content systems](/publishing/markdown-for-docs-blogs-and-ai-ready-content-systems/)
+- [AI Markdown workflows for research notes, docs, and content reuse](/workflows/ai-markdown-workflows-for-research-notes-docs-and-content-reuse/)

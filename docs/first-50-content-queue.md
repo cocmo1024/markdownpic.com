@@ -4,16 +4,16 @@ The queue below is ordered to build durable, high-intent search coverage around 
 
 ## Wave 1: Syntax and portability
 
-1. Markdown image syntax: local vs. remote paths
-2. Markdown tables that survive mobile, PDF, and image export
-3. How to write an email link in Markdown
-4. Markdown links vs HTML links: when to switch
-5. Markdown line breaks explained across CommonMark and GFM
-6. Markdown code blocks that survive copy, export, and screenshots
-7. Markdown footnotes: where they work and where they fail
-8. Markdown task lists across GitHub, docs sites, and note apps
-9. Markdown anchors and heading links that stay stable
-10. Markdown image alt text and accessibility basics
+1. Markdown headings: ATX vs Setext
+2. Markdown links: inline vs reference vs autolinks
+3. Markdown emphasis, inline code, and escaping
+4. Markdown lists, nested lists, and task lists
+5. Markdown code blocks: fenced vs indented
+6. Markdown blockquotes, paragraphs, and line breaks
+7. Markdown image syntax: local vs remote paths
+8. Markdown tables that survive mobile, PDF, and image export
+9. How to write an email link in Markdown
+10. Markdown links vs HTML links: when to switch
 
 ## Wave 2: Editors and tool choice
 

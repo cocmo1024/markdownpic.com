@@ -1,6 +1,6 @@
 ---
 title: Syntax
-description: Markdown syntax pages for links, images, tables, portability, and renderer-safe patterns.
+description: Markdown syntax guide for headings, links, images, lists, code blocks, tables, line breaks, and renderer-safe patterns.
 referenceType: syntax
 adProfile: syntax
 commercialIntent: medium
@@ -8,7 +8,7 @@ reviewCadence: Monthly review
 contentStatus: cornerstone
 problemSolved: Collects Markdown syntax pages for readers who need the safest syntax form across platforms and exports.
 readerTakeaway: You should leave knowing where to look when a Markdown pattern works in one environment and breaks in another.
-primaryKeyword: markdown syntax guide
+primaryKeyword: markdown syntax
 searchIntent: learn
 decisionStage: problem-aware
 targetRoles:
@@ -19,10 +19,62 @@ targetRoles:
 
 Markdown syntax becomes expensive when it is written once and rendered five different ways.
 
-This section focuses on the syntax decisions that survive:
+This section is being built to become the primary learning surface for people searching:
 
-- GitHub,
-- docs sites,
-- export pipelines,
-- image workflows,
-- and copy-paste reuse.
+- markdown syntax
+- markdown examples
+- markdown headings
+- markdown links
+- markdown lists
+- markdown code blocks
+- markdown tables
+- markdown blockquotes
+
+The goal is not to dump disconnected examples. The goal is to show the safest syntax forms, explain where behavior changes, and give standard cases that survive real publishing.
+
+## The standard boundary
+
+Two rules matter before anything else:
+
+1. **CommonMark** defines the core syntax behavior that many modern renderers aim to follow.
+2. **GitHub Flavored Markdown (GFM)** adds practical features such as tables and task lists that many people now expect, even though they are not all part of the core CommonMark spec.
+
+That means a Markdown pattern may be:
+
+- valid CommonMark,
+- valid only in GitHub-style renderers,
+- or tolerated by one tool but unreliable elsewhere.
+
+If your file needs to travel, choose the form that survives the broadest path.
+
+## Start with these syntax pages
+
+- [Markdown headings: ATX vs. Setext](/syntax/markdown-headings-atx-vs-setext/)
+- [Markdown links: inline, reference, and autolinks](/syntax/markdown-links-inline-vs-reference-and-autolinks/)
+- [Markdown emphasis, inline code, and escaping](/syntax/markdown-emphasis-inline-code-and-escaping/)
+- [Markdown lists: unordered, ordered, nested, and task lists](/syntax/markdown-lists-nested-lists-and-task-lists/)
+- [Markdown code blocks: fenced vs. indented](/syntax/markdown-code-blocks-fenced-vs-indented/)
+- [Markdown blockquotes, paragraphs, and line breaks](/syntax/markdown-blockquotes-line-breaks-and-paragraphs/)
+- [Markdown image syntax: local vs. remote paths](/syntax/markdown-image-syntax-local-vs-remote-paths/)
+- [Markdown tables that survive mobile, PDF, and image export](/syntax/markdown-tables-that-survive-mobile-pdf-and-image-export/)
+
+## The safest operating model
+
+If you want Markdown that survives across repos, docs sites, static site generators, copy-paste workflows, and image export, favor these habits:
+
+- use clear ATX headings unless you have a specific reason not to,
+- use inline links for readability and reference links when reuse or repetition justifies them,
+- use fenced code blocks instead of indented blocks in mixed-content documents,
+- keep nested lists shallow and test task lists outside GitHub,
+- treat tables as convenience structures, not universal layout containers,
+- and assume line-break behavior is renderer-sensitive until tested.
+
+## What this section should help you do
+
+You should leave Syntax with three things:
+
+- a correct pattern,
+- a portability judgment,
+- and a concrete example you can copy into a real file.
+
+If the problem becomes larger than syntax, move to [Guides](/guides/). If the problem is actually about standards and renderer differences, move to [Fundamentals](/fundamentals/).

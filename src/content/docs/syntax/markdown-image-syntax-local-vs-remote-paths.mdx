@@ -16,38 +16,108 @@ targetRoles:
   - Technical writers
   - Blog operators
   - Docs engineers
+keyQuestions:
+  - When should Markdown images use relative paths?
+  - When are remote image URLs safer?
+  - How do image export and publishing workflows change the answer?
+notFor:
+  - Readers trying to optimize image compression or CSS styling
+updateTriggers:
+  - Major markdown tool changes affecting image resolution
+  - Material behavior changes in MarkdownPic image export
 ---
 
 ## Quick answer
 
-Use **local relative paths** when the Markdown file and its images are meant to travel together inside the same repository or note system. Use **remote URLs** when the Markdown is meant to be portable across platforms, copied into CMSs, published publicly, or reused in AI-assisted content pipelines.
+Use **local relative paths** when the Markdown file and its images are meant to travel together inside the same repository, docs site, or note system. Use **remote URLs** when the Markdown is meant to be portable across platforms, copied into CMSs, published publicly, or reused in image and AI workflows that do not share the same local folder structure.
+
+## Standard examples
+
+### Relative local image
+
+```md
+![Architecture diagram](./images/pipeline-overview.png)
+```
+
+### Parent-directory relative image
+
+```md
+![UI screenshot](../assets/editor-preview.webp)
+```
+
+### Remote image URL
+
+```md
+![Release note card](https://cdn.example.com/images/release-note-card.png)
+```
 
 ## When local relative paths are correct
 
-Local paths are best when:
+Local paths are usually the right answer when:
 
 - the Markdown lives in Git with its assets,
-- the same folder structure will be preserved,
-- the content is mostly consumed in the same environment,
-- or offline durability matters more than portability.
+- the same repository or folder structure will be preserved,
+- offline durability matters,
+- the content is primarily consumed in the same environment that owns the file,
+- and the publishing pipeline already knows how to copy those assets into the final site.
+
+This is the cleanest choice for docs repos, static-site content, and knowledge bases with predictable folder structure.
 
 ## When remote URLs are safer
 
-Remote URLs are safer when:
+Remote URLs are usually safer when:
 
 - the Markdown will be copied into multiple systems,
-- images need to render outside the original filesystem,
-- or the content will be reused by editors, CMSs, export tools, or AI workflows that do not share local folder context.
+- image rendering has to work outside the source repository,
+- the content will be pasted into CMSs, emails, chats, or publishing tools,
+- or the output will be turned into long images and share assets that do not have access to the original local directory.
 
-## Markdown-to-image effect
+Remote URLs shift the dependency from folder structure to asset hosting. That often improves portability at the cost of needing a stable host.
 
-If the Markdown is going into [the tool](https://tool.markdownpic.com/) or any image export workflow, remote assets often reduce friction because the renderer does not need the original local directory structure.
+## The failure mode that surprises people
 
-If the content will feed:
+The most common mistake is writing Markdown with local image paths, then expecting those same files to render correctly when they are:
 
-- public publishing,
-- cross-platform reuse,
-- AI ingestion,
-- or image export outside the original repo,
+- pasted into another system,
+- sent to a collaborator without the asset folder,
+- processed by a tool that runs in a different environment,
+- or exported through a workflow that cannot resolve local filesystem paths.
 
-default toward remote URLs.
+The Markdown file still looks correct. The image simply disappears later.
+
+## How Markdown-to-image changes the tradeoff
+
+If the Markdown is going into [the tool](https://tool.markdownpic.com/) or any image export workflow, remote assets often reduce friction because the renderer does not need the original local directory layout.
+
+That does not mean remote URLs are always better. It means you should choose the image reference based on the environment that actually resolves the file.
+
+## Practical shortlist
+
+Choose **local** when:
+
+- the source repo is authoritative,
+- the assets are versioned with the text,
+- and the Markdown will mostly stay inside that system.
+
+Choose **remote** when:
+
+- the content needs to travel,
+- the renderer lives elsewhere,
+- the image must work in multiple publishing surfaces,
+- or the Markdown is part of a distribution workflow rather than a single local repo.
+
+## Recommended operating rule
+
+For stable publishing systems:
+
+- keep a canonical image asset strategy,
+- do not mix local and remote paths randomly inside the same content type,
+- and document which environments are allowed to resolve local assets.
+
+That one decision prevents a large share of broken-image problems later.
+
+## Related pages
+
+- [Markdown links: inline, reference, and autolinks](/syntax/markdown-links-inline-vs-reference-and-autolinks/)
+- [Markdown to image workflows for docs, social, and AI content](/guides/markdown-to-image-workflows-for-docs-social-and-ai-content/)
+- [Markdown tables that survive mobile, PDF, and image export](/syntax/markdown-tables-that-survive-mobile-pdf-and-image-export/)

@@ -106,9 +106,8 @@ body {
 	border-radius: 999px;
 }
 
-.hero .actions a:last-child {
+.hero .actions .secondary {
 	border-radius: 999px;
-	border: 1px solid color-mix(in srgb, var(--sl-color-accent) 24%, var(--sl-color-hairline));
 }
 
 .card {

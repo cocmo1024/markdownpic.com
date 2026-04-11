@@ -8,7 +8,12 @@ const imageType = seo.imageUrl.endsWith('.svg') ? 'image/svg+xml' : 'image/png';
 
 const filteredHead = route.head.filter((entry) => {
 	if (entry.tag !== 'meta' || !entry.attrs) return true;
-	return entry.attrs.property !== 'og:type' && entry.attrs.property !== 'og:locale';
+	return (
+		entry.attrs.property !== 'og:type' &&
+		entry.attrs.property !== 'og:locale' &&
+		entry.attrs.name !== 'ad-profile' &&
+		entry.attrs.name !== 'commercial-intent'
+	);
 });
 
 ---
@@ -60,6 +65,4 @@ const filteredHead = route.head.filter((entry) => {
 		content={import.meta.env.PUBLIC_YANDEX_SITE_VERIFICATION}
 	/>
 )}
-{seo.adProfile && <meta name="ad-profile" content={seo.adProfile} />}
-{seo.commercialIntent && <meta name="commercial-intent" content={seo.commercialIntent} />}
 <script type="application/ld+json" is:inline set:html={JSON.stringify(seo.structuredData)} />

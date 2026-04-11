@@ -1,0 +1,133 @@
+---
+title: "Markdown table of contents options and anchor stability"
+description: How Markdown table-of-contents workflows actually work, why most TOCs are generated rather than standardized, and how to keep heading anchors stable over time.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Explains how to build a Markdown table of contents without assuming there is one universal syntax, and shows how heading anchors and generated TOCs stay stable across real publishing systems.
+readerTakeaway: You should leave with a practical rule for manual TOCs, generated TOCs, and anchor-safe heading structure.
+primaryKeyword: markdown table of contents
+searchIntent: learn
+decisionStage: solution-aware
+targetRoles:
+  - Documentation teams
+  - Technical writers
+  - Developers
+  - Markdown learners
+---
+
+## Quick answer
+
+Markdown has no single universal "table of contents" syntax. In practice, TOCs are usually built in one of three ways:
+
+1. manual lists of heading links,
+2. renderer-generated navigation,
+3. or plugin/tool-generated TOCs inserted into the document.
+
+The real portability problem is rarely the TOC itself. It is **anchor stability**.
+
+## The safest manual pattern
+
+```md
+## Contents
+
+- [Install](#install)
+- [Configuration](#configuration)
+- [Troubleshooting](#troubleshooting)
+```
+
+This works only if the renderer generates heading IDs the way you expect. That assumption breaks more often than most authors realize.
+
+## What Markdown does and does not standardize
+
+Markdown itself standardizes headings. It does **not** universally standardize how heading IDs are generated for anchor links.
+
+That means:
+
+- the heading syntax may be portable,
+- but the resulting `#heading-id` may not be.
+
+This is why TOC design belongs partly in syntax and partly in renderer behavior.
+
+## Standards boundary checked April 11, 2026
+
+| Source | Current signal | What it means |
+| --- | --- | --- |
+| [CommonMark 0.31.2](https://spec.commonmark.org/0.31.2/) | CommonMark defines headings but not a universal TOC syntax or anchor-ID algorithm | Manual TOCs are inherently renderer-dependent |
+| [GitHub Flavored Markdown spec](https://github.github.com/gfm/) | GFM covers many extensions, but generated anchor behavior still depends on GitHub implementation details | GitHub-style heading links feel predictable but are not a universal Markdown guarantee |
+| [GitHub Docs](https://docs.github.com/en/get-started/writing-on-github) | GitHub supports linking to sections through generated anchors | Useful in GitHub-first workflows, but still not a universal portability promise |
+
+## When a manual TOC is the right choice
+
+A manual TOC is healthy when:
+
+- the document is long,
+- only a few major sections matter,
+- heading names are stable,
+- and the target renderer is well known.
+
+Manual TOCs are often fine for:
+
+- README files,
+- docs pages with 5 to 10 major sections,
+- and long reference pages where readers need quick section access.
+
+## When generated TOCs are better
+
+Generated TOCs are usually better when:
+
+- the page is long and frequently edited,
+- headings change often,
+- multiple authors maintain the file,
+- or the docs framework already has a reliable TOC system.
+
+In those cases, generated TOCs reduce link rot and maintenance burden.
+
+## The hidden problem: heading changes
+
+Every time a heading changes, a manual TOC can become stale. That affects:
+
+- internal jumps,
+- copied deep links,
+- external bookmarks,
+- and section-specific references from other pages.
+
+This is why heading style should be treated as part of site architecture, not just page wording.
+
+## The best anchor-stability rule
+
+Keep headings:
+
+- concise,
+- descriptive,
+- and stable over time.
+
+Avoid constantly rewriting headings for style if they already serve the information architecture. Every heading rewrite can break internal and external section links.
+
+## When Markdown is not enough
+
+If your site depends heavily on stable deep links, the healthiest solution is often:
+
+- Markdown for headings and content,
+- framework-level TOC generation,
+- and explicit slug or anchor controls in the site layer if supported.
+
+That is usually better than hand-maintaining fragile anchor lists inside source files forever.
+
+## Implementation checklist
+
+Your TOC approach is probably healthy when:
+
+- the team knows whether the TOC is manual or generated;
+- heading IDs are tested in the real renderer;
+- headings are not being renamed casually;
+- long pages expose section navigation without duplicated maintenance burden;
+- and readers can reliably deep-link to major sections.
+
+## Compare next
+
+- [Markdown anchors and heading links that stay stable](/syntax/markdown-anchors-and-heading-links-that-stay-stable/)
+- [Markdown headings: ATX vs Setext](/syntax/markdown-headings-atx-vs-setext/)
+- [Markdown extensions vs portable Markdown: where to draw the line](/fundamentals/markdown-extensions-vs-portable-markdown-where-to-draw-the-line/)

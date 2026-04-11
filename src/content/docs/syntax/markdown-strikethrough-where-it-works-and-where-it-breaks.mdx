@@ -1,0 +1,113 @@
+---
+title: "Markdown strikethrough: where it works and where it breaks"
+description: How Markdown strikethrough works, why it is a GitHub-style extension rather than core CommonMark, and where teams should expect portability problems.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Explains when strikethrough syntax is safe to use, when it is renderer-specific, and how to avoid assuming that every Markdown target supports it.
+readerTakeaway: You should leave with copyable strikethrough syntax, a clear portability rule, and a better understanding of when deleted text should stay in Markdown versus move into editorial workflow.
+primaryKeyword: markdown strikethrough
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Writers
+  - Documentation teams
+  - Developers
+---
+
+## Quick answer
+
+Markdown strikethrough usually uses double tildes:
+
+```md
+~~Deprecated text~~
+```
+
+That syntax is widely recognized in GitHub-style Markdown, but it is **not** part of core CommonMark. If the file must stay highly portable, treat strikethrough as an extension, not a guaranteed baseline feature.
+
+## Standard example
+
+```md
+Use `new-command` instead of ~~old-command~~.
+```
+
+In a GitHub-style renderer, this usually appears as:
+
+Use `new-command` instead of ~~old-command~~.
+
+## Standards boundary checked April 11, 2026
+
+| Source | Current signal | Why it matters |
+| --- | --- | --- |
+| [CommonMark 0.31.2](https://spec.commonmark.org/0.31.2/) | Core CommonMark does not define strikethrough as a standard inline feature | A CommonMark-only renderer is not required to interpret `~~text~~` specially |
+| [GitHub Flavored Markdown spec](https://github.github.com/gfm/) | GFM documents strikethrough as an extension | GitHub and compatible renderers make the syntax feel normal and universal |
+| [GitHub Docs](https://docs.github.com/en/get-started/writing-on-github) | GitHub teaches strikethrough as ordinary authoring syntax | Many teams learn Markdown through GitHub and assume this support exists everywhere |
+
+## When strikethrough is the right tool
+
+Use strikethrough when:
+
+- the file is mainly rendered in a GitHub-style environment;
+- the deleted or superseded text is still useful for readers to see;
+- the goal is revision signaling, not workflow state;
+- and losing the visual effect would be inconvenient rather than harmful.
+
+Good examples:
+
+- release notes showing replaced commands,
+- docs that preserve an old term while introducing the new one,
+- comparison content where an older option should visibly remain for context.
+
+## Where strikethrough goes wrong
+
+The common failure modes are simple:
+
+### 1. Assuming it is standard everywhere
+
+The source file may render correctly on GitHub and then lose the effect in another parser or export pipeline.
+
+### 2. Using strikethrough as workflow state
+
+If crossed-out text means "approved," "removed from policy," or "legally obsolete," the real state probably belongs outside Markdown. Strikethrough is presentation, not governance.
+
+### 3. Overusing it in durable docs
+
+When old content remains crossed out for too long, the page becomes harder to read. In long-lived docs, strikethrough is usually best for transition periods, not permanent clutter.
+
+## The practical portability rule
+
+Use strikethrough when the visual comparison helps and the render path is known.
+
+Do not rely on it when:
+
+- the document must stay renderer-agnostic,
+- the meaning of "removed" is operationally important,
+- or the old text should really be deleted and replaced rather than visually preserved.
+
+## Better alternatives in durable systems
+
+If the content is canonical and long-lived, consider:
+
+- replacing obsolete text entirely,
+- moving historical detail into changelogs,
+- or using notes that explain the transition without leaving a page full of crossed-out fragments.
+
+Markdown should help readers decide what matters now. It should not become a museum of every previous sentence.
+
+## Implementation checklist
+
+Strikethrough is probably a healthy choice when:
+
+- the renderer is known to support GFM-style syntax;
+- the crossed-out text still helps reader understanding;
+- the state of the text does not carry compliance or release meaning;
+- and the page would still be understandable if the visual effect disappeared.
+
+## Compare next
+
+- [Markdown extensions vs portable Markdown: where to draw the line](/fundamentals/markdown-extensions-vs-portable-markdown-where-to-draw-the-line/)
+- [Markdown task lists, checkboxes, and portability](/syntax/markdown-task-lists-checkboxes-and-portability/)
+- [CommonMark vs GFM vs renderer differences](/fundamentals/commonmark-vs-gfm-vs-renderer-differences/)

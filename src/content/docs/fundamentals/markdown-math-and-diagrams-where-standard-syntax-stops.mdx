@@ -1,0 +1,126 @@
+---
+title: "Markdown math and diagrams: where standard syntax stops"
+description: Why math blocks, Mermaid diagrams, and similar visual syntax are not part of core Markdown, and how teams should decide what belongs in source files versus rendering systems.
+referenceType: fundamental
+adProfile: fundamental
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Explains where Markdown ends and math or diagram systems begin, so teams do not confuse renderer-specific power with universal Markdown behavior.
+readerTakeaway: You should leave with a clean mental model for Markdown, math syntax, diagram syntax, and the rendering layer that makes them visible.
+primaryKeyword: markdown math diagrams
+searchIntent: learn
+decisionStage: solution-aware
+targetRoles:
+  - Documentation teams
+  - Developers
+  - Technical writers
+  - Technical educators
+---
+
+## Quick answer
+
+Math and diagrams are usually **not** standard Markdown features. They are renderer-supported extensions layered on top of Markdown.
+
+That means:
+
+- Markdown can hold the source text,
+- but KaTeX, MathJax, Mermaid, or another renderer is what gives that text visual meaning.
+
+If the renderer changes, support can disappear or change with it.
+
+## Why this matters
+
+Authors often ask:
+
+- "Can Markdown do math?"
+- "Can Markdown render diagrams?"
+
+The practical answer is:
+
+- **some Markdown environments can**,
+- but the capability comes from the environment, not from universal Markdown syntax itself.
+
+This is one of the clearest examples of why renderer awareness matters.
+
+## The real boundary
+
+Markdown is strongest at:
+
+- headings,
+- paragraphs,
+- links,
+- lists,
+- code,
+- and lightweight document structure.
+
+Math and diagrams usually rely on a second system:
+
+- LaTeX-style math delimiters plus a math renderer,
+- or fenced blocks plus a diagram renderer such as Mermaid.
+
+The source may live in a Markdown file, but the meaning depends on the rendering stack.
+
+## When math and diagrams are a good fit
+
+They are a good fit when:
+
+- the docs platform explicitly supports them,
+- the authoring team controls the renderer,
+- and the audience benefits more from semantic source than from static screenshots alone.
+
+Good examples:
+
+- engineering documentation,
+- API architecture docs,
+- product design notes,
+- and educational material where formulas or flows need to stay editable.
+
+## When they become a portability problem
+
+Problems appear when:
+
+- the Markdown file travels into an environment with no diagram or math renderer,
+- the export pipeline strips scripts or special blocks,
+- email or lightweight viewers flatten the content,
+- or teams assume GitHub, docs tooling, and image pipelines all support the same syntax.
+
+That assumption is usually wrong.
+
+## The practical policy
+
+Use math or diagram syntax in Markdown when:
+
+- the rendering path is known,
+- the editable source matters,
+- and the team accepts the renderer dependency.
+
+Do not assume those blocks are universally portable. If portability matters more than editability, a visual export or dual-representation approach may be healthier.
+
+## The healthiest operating model
+
+The strongest long-term model is:
+
+1. keep source expressive when the renderer supports it,
+2. document which math or diagram syntax is allowed,
+3. and treat rendered output as environment-dependent.
+
+For broader distribution, generate:
+
+- a web-native rendered version,
+- and a visual or exported fallback when needed.
+
+## Implementation checklist
+
+Your math/diagram policy is probably healthy when:
+
+- the allowed syntax and renderer are documented,
+- pages still degrade gracefully when support is missing,
+- visual export is planned where necessary,
+- and no one mistakes renderer-specific syntax for portable core Markdown.
+
+## Compare next
+
+- [HTML in Markdown: when to use it and when it becomes debt](/fundamentals/html-in-markdown-when-to-use-it-and-when-it-becomes-debt/)
+- [Markdown extensions vs portable Markdown: where to draw the line](/fundamentals/markdown-extensions-vs-portable-markdown-where-to-draw-the-line/)
+- [CommonMark vs GFM vs renderer differences](/fundamentals/commonmark-vs-gfm-vs-renderer-differences/)

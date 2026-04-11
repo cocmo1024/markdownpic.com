@@ -1,0 +1,120 @@
+---
+title: "HTML in Markdown: when to use it and when it becomes debt"
+description: How to decide when HTML inside Markdown is a useful escape hatch and when it turns a clean content source into renderer-specific technical debt.
+referenceType: fundamental
+adProfile: fundamental
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Helps teams decide when HTML inside Markdown is justified, when it damages portability, and how to keep Markdown files readable and reusable.
+readerTakeaway: You should leave with a clear rule for when HTML is acceptable in Markdown and when the problem belongs in templates, CSS, or a publishing system instead.
+primaryKeyword: html in markdown
+searchIntent: learn
+decisionStage: solution-aware
+targetRoles:
+  - Documentation teams
+  - Developers
+  - Technical writers
+  - Content systems owners
+---
+
+## Quick answer
+
+HTML in Markdown is useful as an escape hatch. It becomes debt when it stops being an exception and starts carrying layout, workflow, or renderer-specific behavior that the source file should not own.
+
+Use HTML in Markdown when it solves a narrow presentation problem and the target renderer is known. Avoid it when the file is supposed to remain portable, reusable, and easy to transform.
+
+## Why this question matters
+
+Many Markdown authors eventually hit a wall:
+
+- image sizing,
+- custom layout,
+- embedded video,
+- extra attributes,
+- or UI elements that Markdown syntax does not cover.
+
+HTML feels like the easy answer. Sometimes it is. The danger is that a Markdown source can gradually become a pseudo-HTML document that is harder to migrate, harder to parse, and harder to reuse.
+
+## What the standards actually imply
+
+CommonMark allows raw HTML blocks and inline HTML in many situations, but that does not mean every renderer or sanitizer will preserve all of it. The issue is not only whether HTML is allowed. The issue is whether the exact HTML survives the real rendering, export, and security environment.
+
+That means HTML support is partly a syntax question and partly a renderer policy question.
+
+## When HTML is a healthy choice
+
+HTML is usually reasonable in Markdown when:
+
+- one missing capability blocks the page,
+- the renderer is known,
+- the HTML remains minimal and readable,
+- and the content would still be maintainable if another person opened the file months later.
+
+Examples:
+
+- a narrow `<img>` width control,
+- a semantic `<sup>` or `<sub>` case,
+- a simple `<details>` disclosure if the renderer supports it,
+- or a small embed wrapper in a controlled docs environment.
+
+## When HTML becomes debt
+
+HTML becomes debt when:
+
+- the file relies on complex layout markup,
+- one page accumulates many renderer-specific exceptions,
+- authors can no longer tell what is source content versus display scaffolding,
+- or a migration to another renderer would require editing every page by hand.
+
+That is usually a sign that the solution belongs in the publishing layer, not in the Markdown source.
+
+## The practical rule
+
+Use HTML in Markdown only if all of these are true:
+
+1. Markdown cannot express the needed behavior.
+2. The target renderer is known to support the HTML safely.
+3. The HTML is small, understandable, and local.
+4. The same effect cannot be solved more cleanly in a template or theme.
+
+If one of those conditions fails, HTML is probably the wrong fix.
+
+## Better alternatives
+
+Before writing HTML into Markdown, ask whether the healthier answer is:
+
+- a site-wide component,
+- CSS in the theme,
+- framework-level rendering logic,
+- structured data in frontmatter,
+- or a post-processing/export layer.
+
+These often preserve a cleaner content source than inline HTML patches everywhere.
+
+## Why this matters in AI workflows
+
+Markdown is more useful to AI systems when the content layer stays clean and semantically legible. Heavy inline HTML makes source files harder to:
+
+- summarize,
+- transform,
+- validate,
+- and reuse across publishing pipelines.
+
+That does not mean HTML is forbidden. It means HTML should be deliberate.
+
+## Implementation checklist
+
+HTML in Markdown is probably a healthy choice when:
+
+- it solves a real gap in Markdown syntax,
+- the render target is known,
+- the file is still readable as content rather than markup scaffolding,
+- the same HTML pattern does not need to be copied into dozens of pages,
+- and migration cost remains acceptable.
+
+## Compare next
+
+- [Markdown image size and resizing: when Markdown is not enough](/syntax/markdown-image-size-and-resizing-when-markdown-is-not-enough/)
+- [Markdown extensions vs portable Markdown: where to draw the line](/fundamentals/markdown-extensions-vs-portable-markdown-where-to-draw-the-line/)
+- [CommonMark vs GFM vs renderer differences](/fundamentals/commonmark-vs-gfm-vs-renderer-differences/)

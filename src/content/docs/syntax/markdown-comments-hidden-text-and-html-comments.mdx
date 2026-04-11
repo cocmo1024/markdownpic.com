@@ -1,0 +1,165 @@
+---
+title: Markdown comments, hidden text, and HTML comments
+description: How to hide text in Markdown, whether Markdown supports comments, and when HTML comments are safe or risky across renderers and publishing workflows.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Explains how to add hidden notes or comments in Markdown without assuming a native comment syntax that does not actually exist.
+readerTakeaway: You should leave knowing that Markdown has no native comment feature, when HTML comments are acceptable, and when hidden text will break portability or export workflows.
+primaryKeyword: markdown comments
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Developers
+  - Technical writers
+  - Documentation teams
+keyQuestions:
+  - Does Markdown have a native comment syntax?
+  - Can HTML comments be used inside Markdown safely?
+  - What is the safest way to keep editorial notes out of rendered output?
+notFor:
+  - Teams looking for editor-specific inline review features
+  - Readers solving GitHub pull request commenting workflows
+  - Projects that only need general HTML comment syntax without Markdown concerns
+updateTriggers:
+  - Renderer behavior changes around raw HTML support
+  - Static-site and docs-tool defaults that strip or escape HTML comments differently
+  - Repeated user confusion between editor comments and Markdown comments
+---
+
+## Quick answer
+
+Markdown does **not** have a native comment syntax. The most common workaround is an HTML comment:
+
+```md
+<!-- Hidden note -->
+```
+
+That works in many renderers, but not all workflows treat raw HTML the same way. If portability matters, treat HTML comments as useful but conditional, not universal.
+
+## The most important rule
+
+If a hidden note must never leak into rendered output, exported HTML, shared copy, or downstream AI workflows, do not rely only on a Markdown comment hack. Put the note in your editor, CMS, or source-management workflow instead.
+
+## Markdown has no built-in comment syntax
+
+This is the source of most confusion. People expect something like:
+
+```md
+// comment
+```
+
+or
+
+```md
+[comment]: this is hidden
+```
+
+Those are not standard Markdown comments. Some tools may ignore them in specific cases, but that is tool behavior, not Markdown syntax.
+
+## The usual workaround: HTML comments
+
+The common pattern is:
+
+```md
+<!-- This text is hidden in many rendered outputs -->
+```
+
+This is acceptable when:
+
+- the renderer supports raw HTML,
+- the publishing pipeline does not sanitize or expose the comment,
+- and the file is not being treated as a strict Markdown-only artifact.
+
+## When HTML comments are a bad fit
+
+HTML comments are risky when:
+
+- the renderer strips or rewrites raw HTML,
+- the file is processed by a tool that exposes comments during export,
+- the content is copied into systems that do not preserve hidden HTML safely,
+- or the Markdown is meant to remain highly portable across many unknown environments.
+
+This is why "HTML comments work in my editor" is not a strong portability standard.
+
+## Standard examples
+
+### HTML comment
+
+```md
+<!-- Editorial note: replace this example before publishing -->
+```
+
+### Hidden guidance inside a draft section
+
+```md
+## Release notes
+
+<!-- Add the migration warning once the final version ships -->
+```
+
+### What not to treat as a standard comment
+
+```md
+[comment]: This may be ignored in some workflows, but it is not standard Markdown comment syntax.
+```
+
+The third example may appear in older blog posts or forum answers. It should not be your default.
+
+## Safer alternatives to hidden comments
+
+If the note matters operationally, use a better storage layer:
+
+- editor comments or annotations,
+- CMS draft notes,
+- issue tracker tasks,
+- frontmatter fields designed for workflow metadata,
+- or a separate authoring document that never ships publicly.
+
+Those are healthier than packing non-portable comments into Markdown files and hoping every renderer behaves.
+
+## Use case: docs teams and static sites
+
+Docs teams often want comments for:
+
+- TODO markers,
+- review notes,
+- migration reminders,
+- or publishing instructions.
+
+If the Markdown is traveling through a docs pipeline, the safer rule is:
+
+1. use workflow tooling for real collaboration notes,
+2. use HTML comments only for low-risk hidden hints,
+3. test the final output before assuming the comment is actually hidden.
+
+## Use case: AI-era content pipelines
+
+This matters more now because Markdown files are often reused by:
+
+- LLM-based writing assistants,
+- content transformation scripts,
+- retrieval systems,
+- and markdown-to-image workflows.
+
+A hidden HTML comment might still be visible to a downstream system even if the final renderer hides it. That means comments can leak into prompts, exports, or generated outputs unless the pipeline strips them intentionally.
+
+## Practical decision rule
+
+Use HTML comments only when all three are true:
+
+1. the renderer path is known,
+2. the note is low risk if exposed,
+3. the comment is a convenience, not a core workflow dependency.
+
+If any of those are false, move the note into a proper collaboration or publishing system.
+
+## Related pages
+
+- [Markdown cheat sheet with standard examples](/syntax/markdown-cheat-sheet-with-standard-examples/)
+- [Markdown links vs HTML links: when to switch](/syntax/markdown-links-vs-html-links-when-to-switch/)
+- [Markdown image syntax: local vs. remote paths](/syntax/markdown-image-syntax-local-vs-remote-paths/)
+- [Markdown tables that survive mobile, PDF, and image export](/syntax/markdown-tables-that-survive-mobile-pdf-and-image-export/)

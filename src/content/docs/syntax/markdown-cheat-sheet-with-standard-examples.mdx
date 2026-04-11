@@ -1,0 +1,211 @@
+---
+title: Markdown cheat sheet with standard examples
+description: A copyable Markdown cheat sheet covering headings, links, images, lists, code blocks, tables, blockquotes, and the safest portable syntax forms.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: high
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Gives readers one reliable Markdown cheat sheet they can copy from when they need standard syntax examples that survive common renderers and publishing tools.
+readerTakeaway: You should leave with a compact but trustworthy set of Markdown examples, plus a clearer idea of which syntax forms stay portable and which ones are renderer-specific.
+primaryKeyword: markdown cheat sheet
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Developers
+  - Technical writers
+  - Documentation teams
+keyQuestions:
+  - What is the standard Markdown syntax for the most common elements?
+  - Which examples are safest across GitHub, docs tools, and static site workflows?
+  - Which popular patterns are not truly universal?
+notFor:
+  - Teams looking for a complete Markdown parser specification
+  - Readers comparing editors rather than learning syntax
+  - Projects that need renderer-specific extensions documented in depth
+updateTriggers:
+  - Meaningful CommonMark or GitHub Flavored Markdown feature shifts
+  - Broad renderer support changes for footnotes, tables, or task lists
+  - Repeated user demand for new example categories not yet covered in the cheat sheet
+---
+
+## Quick answer
+
+Use this page as the copy-ready baseline for standard Markdown. Start with the examples below, then branch into the deeper syntax pages when a renderer behaves differently, an export breaks, or an extension such as tables, task lists, or footnotes is involved.
+
+## The fastest safe rule
+
+If you want Markdown that survives GitHub, docs sites, static site generators, and AI-era content reuse, default to these habits:
+
+- use ATX headings with `#`,
+- use inline links unless repetition justifies reference links,
+- use fenced code blocks instead of indented blocks,
+- keep nested lists shallow,
+- treat tables as convenience syntax, not universal layout,
+- and assume extensions such as task lists and footnotes must be tested outside GitHub.
+
+## Markdown cheat sheet
+
+### Heading
+
+```md
+# H1
+## H2
+### H3
+```
+
+### Emphasis
+
+```md
+*italic*
+**bold**
+***bold italic***
+```
+
+### Inline code
+
+```md
+Use `npm run build`.
+```
+
+### Link
+
+```md
+[MarkdownPic](https://markdownpic.com/)
+```
+
+### Image
+
+```md
+![Alt text](/images/example.png)
+```
+
+### Unordered list
+
+```md
+- Item one
+- Item two
+- Item three
+```
+
+### Ordered list
+
+```md
+1. First
+2. Second
+3. Third
+```
+
+### Nested list
+
+```md
+- Parent item
+  - Child item
+  - Another child
+```
+
+### Blockquote
+
+```md
+> This is a blockquote.
+```
+
+### Fenced code block
+
+````md
+```js
+console.log('Hello, Markdown');
+```
+````
+
+### Horizontal rule
+
+```md
+---
+```
+
+### Table
+
+```md
+| Name | Role |
+| --- | --- |
+| Anna | Writer |
+| Omar | Engineer |
+```
+
+### Task list
+
+```md
+- [x] Done
+- [ ] To do
+```
+
+### Footnote
+
+```md
+Markdown supports footnotes in many modern renderers.[^1]
+
+[^1]: But not every renderer handles them the same way.
+```
+
+### Escape a special character
+
+```md
+\*This is not italic\*
+```
+
+## Which examples are safest across renderers
+
+The most portable forms are:
+
+- ATX headings,
+- inline links,
+- fenced code blocks,
+- simple unordered and ordered lists,
+- plain blockquotes,
+- and standard images with explicit alt text.
+
+These patterns usually survive better than the more conditional forms.
+
+## Which examples need caution
+
+These are useful, but more renderer-sensitive:
+
+- tables,
+- task lists,
+- footnotes,
+- heading anchors,
+- and HTML mixed into Markdown.
+
+They are common enough to know, but not universal enough to trust blindly.
+
+## When to switch to HTML
+
+Switch to HTML only when Markdown alone cannot express the structure you need. Typical reasons include:
+
+- adding custom attributes,
+- embedding raw HTML elements,
+- creating hidden comments,
+- or handling layout behavior that plain Markdown does not support.
+
+Do not switch just because Markdown looks less expressive. The simpler syntax is usually healthier when it already solves the problem.
+
+## A better way to use this cheat sheet
+
+Do not treat this page as the end state. Treat it as the shortest reliable starting point. Then move deeper:
+
+- if headings or anchors behave oddly, inspect heading and anchor rules;
+- if links become messy, choose between inline, reference, or HTML forms;
+- if tables or footnotes break in export, use the extension-specific pages;
+- if images fail, inspect path, alt text, and renderer expectations.
+
+That is how a cheat sheet stays useful instead of becoming misleadingly generic.
+
+## Related pages
+
+- [Markdown headings: ATX vs. Setext](/syntax/markdown-headings-atx-vs-setext/)
+- [Markdown links: inline, reference, and autolinks](/syntax/markdown-links-inline-vs-reference-and-autolinks/)
+- [Markdown code blocks: fenced vs. indented](/syntax/markdown-code-blocks-fenced-vs-indented/)
+- [Markdown tables that survive mobile, PDF, and image export](/syntax/markdown-tables-that-survive-mobile-pdf-and-image-export/)
+- [Markdown comments, hidden text, and HTML comments](/syntax/markdown-comments-hidden-text-and-html-comments/)

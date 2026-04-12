@@ -147,6 +147,11 @@ import { Card, CardGrid, LinkCard, Steps } from '@astrojs/starlight/components';
 		description="A cross-platform portability cluster built for one of the most common long-term Markdown migration problems."
 	/>
 	<LinkCard
+		title="Markdown frontmatter portability"
+		href="/fundamentals/markdown-frontmatter-portability-and-where-metadata-belongs/"
+		description="A metadata-boundary cluster for teams deciding how much publishing logic should live inside Markdown source files."
+	/>
+	<LinkCard
 		title="HTML, math, and diagram boundaries"
 		href="/fundamentals/html-in-markdown-when-to-use-it-and-when-it-becomes-debt/"
 		description="A standards-boundary cluster around where Markdown should stop and rendering systems, HTML, KaTeX, or Mermaid should take over."
@@ -170,6 +175,16 @@ import { Card, CardGrid, LinkCard, Steps } from '@astrojs/starlight/components';
 		title="Iframes, video, and embeds"
 		href="/syntax/markdown-iframe-video-and-embed-limitations/"
 		description="A high-intent boundary page for people who expect Markdown to handle embeds that really belong to HTML or the publishing layer."
+	/>
+	<LinkCard
+		title="Details, divs, spans, and custom classes"
+		href="/syntax/markdown-details-summary-and-collapsible-sections/"
+		description="A renderer-boundary cluster for collapsible blocks, wrappers, and custom classes that often break portability fastest."
+	/>
+	<LinkCard
+		title="Wiki links vs standard links"
+		href="/syntax/markdown-wiki-links-vs-standard-links/"
+		description="A portability cluster for note-taking users deciding whether local link convenience is worth the long-term migration cost."
 	/>
 	<LinkCard
 		title="AI-ready Markdown systems"

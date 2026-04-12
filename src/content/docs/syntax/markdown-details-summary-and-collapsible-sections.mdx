@@ -1,0 +1,67 @@
+---
+title: Markdown details summary and collapsible sections
+description: A practical guide to collapsible sections in Markdown, when details and summary HTML is acceptable, and how portability changes across renderers.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Explains how collapsible content works in Markdown workflows and why details-summary behavior belongs to HTML and renderer support rather than Markdown itself.
+readerTakeaway: You should leave with a clear rule for when collapsible sections are reasonable in Markdown and when they become portability debt.
+primaryKeyword: markdown collapsible section
+searchIntent: learn
+decisionStage: solution-aware
+targetRoles:
+  - Developers
+  - Technical writers
+  - Documentation teams
+---
+
+## Quick answer
+
+Markdown does not natively provide collapsible sections.
+
+When collapsible content works in a Markdown page, it usually works because the renderer accepts HTML such as `<details>` and `<summary>`. That means collapsible sections are not a standard Markdown feature. They are a renderer-supported HTML feature.
+
+## Why people look for this
+
+Collapsible sections are useful for:
+
+- FAQs,
+- optional detail,
+- long technical explanations,
+- and keeping dense pages readable.
+
+The problem is that many authors assume there should be a Markdown syntax for them. Usually there is not.
+
+## When details-summary is reasonable
+
+It is usually reasonable when:
+
+- the target renderer is known,
+- the feature is helpful rather than mandatory,
+- and the page can still be understood if the collapsible behavior degrades.
+
+This makes it a controlled enhancement rather than a structural dependency.
+
+## When it becomes debt
+
+It becomes debt when:
+
+- the source depends on collapse behavior to stay understandable,
+- the same pattern must be repeated across many pages,
+- or the content needs to move to platforms that sanitize or ignore the HTML.
+
+At that point the healthier answer is usually a component or a docs-system feature.
+
+## The practical rule
+
+Use collapsible sections only when the page still works without them.
+
+That keeps the source readable and makes the feature optional rather than foundational.
+
+## Compare next
+
+- [Raw HTML blocks vs inline HTML in Markdown](/fundamentals/raw-html-blocks-vs-inline-html-in-markdown/)
+- [HTML in Markdown when to use it and when it becomes debt](/fundamentals/html-in-markdown-when-to-use-it-and-when-it-becomes-debt/)
+- [Markdown portability between GitHub Notion Obsidian and static sites](/fundamentals/markdown-portability-between-github-notion-obsidian-and-static-sites/)

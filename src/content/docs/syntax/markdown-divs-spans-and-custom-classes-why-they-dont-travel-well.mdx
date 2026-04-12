@@ -1,0 +1,74 @@
+---
+title: Markdown divs spans and custom classes why they do not travel well
+description: A practical guide to divs, spans, and custom CSS classes in Markdown, and why presentation-heavy source files become fragile across renderers and publishing stacks.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Helps authors understand why divs, spans, and custom classes inside Markdown usually weaken portability and should be used cautiously.
+readerTakeaway: You should leave with a practical rule for when custom HTML wrappers in Markdown are acceptable and when they are a sign the content layer is taking on layout work.
+primaryKeyword: markdown div class
+searchIntent: learn
+decisionStage: solution-aware
+targetRoles:
+  - Developers
+  - Technical writers
+  - Documentation teams
+---
+
+## Quick answer
+
+Divs, spans, and custom classes inside Markdown are usually a sign that layout concerns are leaking into the content layer.
+
+They can work in controlled publishing stacks, but they do not travel well across platforms because:
+
+- sanitization varies,
+- CSS classes only mean something in one stack,
+- and the source becomes harder to reuse.
+
+## Why this matters
+
+At first, adding a small wrapper feels harmless. Over time, pages accumulate:
+
+- `<div class="note">`
+- `<span class="highlight">`
+- custom wrappers for alignment, spacing, or layout
+
+At that point, the Markdown file is no longer just content. It is partially coupled to a theme.
+
+## When wrappers may be acceptable
+
+They may be acceptable when:
+
+- the renderer is known,
+- the class names are part of a stable system,
+- and the content is not expected to move elsewhere unchanged.
+
+That is a controlled publishing decision.
+
+## When wrappers are the wrong answer
+
+They are usually the wrong answer when:
+
+- the site needs portable Markdown,
+- the same wrappers are copied manually across many pages,
+- or the classes are compensating for a missing component or template.
+
+That is where source debt grows fastest.
+
+## The practical rule
+
+If the same div or span pattern appears more than a few times, it probably belongs in:
+
+- a component,
+- a shortcode/directive,
+- or the publishing layer,
+
+not in raw Markdown source.
+
+## Compare next
+
+- [HTML in Markdown when to use it and when it becomes debt](/fundamentals/html-in-markdown-when-to-use-it-and-when-it-becomes-debt/)
+- [Raw HTML blocks vs inline HTML in Markdown](/fundamentals/raw-html-blocks-vs-inline-html-in-markdown/)
+- [Markdown portability between GitHub Notion Obsidian and static sites](/fundamentals/markdown-portability-between-github-notion-obsidian-and-static-sites/)

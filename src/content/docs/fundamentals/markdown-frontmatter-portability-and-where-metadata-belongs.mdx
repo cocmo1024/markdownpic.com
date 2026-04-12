@@ -1,0 +1,89 @@
+---
+title: Markdown frontmatter portability and where metadata belongs
+description: A practical guide to frontmatter in Markdown, what it solves well, and when metadata choices reduce portability across repos, note apps, and publishing stacks.
+referenceType: fundamental
+adProfile: fundamental
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Helps teams decide which metadata belongs in frontmatter and which metadata should live elsewhere to keep Markdown portable and maintainable.
+readerTakeaway: You should leave with a practical rule for frontmatter usage that balances publishing power with portability.
+primaryKeyword: markdown frontmatter
+searchIntent: learn
+decisionStage: solution-aware
+targetRoles:
+  - Developers
+  - Technical writers
+  - Documentation teams
+  - Content system owners
+---
+
+## Quick answer
+
+Frontmatter is useful when metadata helps the publishing system interpret the document. It becomes portability debt when the file depends on metadata conventions that only one stack understands.
+
+Good frontmatter usually describes:
+
+- title,
+- description,
+- dates,
+- tags,
+- status,
+- or other publishing metadata.
+
+Weak frontmatter often tries to carry renderer-specific behavior that belongs in templates, components, or a CMS layer.
+
+## Why this matters
+
+Many Markdown workflows become harder to move not because the Markdown body is bad, but because the frontmatter is tightly coupled to one static site generator, notes workflow, or content pipeline.
+
+The more metadata the file carries, the more important it becomes to decide:
+
+- which keys are durable,
+- which are stack-specific,
+- and which should not live in the source file at all.
+
+## What frontmatter is best at
+
+Frontmatter is strongest when it answers questions about the document itself:
+
+- what it is called,
+- when it was published,
+- how it should be grouped,
+- whether it is draft or live,
+- and what high-level metadata the site needs to know.
+
+This keeps the content portable while still supporting a publishing system.
+
+## What frontmatter is bad at
+
+Frontmatter becomes fragile when it starts encoding:
+
+- renderer layout rules,
+- component wiring,
+- UI logic,
+- stack-specific directives,
+- or lots of data that only one system can understand.
+
+At that point, the Markdown source is becoming application configuration.
+
+## The portability rule
+
+Use frontmatter for **document metadata**, not for **renderer behavior**.
+
+If a field would confuse a human reviewer who does not know the specific stack, it probably does not belong in canonical source.
+
+## The healthy policy
+
+For most teams, a healthy frontmatter policy:
+
+1. keeps core keys small and documented,
+2. separates durable metadata from stack-specific metadata,
+3. avoids putting presentation controls in frontmatter unless truly necessary,
+4. and makes migrations possible without editing every document by hand.
+
+## Compare next
+
+- [Markdown portability between GitHub Notion Obsidian and static sites](/fundamentals/markdown-portability-between-github-notion-obsidian-and-static-sites/)
+- [HTML in Markdown when to use it and when it becomes debt](/fundamentals/html-in-markdown-when-to-use-it-and-when-it-becomes-debt/)
+- [Markdown extensions vs portable Markdown where to draw the line](/fundamentals/markdown-extensions-vs-portable-markdown-where-to-draw-the-line/)

@@ -1,0 +1,66 @@
+---
+title: Markdown wiki links vs standard links
+description: A practical guide to wiki links, standard Markdown links, and why link convenience inside note apps often creates portability problems later.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Helps authors decide when wiki links are useful and when standard Markdown links are the safer long-term choice.
+readerTakeaway: You should leave with a practical rule for using wiki links in local note workflows without damaging long-term Markdown portability.
+primaryKeyword: markdown wiki links
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Writers
+  - Developers
+  - Obsidian users
+  - Documentation teams
+---
+
+## Quick answer
+
+Standard Markdown links travel better. Wiki links are convenient in note-first tools but often reduce portability outside those tools.
+
+If your Markdown must survive across repositories, docs sites, exports, and publishing stacks, standard links are the safer default.
+
+## Why this matters
+
+Wiki links are attractive because they are fast and pleasant in local knowledge systems. The portability cost appears later:
+
+- another renderer does not understand them,
+- link text and destination rules differ,
+- or a publishing export step has to rewrite links before the site works.
+
+That is a syntax convenience with system-level consequences.
+
+## The practical tradeoff
+
+### Wiki links
+
+Best when:
+
+- the content lives mainly inside one notes environment,
+- the tool natively understands wiki links,
+- and local knowledge management matters more than external portability.
+
+### Standard Markdown links
+
+Best when:
+
+- files need to move between tools,
+- content will be published,
+- links need to survive GitHub and static site workflows,
+- or the source should remain broadly understandable.
+
+## The healthiest long-term rule
+
+Use standard Markdown links for canonical content.
+
+If a local notes workflow benefits from wiki links, treat that as a local authoring convenience or a transform step, not as the only durable source representation.
+
+## Compare next
+
+- [Markdown links inline reference and autolinks](/syntax/markdown-links-inline-vs-reference-and-autolinks/)
+- [Markdown portability between GitHub Notion Obsidian and static sites](/fundamentals/markdown-portability-between-github-notion-obsidian-and-static-sites/)
+- [Markdown anchors and heading links that stay stable](/syntax/markdown-anchors-and-heading-links-that-stay-stable/)

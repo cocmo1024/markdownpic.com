@@ -1,0 +1,133 @@
+---
+title: Raw HTML blocks vs inline HTML in Markdown
+description: A practical guide to the difference between raw HTML blocks and inline HTML in Markdown, and why the distinction matters for rendering, sanitization, and portability.
+referenceType: fundamental
+adProfile: fundamental
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Explains the difference between HTML blocks and inline HTML in Markdown so authors can predict where rendering behavior changes and where portability risk starts.
+readerTakeaway: You should leave with a clear rule for when raw HTML behaves like a block, when it behaves inline, and why that distinction matters for real publishing systems.
+primaryKeyword: markdown raw html
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Developers
+  - Technical writers
+  - Documentation teams
+---
+
+## Quick answer
+
+Markdown does not treat all raw HTML the same way.
+
+Some HTML behaves like a **block-level interruption** in the Markdown parser. Other HTML behaves like **inline content** mixed into a paragraph. That distinction changes:
+
+- how surrounding Markdown is parsed,
+- what spacing rules still apply,
+- and how fragile the source becomes across renderers.
+
+If you do not understand that boundary, HTML-in-Markdown problems become hard to debug.
+
+## The simple mental model
+
+Think of two broad categories:
+
+### Raw HTML blocks
+
+These are block-level HTML constructs that tell the parser, in effect, "stop treating this region like ordinary paragraph Markdown and hand it to the HTML side."
+
+### Inline HTML
+
+These are smaller HTML tags used inside otherwise normal Markdown text, such as a small semantic tag or inline wrapper.
+
+The parser consequences are different.
+
+## Why authors get confused
+
+Most Markdown users first meet HTML through tiny inline cases:
+
+- `<!-- comment -->`
+- `<sup>`
+- `<sub>`
+- `<kbd>`
+
+Later they try bigger HTML:
+
+- `<div>`
+- `<table>`
+- `<details>`
+- `<iframe>`
+
+That is where the behavior changes. Block HTML often creates a much stronger renderer dependency than inline HTML.
+
+## Why the distinction matters
+
+### 1. Parsing behavior changes
+
+With block HTML, surrounding Markdown sometimes stops behaving the way authors expect. Paragraphs, indentation, and nearby syntax can be affected.
+
+### 2. Sanitization risk changes
+
+Many platforms are more comfortable allowing a tiny inline tag than preserving a larger structural block with attributes.
+
+### 3. Portability risk changes
+
+Small inline HTML may survive in many environments. Block HTML often exposes stronger differences across GitHub, static site generators, note-taking tools, documentation systems, and export pipelines.
+
+## The practical rule
+
+Treat inline HTML as a **narrow local exception**.
+
+Treat raw HTML blocks as a **publishing-system decision**.
+
+If you need repeated block-level HTML for layout, embeds, disclosure widgets, or wrappers, the healthier long-term solution is usually:
+
+- a component,
+- a template,
+- or a renderer-specific content layer,
+
+not free-form HTML scattered through Markdown files.
+
+## Examples of lower-risk inline HTML
+
+Inline HTML is often acceptable when:
+
+- the tag is semantically small,
+- the content is still readable as Markdown,
+- and the page remains understandable in source form.
+
+Examples:
+
+- comments,
+- `<sup>` and `<sub>`,
+- a small `<kbd>` or `<mark>` in controlled environments.
+
+## Examples of higher-risk raw HTML blocks
+
+Risk rises quickly when HTML becomes structural:
+
+- multi-line `<div>` wrappers,
+- layout tables,
+- embedded media,
+- collapsible disclosure structures,
+- custom attributes used for styling or scripting.
+
+At that point, the file is no longer just Markdown with a small exception. It is now partially coupled to a specific rendering stack.
+
+## The healthiest authoring policy
+
+For most teams, a good policy is:
+
+1. allow a very small set of inline HTML tags,
+2. restrict block HTML to documented exceptions,
+3. avoid repeated layout HTML in content source,
+4. and require renderer testing for any page that depends on block HTML.
+
+That keeps Markdown readable while still allowing practical escape hatches.
+
+## Compare next
+
+- [HTML in Markdown when to use it and when it becomes debt](/fundamentals/html-in-markdown-when-to-use-it-and-when-it-becomes-debt/)
+- [Markdown portability between GitHub, Notion, Obsidian, and static sites](/fundamentals/markdown-portability-between-github-notion-obsidian-and-static-sites/)
+- [Markdown iframe, video, and embed limitations](/syntax/markdown-iframe-video-and-embed-limitations/)

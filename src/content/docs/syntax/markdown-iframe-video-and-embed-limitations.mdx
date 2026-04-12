@@ -1,0 +1,122 @@
+---
+title: Markdown iframe video and embed limitations
+description: A practical guide to why Markdown does not natively solve iframes, video embeds, or rich media, and how to decide when HTML, components, or publishing tooling should take over.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Explains why Markdown alone does not provide reliable iframe, video, or embed support and how to handle media embeds without breaking portability.
+readerTakeaway: You should leave with a clearer rule for when embeds belong in raw HTML, components, or the publishing layer instead of Markdown syntax itself.
+primaryKeyword: markdown iframe
+searchIntent: learn
+decisionStage: solution-aware
+targetRoles:
+  - Developers
+  - Writers
+  - Documentation teams
+  - Content system owners
+---
+
+## Quick answer
+
+Markdown does not natively solve iframes, video embeds, or rich interactive media.
+
+If embeds work in a Markdown workflow, they usually work because the renderer allows:
+
+- raw HTML,
+- platform-specific embed syntax,
+- or framework-level components.
+
+That means embeds are almost never a pure Markdown question. They are a renderer and publishing-stack question.
+
+## Why this query is so common
+
+People search for "markdown iframe" or "markdown video embed" because they assume there should be a syntax form parallel to links or images.
+
+There usually is not.
+
+Markdown is good at:
+
+- text structure,
+- links,
+- images,
+- code,
+- and simple lists.
+
+It is not designed to be a universal interactive-media language.
+
+## The practical embed ladder
+
+When the job is to embed media, the healthy order of options is usually:
+
+1. **Plain Markdown link**
+   Best for maximum portability.
+2. **Markdown image**
+   Best when a static preview is enough.
+3. **Raw HTML**
+   Acceptable only when the renderer clearly supports it and the portability cost is acceptable.
+4. **Framework component or publishing-layer solution**
+   Best when embeds are a repeatable feature, not a one-off exception.
+
+The more repeatable the need, the less you want raw HTML scattered through source files.
+
+## Why raw HTML is not a universal solution
+
+Raw HTML can help in controlled environments, but it introduces three practical risks:
+
+### 1. Sanitization
+
+Some platforms strip or restrict iframe-like tags for safety reasons.
+
+### 2. Portability
+
+An embed that renders in one site may disappear or degrade in another.
+
+### 3. Source debt
+
+If many pages rely on custom embed HTML, the Markdown source stops being clean, reusable content and becomes display scaffolding.
+
+## When HTML is reasonable
+
+Raw HTML is more defensible when:
+
+- the target renderer is known,
+- the media pattern is limited,
+- and the team accepts the portability tradeoff.
+
+It becomes a worse choice when:
+
+- the content needs to move between platforms,
+- the file should remain clean for AI or export workflows,
+- or the same embed pattern will appear across many pages.
+
+## The better long-term answer
+
+If your site regularly needs:
+
+- YouTube embeds,
+- diagrams,
+- video players,
+- rich media cards,
+- or sandboxed interactive elements,
+
+the better answer is usually a component or rendering-layer feature rather than Markdown syntax itself.
+
+That keeps the source cleaner and makes system-wide changes possible.
+
+## The rule for portable Markdown
+
+If portability matters, assume:
+
+- links survive,
+- images often survive,
+- rich embeds usually do not.
+
+Write your canonical Markdown source with that reality in mind.
+
+## Compare next
+
+- [HTML in Markdown when to use it and when it becomes debt](/fundamentals/html-in-markdown-when-to-use-it-and-when-it-becomes-debt/)
+- [Raw HTML blocks vs inline HTML in Markdown](/fundamentals/raw-html-blocks-vs-inline-html-in-markdown/)
+- [Markdown portability between GitHub Notion Obsidian and static sites](/fundamentals/markdown-portability-between-github-notion-obsidian-and-static-sites/)

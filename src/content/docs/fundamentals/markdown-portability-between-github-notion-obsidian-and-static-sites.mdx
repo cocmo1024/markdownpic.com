@@ -1,0 +1,127 @@
+---
+title: Markdown portability between GitHub Notion Obsidian and static sites
+description: A practical guide to why Markdown behaves differently across GitHub, Notion, Obsidian, and static site workflows, and how to write source that travels more safely.
+referenceType: fundamental
+adProfile: fundamental
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Helps authors understand why Markdown portability fails across common platforms and how to write source that survives the most common migration paths.
+readerTakeaway: You should leave with a practical portability model for Markdown across GitHub, Notion, Obsidian, and static site publishing stacks.
+primaryKeyword: markdown portability
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Writers
+  - Developers
+  - Documentation teams
+  - Content system owners
+---
+
+## Quick answer
+
+Markdown portability fails because the file format is smaller than the rendering ecosystem around it.
+
+GitHub, Notion, Obsidian, and static site stacks each make different choices about:
+
+- supported syntax,
+- raw HTML handling,
+- extensions,
+- frontmatter,
+- internal links,
+- embeds,
+- and export behavior.
+
+Portable Markdown is not "whatever renders once." It is the subset of authoring choices that survives the paths you care about.
+
+## Why this matters
+
+Teams often say they want Markdown because it is "future-proof" or "portable." That is only partly true.
+
+A Markdown file can still become sticky if it depends on:
+
+- GitHub-only task list assumptions,
+- Obsidian-style wiki links,
+- Notion import quirks,
+- static-site frontmatter conventions,
+- or HTML and extension patterns that only one renderer preserves.
+
+The portability problem is usually not the file extension. It is the invisible renderer contract.
+
+## The practical portability model
+
+Think in layers:
+
+### Layer 1: Core Markdown source
+
+Headings, paragraphs, links, emphasis, code blocks, simple lists. This is where portability is strongest.
+
+### Layer 2: Common extensions
+
+Tables, task lists, footnotes, autolinks, diagram blocks. These are useful, but support varies more.
+
+### Layer 3: Renderer-specific behavior
+
+Wiki links, embeds, callouts, custom directives, inline HTML patterns, theme or plugin behavior.
+
+Portability drops sharply as you move down the stack.
+
+## What tends to survive best
+
+The safest cross-platform Markdown usually looks like this:
+
+- ATX headings,
+- inline or reference links,
+- fenced code blocks,
+- shallow nested lists,
+- plain images,
+- simple tables only when necessary,
+- and very limited raw HTML.
+
+This is not the fanciest style, but it usually travels the farthest.
+
+## Where portability usually breaks
+
+### GitHub
+
+GitHub is strong for GFM patterns, comments, task lists, and Mermaid in supported contexts, but that does not mean those features transfer cleanly elsewhere.
+
+### Notion
+
+Notion often imports Markdown acceptably, but its internal block model is not the same as Markdown source. Round-tripping can get messy.
+
+### Obsidian
+
+Obsidian is powerful for local knowledge workflows, but wiki-link habits, plugins, and theme assumptions can quietly reduce portability.
+
+### Static sites
+
+Static site generators can preserve clean Markdown well, but they also invite frontmatter, components, directives, and HTML patterns that make the content more stack-dependent.
+
+## The healthiest authoring rule
+
+Write for **the narrowest feature set that still solves the job**.
+
+That means:
+
+- keep the canonical source cleaner than the richest renderer allows,
+- isolate platform-specific behavior where possible,
+- and know which features are editorial choices versus infrastructure choices.
+
+## A good portability policy for teams
+
+Most teams benefit from explicitly documenting:
+
+1. which syntax forms are preferred,
+2. which extensions are allowed,
+3. which raw HTML patterns are acceptable,
+4. which platform-specific conveniences are banned in canonical content,
+5. and which export paths must be tested before changes are considered safe.
+
+That policy matters more than arguing abstractly about whether Markdown is portable.
+
+## Compare next
+
+- [CommonMark vs GFM vs renderer differences](/fundamentals/commonmark-vs-gfm-vs-renderer-differences/)
+- [Markdown extensions vs portable Markdown where to draw the line](/fundamentals/markdown-extensions-vs-portable-markdown-where-to-draw-the-line/)
+- [Raw HTML blocks vs inline HTML in Markdown](/fundamentals/raw-html-blocks-vs-inline-html-in-markdown/)

@@ -1,0 +1,106 @@
+---
+title: Markdown escaping pipes backticks and special characters
+description: A practical guide to escaping special characters in Markdown, especially pipes, backticks, brackets, and punctuation that break links, tables, and code examples.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Helps authors escape special Markdown characters safely so tables, links, code examples, and literal markup render the way they intended.
+readerTakeaway: You should leave with working rules for escaping Markdown characters in normal text, tables, and inline code without damaging readability.
+primaryKeyword: markdown escape characters
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Developers
+  - Technical writers
+  - Documentation teams
+---
+
+## Quick answer
+
+Escape Markdown formatting when you need the literal character to appear instead of triggering syntax.
+
+In practice, the hardest cases are not ordinary asterisks. They are:
+
+- pipes inside tables,
+- backticks inside inline code,
+- brackets inside link text,
+- and mixed examples where Markdown syntax is being explained literally.
+
+Those are the cases that cause broken formatting and confusing documentation.
+
+## The basic escape rule
+
+In many Markdown contexts, a backslash can neutralize the formatting meaning of a character:
+
+```md
+\*literal asterisks\*
+\[not a link]
+\# not a heading
+```
+
+That solves many ordinary cases, but not all of them.
+
+## Pipes inside tables
+
+Pipes are a classic edge case because tables already use pipes as cell separators.
+
+If you need a literal pipe in a table cell, escaping may work in some renderers, but the result is not equally reliable everywhere. In many cases, the safer answer is:
+
+- inline code for the literal token,
+- or avoiding the table for syntax-heavy examples.
+
+This is one reason Markdown tables are poor containers for dense syntax documentation.
+
+## Backticks inside inline code
+
+Backticks are another frequent problem. When the code sample itself contains a backtick, you often need a larger backtick wrapper around the whole inline-code span.
+
+That keeps the internal backtick literal instead of closing the code span too early.
+
+The practical rule is simple:
+
+- wrap inline code with a backtick fence longer than the longest run inside the content.
+
+## Brackets and parentheses in links
+
+Links become fragile when the text or destination itself contains bracket-like or parenthesis-like characters.
+
+In those cases, authors often get better results by:
+
+- simplifying the visible anchor text,
+- switching to reference-style links,
+- or showing the literal syntax as code instead of forcing a clickable example.
+
+This is easier to maintain than fighting nested punctuation in one line.
+
+## When escaping is the wrong fix
+
+Escaping is not always the healthiest answer.
+
+If the document contains many literal syntax examples, the better pattern is often:
+
+- fenced code blocks,
+- shorter isolated examples,
+- or a page structure that separates explanation from copyable syntax.
+
+Trying to force too many literal edge cases into one paragraph usually hurts readability.
+
+## Best practices for syntax-heavy pages
+
+When teaching Markdown itself:
+
+- use inline code for short literal tokens,
+- use fenced blocks for full examples,
+- avoid dense syntax examples inside tables,
+- and reserve escaping for the smallest cases that truly need it.
+
+That produces cleaner pages and fewer renderer surprises.
+
+## Compare next
+
+- [Markdown code blocks fenced vs indented](/syntax/markdown-code-blocks-fenced-vs-indented/)
+- [Markdown links inline reference and autolinks](/syntax/markdown-links-inline-vs-reference-and-autolinks/)
+- [Markdown table alignment and column formatting that survives export](/syntax/markdown-table-alignment-and-column-formatting-that-survives-export/)

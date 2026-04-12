@@ -1,0 +1,125 @@
+---
+title: Markdown superscript and subscript when HTML is required
+description: How superscript and subscript work in Markdown, why they are usually outside core syntax, and when small HTML tags are the safest practical answer.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Explains how to write superscript and subscript in Markdown, where native syntax support is missing, and how to use HTML without turning source files into renderer debt.
+readerTakeaway: "You should leave with a simple rule: standard Markdown does not reliably solve superscript or subscript, so small HTML tags are often the safest answer in controlled renderers."
+primaryKeyword: markdown superscript
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Technical writers
+  - Scientists and engineers
+  - Documentation teams
+keyQuestions:
+  - Does Markdown support superscript or subscript natively?
+  - When is HTML the right answer for superscript and subscript?
+  - What should teams do when the file has to stay portable?
+notFor:
+  - Math typesetting systems using KaTeX or LaTeX as the main rendering layer
+  - Rich-text editor questions outside Markdown source
+updateTriggers:
+  - Renderer changes that add or remove native superscript or subscript support
+  - Significant changes in sanitizer behavior for simple inline HTML
+---
+
+## Quick answer
+
+Standard Markdown does **not** provide a portable native syntax for superscript or subscript. In most real workflows, the practical answer is to use small inline HTML tags such as `<sup>` and `<sub>` when the renderer allows them.
+
+If the content must travel broadly, test the target renderer first and assume this is an HTML boundary, not a core Markdown feature.
+
+## Copyable examples
+
+### Superscript with HTML
+
+```md
+Water is H<sub>2</sub>O and area is measured in m<sup>2</sup>.
+```
+
+### Standalone superscript
+
+```md
+The 10<sup>th</sup> sample passed review.
+```
+
+### Standalone subscript
+
+```md
+CO<sub>2</sub> levels increased during the test.
+```
+
+These examples are simple, readable, and usually safer than inventing renderer-specific pseudo-syntax.
+
+## Why this question causes so much confusion
+
+Search results for `markdown superscript` often mix together:
+
+- true Markdown syntax,
+- forum tricks,
+- processor-specific extensions,
+- and raw HTML answers.
+
+The result is that readers often believe there is one standard Markdown notation for superscript or subscript. There is not.
+
+## Standards boundary checked April 13, 2026
+
+| Source | Current signal | What it means |
+| --- | --- | --- |
+| [CommonMark 0.31.2](https://spec.commonmark.org/0.31.2/) | CommonMark standardizes emphasis, code spans, links, lists, and other core constructs, but not superscript or subscript syntax | You should not expect a plain CommonMark parser to understand custom superscript markers |
+| [GitHub Flavored Markdown spec](https://github.github.com/gfm/) | GFM documents practical extensions such as tables and task lists, but not a standard superscript/subscript syntax | GitHub is not a universal source-of-truth for this formatting need |
+| HTML behavior in Markdown renderers | Many renderers preserve small inline HTML tags when sanitation rules allow them | `<sup>` and `<sub>` are often the most realistic solution in controlled environments |
+
+## When HTML is the right answer
+
+Inline HTML is usually the right choice when:
+
+- the target renderer preserves simple inline tags,
+- the superscript or subscript is occasional rather than everywhere,
+- the file needs a readable source form,
+- and the team wants a predictable answer instead of a renderer-specific shortcut.
+
+That covers most docs, README, blog, and knowledge-base cases.
+
+## When HTML starts becoming debt
+
+Even though `<sup>` and `<sub>` are small, the same warning still applies:
+
+- if the file must survive many unknown renderers,
+- if sanitization strips inline HTML,
+- or if the source is turning into a patchwork of HTML workarounds,
+
+then the team should step back and ask whether the output format, renderer, or publishing system should handle this instead.
+
+## What to do when portability matters more than formatting
+
+If portability is the top priority, the safer fallback is often to write the content plainly:
+
+- `m^2` instead of styled superscript,
+- `H2O` with surrounding explanation when typography is less important,
+- or a renderer-specific output transform handled outside the source file.
+
+This is less elegant, but often more durable.
+
+## The practical rule
+
+Use `<sup>` and `<sub>` when:
+
+1. the renderer is known,
+2. the formatting matters,
+3. the tags remain readable in source,
+4. and the file is not pretending that this is portable core Markdown.
+
+If any of those fail, prefer a plain-text fallback or a more controlled publishing layer.
+
+## Compare next
+
+- [HTML in Markdown: when to use it and when it becomes debt](/fundamentals/html-in-markdown-when-to-use-it-and-when-it-becomes-debt/)
+- [Raw HTML blocks vs inline HTML in Markdown](/fundamentals/raw-html-blocks-vs-inline-html-in-markdown/)
+- [Markdown math and diagrams: where standard syntax stops](/fundamentals/markdown-math-and-diagrams-where-standard-syntax-stops/)
+- [Markdown text color, highlight, and callouts: what is portable](/syntax/markdown-text-color-highlight-and-callouts-what-is-portable/)

@@ -1,0 +1,138 @@
+---
+title: Markdown definition lists and where they render
+description: How definition lists work in Markdown, why they are not part of core CommonMark, and what to do when glossary-style content has to stay portable.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Explains whether Markdown supports definition lists, where they render reliably, and how teams should handle glossary-style content when portability matters.
+readerTakeaway: You should leave with a clear rule for when definition lists are acceptable renderer-specific syntax and when plain headings, lists, or tables are the safer choice.
+primaryKeyword: markdown definition list
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Documentation teams
+  - Technical writers
+  - Developers
+  - Markdown learners
+keyQuestions:
+  - Does Markdown support definition lists by default?
+  - Where do definition lists render cleanly?
+  - What should teams do when they need glossary-style content to stay portable?
+notFor:
+  - Glossary design decisions outside Markdown source
+  - XML, HTML, or CMS-specific glossary formatting questions
+updateTriggers:
+  - Major changes in common Markdown processors or docs frameworks
+  - Renderer changes that materially improve or break definition-list support
+---
+
+## Quick answer
+
+Definition lists are **not a safe universal Markdown feature**. Some Markdown processors and publishing stacks support them, but CommonMark does not standardize them as core syntax.
+
+If the file must travel across platforms, assume definition lists are renderer-specific until proven otherwise.
+
+## What people usually mean by a definition list
+
+A definition list is a glossary-style structure where one term is followed by its description.
+
+One common syntax looks like this:
+
+```md
+Term
+: Definition text
+```
+
+Some processors support this. Many do not. That is the portability problem.
+
+## Standards boundary checked April 13, 2026
+
+| Source | Current signal | What it means |
+| --- | --- | --- |
+| [CommonMark 0.31.2](https://spec.commonmark.org/0.31.2/) | CommonMark does not define definition-list syntax | You cannot assume a CommonMark renderer will parse `:` lines as structured definitions |
+| [GitHub Flavored Markdown spec](https://github.github.com/gfm/) | GFM does not standardize definition lists as a core extension in the way tables or task lists are documented | GitHub is not a safe baseline for glossary syntax using definition lists |
+| Processor and framework ecosystems | Some tools support definition lists through extensions or custom parsing | The syntax may work well locally while failing elsewhere |
+
+The key point is that a definition list can be a valid *tool-specific authoring convenience* without being portable Markdown.
+
+## When definition lists are a reasonable choice
+
+Definition lists make sense when:
+
+- the publishing stack is known,
+- glossary-like content is common,
+- the team wants a compact term-definition pattern,
+- and portability is not the main constraint.
+
+For one controlled docs site, this can be perfectly acceptable.
+
+## When they are the wrong choice
+
+Avoid definition-list syntax in canonical source when:
+
+- files move between GitHub, notes tools, docs platforms, and exports;
+- authors expect GitHub or basic Markdown viewers to render them cleanly;
+- or glossary entries need to remain easy to transform into tables, cards, or other layouts later.
+
+In those cases, definition-list syntax adds more hidden coupling than value.
+
+## Better portable alternatives
+
+When portability matters, these options are usually safer:
+
+### 1. Heading plus paragraph
+
+```md
+### Term
+
+Definition text.
+```
+
+This is verbose but portable and easy to transform later.
+
+### 2. Bold term plus description
+
+```md
+- **Term:** Definition text.
+```
+
+This works well for compact reference pages.
+
+### 3. Two-column table
+
+```md
+| Term | Meaning |
+| --- | --- |
+| API | Application programming interface |
+```
+
+This can work well for short glossaries, though tables bring their own export and mobile limits.
+
+## The decision rule that actually works
+
+Use definition-list syntax only if:
+
+1. the renderer is fixed and known,
+2. the team actively values the term-definition presentation,
+3. and the cost of later converting away from it is acceptable.
+
+If any of those are false, write the glossary in a more portable structure.
+
+## What to do for serious reference sites
+
+If the site is building a long-lived glossary or reference section, the healthiest approach is often:
+
+- keep the source structure portable,
+- let templates control final presentation,
+- and avoid source syntax that only one parser understands.
+
+That preserves more future options for export, search indexing, reuse, and AI-assisted transformation.
+
+## Compare next
+
+- [Markdown tables that survive mobile, PDF, and image export](/syntax/markdown-tables-that-survive-mobile-pdf-and-image-export/)
+- [Markdown extensions vs portable Markdown: where to draw the line](/fundamentals/markdown-extensions-vs-portable-markdown-where-to-draw-the-line/)
+- [Markdown portability between GitHub, Notion, Obsidian, and static sites](/fundamentals/markdown-portability-between-github-notion-obsidian-and-static-sites/)
+- [CommonMark vs GFM vs renderer differences](/fundamentals/commonmark-vs-gfm-vs-renderer-differences/)

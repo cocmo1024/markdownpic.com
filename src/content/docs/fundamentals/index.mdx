@@ -35,6 +35,7 @@ If those questions are unresolved, syntax pages alone will not solve the real pr
 - Read [Markdown extensions vs portable Markdown: where to draw the line](/fundamentals/markdown-extensions-vs-portable-markdown-where-to-draw-the-line/) if the real question is not "what syntax works?" but "what rules should our team allow in source files?"
 - Read [HTML in Markdown: when to use it and when it becomes debt](/fundamentals/html-in-markdown-when-to-use-it-and-when-it-becomes-debt/) if authors keep patching source files with raw HTML to compensate for missing layout or renderer features.
 - Read [Raw HTML blocks vs inline HTML in Markdown](/fundamentals/raw-html-blocks-vs-inline-html-in-markdown/) if the team needs to understand why some HTML changes parsing and portability more aggressively than others.
+- Read [Markdown alerts, callouts, and admonitions portability](/fundamentals/markdown-alerts-callouts-and-admonitions-portability/) if authors are mixing GitHub alerts, docs-site admonitions, and generic "callout" advice as if they were one portable syntax family.
 - Read [Markdown math and diagrams: where standard syntax stops](/fundamentals/markdown-math-and-diagrams-where-standard-syntax-stops/) if the team is starting to treat KaTeX, Mermaid, or similar rendering layers as if they were universal Markdown.
 - Read [Mermaid diagrams in Markdown: where they render and where they don't](/fundamentals/mermaid-diagrams-in-markdown-where-they-render-and-where-they-dont/) if authors are starting to assume a fenced `mermaid` block is portable just because it looks like code in source.
 - Read [Markdown portability between GitHub, Notion, Obsidian, and static sites](/fundamentals/markdown-portability-between-github-notion-obsidian-and-static-sites/) if the real problem is not syntax itself but whether one Markdown source can survive multiple platforms cleanly.
@@ -48,6 +49,7 @@ By the time you leave Fundamentals, you should be able to:
 - decide which extensions improve readability without damaging long-term portability,
 - understand why portability problems happen,
 - recognize when raw Markdown is enough and when HTML, metadata, or tooling needs to take over,
+- understand why alerts, callouts, and admonitions usually belong to the renderer contract rather than the Markdown standard,
 - distinguish between small inline HTML exceptions and larger raw HTML blocks,
 - decide which metadata belongs in frontmatter and which belongs elsewhere,
 - understand why Mermaid and other diagram layers belong to the renderer contract rather than the Markdown standard,

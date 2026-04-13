@@ -1,0 +1,100 @@
+---
+title: Markdown autolink literals and URL rendering across platforms
+description: How autolink literals work in GitHub-style Markdown, where plain URLs become clickable automatically, and why link behavior still changes across renderers.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Explains when raw URLs become links automatically, when explicit link syntax is safer, and how autolink behavior differs across Markdown platforms.
+readerTakeaway: You should leave with a practical rule for when raw URLs are fine and when explicit link syntax is the safer long-term choice.
+primaryKeyword: markdown autolink
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Developers
+  - Technical writers
+  - Docs teams
+keyQuestions:
+  - What is an autolink literal in Markdown?
+  - Do raw URLs become clickable everywhere?
+  - When is explicit link syntax safer than relying on auto-linking?
+notFor:
+  - Link-shortener or analytics questions outside Markdown source
+updateTriggers:
+  - GFM or renderer changes affecting autolink behavior
+  - Major changes in platform treatment of raw URLs
+---
+
+## Quick answer
+
+Raw URLs often become clickable in GitHub-style environments, but that does **not** mean every renderer treats them the same way.
+
+The safe rule is:
+
+- use explicit link syntax when readability, portability, or destination text matters,
+- use raw URLs only when the source needs to show the URL plainly and the render path is known.
+
+## Why this causes confusion
+
+Many people first learn Markdown on GitHub, where raw URLs frequently "just work." Then the same file moves elsewhere and:
+
+- the URL stops auto-linking,
+- punctuation gets captured badly,
+- or the output looks inconsistent.
+
+That is the difference between a convenient renderer behavior and a portable source rule.
+
+## Three common patterns
+
+### Explicit link syntax
+
+```md
+[MarkdownPic](https://markdownpic.com/)
+```
+
+This is the most portable and controllable option.
+
+### Angle-bracket autolink
+
+```md
+<https://markdownpic.com/>
+```
+
+This is a more explicit autolink form and is often clearer than a naked raw URL.
+
+### Raw URL literal
+
+```md
+https://markdownpic.com/
+```
+
+This may auto-link in many environments, but it is also the least predictable across renderers.
+
+## When raw URLs are acceptable
+
+Raw URLs are acceptable when:
+
+- the visible URL is useful to the reader,
+- the renderer behavior is known,
+- and the content does not depend on subtle punctuation or formatting around the link.
+
+They are common in READMEs, quick notes, and lightweight references.
+
+## When explicit link syntax is better
+
+Explicit links are usually better when:
+
+- the anchor text should be readable,
+- the destination matters more than the literal URL,
+- the file needs to travel across platforms,
+- or the surrounding sentence includes punctuation that could confuse auto-linking.
+
+That is why explicit syntax is usually the right default for long-lived docs.
+
+## Compare next
+
+- [Markdown links: inline, reference, and autolinks](/syntax/markdown-links-inline-vs-reference-and-autolinks/)
+- [Markdown links vs HTML links: when to switch](/syntax/markdown-links-vs-html-links-when-to-switch/)
+- [GFM-only features you should not assume everywhere](/fundamentals/gfm-only-features-you-should-not-assume-everywhere/)

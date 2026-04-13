@@ -1,0 +1,96 @@
+---
+title: Export-safe Markdown authoring for PDF, email, and social
+description: How to write Markdown source that survives export into PDF, email, screenshots, and social snippets without collapsing formatting or losing the point of the content.
+referenceType: guide
+adProfile: guide
+commercialIntent: high
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Helps teams write Markdown source that can be republished, exported, screenshotted, or converted into images without fragile formatting surprises.
+readerTakeaway: You should leave with a practical authoring model for Markdown that stays useful beyond one renderer and one publishing channel.
+primaryKeyword: markdown export
+searchIntent: design
+decisionStage: solution-aware
+targetRoles:
+  - Docs teams
+  - Technical writers
+  - Content operators
+  - Developers
+keyQuestions:
+  - How should Markdown be written if it must survive PDF, email, and image export?
+  - Which source patterns break most often during export?
+  - How should teams trade visual convenience against long-term portability?
+notFor:
+  - Generic PDF design workflows not using Markdown source
+  - Teams that never export or repurpose Markdown
+updateTriggers:
+  - Major changes in export tooling or MarkdownPic behavior
+  - Material shifts in email or PDF rendering constraints
+---
+
+## Quick answer
+
+Export-safe Markdown starts with one rule: write for **structural clarity first**, not renderer tricks first.
+
+That means:
+
+- paragraphs should still make sense as paragraphs,
+- lists should be real lists,
+- headings should carry the structure,
+- and visual hacks should stay out of canonical source unless they are worth the portability cost.
+
+If the source depends on one renderer's kindness, export will eventually punish it.
+
+## Why export-safe authoring matters
+
+Markdown rarely stays in one place. Teams write once and then:
+
+- publish as HTML,
+- export to PDF,
+- paste into email,
+- convert to screenshots,
+- or turn sections into long images and social assets.
+
+The content that survives those moves best is usually the content written with the least renderer-specific fragility.
+
+## The most common export failures
+
+The biggest failures usually come from:
+
+- line breaks that only worked in one renderer,
+- wide tables treated like layout systems,
+- image sizing hacks that collapse in another environment,
+- badge or embed heavy sections that do not survive export,
+- and GFM-only features assumed to be universal.
+
+Those are authoring problems before they are export problems.
+
+## A practical export-safe checklist
+
+When a Markdown file is meant to travel, favor these habits:
+
+1. use headings to express structure instead of styling tricks;
+2. use explicit paragraphs and lists instead of newline-dependent layout;
+3. avoid overloading tables as visual grids;
+4. treat raw HTML as a narrow exception, not a default fix;
+5. write links and image references so the source still reads well even if the rendering changes;
+6. test the final export for any page that matters commercially or operationally.
+
+## Where MarkdownPic fits
+
+MarkdownPic is strongest when the source is already healthy.
+
+If the canonical Markdown is structurally sound, the site can:
+
+- publish HTML for SEO,
+- export sections into images for distribution,
+- and keep the original content easy to update.
+
+If the source is weak, the image export simply hides the weakness behind a nicer surface.
+
+## Compare next
+
+- [Markdown to image workflows for docs, social, and AI content](/guides/markdown-to-image-workflows-for-docs-social-and-ai-content/)
+- [Markdown tables that survive mobile, PDF, and image export](/syntax/markdown-tables-that-survive-mobile-pdf-and-image-export/)
+- [Markdown image size and resizing: when Markdown is not enough](/syntax/markdown-image-size-and-resizing-when-markdown-is-not-enough/)
+- [Markdown portability between GitHub, Notion, Obsidian, and static sites](/fundamentals/markdown-portability-between-github-notion-obsidian-and-static-sites/)

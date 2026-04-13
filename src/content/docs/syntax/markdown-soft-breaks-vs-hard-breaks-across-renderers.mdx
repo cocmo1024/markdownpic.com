@@ -1,0 +1,99 @@
+---
+title: Markdown soft breaks vs hard breaks across renderers
+description: How soft breaks, hard breaks, single newlines, and explicit line breaks behave across Markdown renderers, and how to write source that survives copy, export, and publishing.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Explains why line breaks render differently across Markdown environments and how to write text that stays readable when newline behavior changes.
+readerTakeaway: You should leave with a clear rule for when a line break is only source formatting, when it becomes visible output, and how to avoid fragile newline-dependent content.
+primaryKeyword: markdown line break
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Writers
+  - Docs teams
+  - Developers
+keyQuestions:
+  - What is the difference between a soft break and a hard break in Markdown?
+  - Why does a single newline behave differently across renderers?
+  - How should teams author text that survives export and copy-paste?
+notFor:
+  - CSS layout questions unrelated to Markdown source
+updateTriggers:
+  - CommonMark or renderer changes affecting line-break behavior
+  - Major platform changes in paste or export behavior
+---
+
+## Quick answer
+
+A **soft break** is usually a normal line ending inside a paragraph. A **hard break** is an intentional visible line break in the rendered output.
+
+The portability rule is simple:
+
+- use blank lines for real paragraphs,
+- use explicit hard-break syntax only when the visible line break matters,
+- and avoid writing content that depends on one renderer's treatment of single newlines.
+
+## Why this question keeps breaking content
+
+Line breaks are one of the easiest ways for Markdown to look correct in source and wrong in output.
+
+Common failure cases:
+
+- addresses or captions collapse into one paragraph,
+- copy-pasted content changes line-break behavior,
+- one renderer treats a newline as visible while another folds it away,
+- or export tools flatten carefully spaced prose.
+
+The issue is usually not the words. It is the assumed rendering contract.
+
+## What the baseline means
+
+In practical Markdown authoring:
+
+- a blank line creates a new paragraph,
+- a single newline inside a paragraph is often treated as a soft break,
+- and explicit hard-break syntax is needed when the output must visibly break the line.
+
+That is why teams should treat newline-sensitive prose as a special case rather than a default writing style.
+
+## When hard breaks are justified
+
+Hard breaks are reasonable for:
+
+- poetry or lyrics where line structure matters,
+- addresses,
+- captions,
+- compact UI snippets,
+- or controlled documentation where exact visual lineation matters.
+
+They are usually not the right answer for normal explanatory prose.
+
+## The safest authoring rule
+
+For portable content:
+
+- write paragraphs as paragraphs,
+- use lists when the content is actually a list,
+- and use explicit hard breaks only when the semantic meaning of the line break matters.
+
+This avoids relying on renderer-specific newline tolerance.
+
+## The most common portability failure
+
+The most common failure is authors writing content with visible single-line wrapping in the source and then assuming those wraps will survive everywhere.
+
+That is fragile because:
+
+- some renderers fold them,
+- some exports reinterpret them,
+- and some editing tools normalize the whitespace differently.
+
+## Compare next
+
+- [Markdown blockquotes, paragraphs, and line breaks](/syntax/markdown-blockquotes-line-breaks-and-paragraphs/)
+- [CommonMark vs GFM vs renderer differences](/fundamentals/commonmark-vs-gfm-vs-renderer-differences/)
+- [Markdown tables that survive mobile, PDF, and image export](/syntax/markdown-tables-that-survive-mobile-pdf-and-image-export/)

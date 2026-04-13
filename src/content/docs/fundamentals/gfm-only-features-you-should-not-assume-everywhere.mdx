@@ -1,0 +1,124 @@
+---
+title: GFM-only features you should not assume everywhere
+description: Which popular Markdown features come from GitHub Flavored Markdown or platform behavior rather than portable core syntax, and how to decide when they are worth using.
+referenceType: fundamental
+adProfile: fundamental
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Helps teams separate true portable Markdown from GitHub-style conveniences so source files do not silently break when they leave GitHub-centric environments.
+readerTakeaway: You should leave with a practical list of GFM-era features that are common, useful, and still dangerous to assume everywhere.
+primaryKeyword: gfm features
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Developers
+  - Technical writers
+  - Docs teams
+  - Markdown learners
+keyQuestions:
+  - Which popular Markdown features are actually GitHub-style extensions?
+  - Which of those features travel well and which ones break first?
+  - How should teams decide when GFM convenience is worth the portability cost?
+notFor:
+  - Teams that publish only on GitHub and do not care about portability
+  - Readers looking for a basic Markdown syntax cheat sheet
+updateTriggers:
+  - GitHub documentation changes affecting supported formatting
+  - Changes in GFM or major renderer compatibility
+---
+
+## Quick answer
+
+Many of the Markdown features people now treat as "normal" are actually **GitHub Flavored Markdown conventions or renderer behavior**, not core portable Markdown.
+
+The safest rule is:
+
+- use GFM features when the render path is known,
+- but do not let those features become accidental portability assumptions in canonical source.
+
+## Why this matters
+
+GitHub made several extensions feel mainstream because they are useful and familiar. The portability problem appears later when the same file moves into:
+
+- docs generators,
+- notes apps,
+- email exports,
+- static site pipelines,
+- or image-generation workflows.
+
+The file is still Markdown, but the feature contract has changed.
+
+## High-frequency features people over-assume
+
+These are among the most commonly over-assumed features:
+
+- tables,
+- task lists,
+- strikethrough,
+- autolink literals,
+- alerts or callout-like constructs,
+- footnotes in some ecosystems,
+- and various HTML-tolerant patterns that "work on GitHub."
+
+Some of these travel well. Others do not.
+
+## The practical risk ranking
+
+### Usually low-risk
+
+- tables in many modern renderers,
+- strikethrough in many common environments.
+
+These are still not pure CommonMark guarantees, but the modern ecosystem often tolerates them reasonably well.
+
+### Medium-risk
+
+- task lists,
+- autolink literals,
+- footnotes,
+- some image and heading-link behaviors.
+
+These often work in several environments, but not enough to treat them as universal.
+
+### High-risk
+
+- GitHub alerts or callout syntax,
+- custom containers,
+- HTML-heavy layout tricks,
+- renderer-specific components disguised as Markdown.
+
+These are where portability usually fails first.
+
+## A healthier authoring policy
+
+For long-lived Markdown source:
+
+1. treat CommonMark-safe content as the baseline,
+2. allow selected GFM features intentionally,
+3. document which extensions are approved,
+4. and test the real render targets rather than assuming "Markdown is Markdown."
+
+That policy matters more than memorizing a list.
+
+## What usually belongs on the approved list
+
+In many serious teams, the approved extension list ends up including:
+
+- tables,
+- strikethrough,
+- maybe task lists,
+- and a limited set of inline HTML escapes.
+
+It usually excludes:
+
+- renderer-specific alert syntax,
+- layout hacks,
+- and anything that makes the file hard to migrate or transform.
+
+## Compare next
+
+- [CommonMark vs GFM vs renderer differences](/fundamentals/commonmark-vs-gfm-vs-renderer-differences/)
+- [Markdown extensions vs portable Markdown: where to draw the line](/fundamentals/markdown-extensions-vs-portable-markdown-where-to-draw-the-line/)
+- [Markdown alerts, callouts, and admonitions portability](/fundamentals/markdown-alerts-callouts-and-admonitions-portability/)
+- [Markdown task lists, checkboxes, and portability](/syntax/markdown-task-lists-checkboxes-and-portability/)

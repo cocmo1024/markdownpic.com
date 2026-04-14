@@ -1,0 +1,77 @@
+---
+title: "GitHub README Markdown vs docs-site Markdown: what breaks"
+description: A practical guide to the Markdown behaviors that diverge between GitHub READMEs and docs-site pipelines, and how to keep source files reusable.
+referenceType: guide
+adProfile: guide
+commercialIntent: medium
+reviewCadence: Monthly review
+contentStatus: growing
+problemSolved: Helps teams stop assuming a README render path and a docs-site render path are interchangeable when the source needs to survive both.
+readerTakeaway: You should leave with a reusable authoring model for Markdown that works in both GitHub-first and docs-site publishing systems.
+primaryKeyword: github readme markdown vs docs site markdown
+searchIntent: learn
+decisionStage: solution-aware
+targetRoles:
+  - Developers
+  - Documentation teams
+  - Open-source maintainers
+  - Content operators
+keyQuestions:
+  - What usually breaks when README Markdown is reused in docs sites?
+  - Which GitHub-friendly patterns are risky in docs pipelines?
+  - How should teams write one source that survives both paths?
+notFor:
+  - Teams publishing only on GitHub
+  - Readers looking only for a Markdown syntax cheat sheet
+updateTriggers:
+  - Changes in major docs-site Markdown behavior
+  - Changes in GitHub-flavored Markdown rendering expectations
+---
+
+# GitHub README Markdown vs docs-site Markdown: what breaks
+
+Many teams assume Markdown written for a README will move cleanly into a docs site. Sometimes it does. Often it does not. The reason is simple: a README renderer and a docs-site pipeline are solving different problems. GitHub optimizes for repository reading. Docs systems optimize for navigation, theming, metadata, and site structure.
+
+## Quick answer
+
+README Markdown and docs-site Markdown overlap heavily, but they are not the same operating environment.
+
+The common breakpoints are:
+
+- frontmatter and page metadata;
+- heading IDs and generated anchors;
+- callouts, alerts, and custom components;
+- relative paths for links and assets;
+- raw HTML that depends on site styling;
+- table-of-contents behavior;
+- and any syntax that was only "safe enough" inside GitHub.
+
+If the file must live in both places, author for the stricter path.
+
+## The highest-friction differences
+
+| Difference | Why it breaks reuse |
+| --- | --- |
+| Relative links | Repo-relative paths often do not match site routing |
+| Image paths | README asset conventions may not survive docs build output |
+| Frontmatter | Docs sites often need it; READMEs often ignore it |
+| Alerts and components | GitHub alerts are not universal docs components |
+| Raw HTML | Docs systems may sanitize differently or replace the need with components |
+| Heading IDs | Generated anchors may not match GitHub behavior |
+
+These are not edge cases. They are the normal reasons shared Markdown sources become messy.
+
+## The safest shared-source model
+
+If one source must serve both:
+
+1. keep the body in portable Markdown;
+2. isolate site-specific metadata from reusable content where possible;
+3. minimize renderer-specific callouts or component syntax;
+4. treat links and assets as a deliberate compatibility layer, not an afterthought.
+
+## When separate sources are justified
+
+Sometimes two sources are cleaner than one. That becomes justified when the README is a repository landing page with marketing-like behavior, the docs site needs structured navigation and components, or the team keeps compromising readability in both places to preserve one file.
+
+Shared source is valuable, but only if it reduces complexity overall.

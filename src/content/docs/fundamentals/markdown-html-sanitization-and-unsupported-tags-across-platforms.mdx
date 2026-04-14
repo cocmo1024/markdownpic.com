@@ -1,0 +1,96 @@
+---
+title: Markdown HTML sanitization and unsupported tags across platforms
+description: How Markdown renderers sanitize or reject raw HTML, which tags commonly break, and how to write source that survives GitHub, docs sites, CMSs, and export tools.
+referenceType: fundamental
+adProfile: fundamental
+commercialIntent: medium
+reviewCadence: Monthly review
+contentStatus: growing
+problemSolved: Helps authors understand why raw HTML survives in some Markdown pipelines and disappears, degrades, or gets stripped in others.
+readerTakeaway: You should leave with a safer model for when raw HTML is acceptable, which tags are likely to fail, and how to avoid portability debt.
+primaryKeyword: markdown html sanitization
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Developers
+  - Technical writers
+  - Docs teams
+  - Content operators
+keyQuestions:
+  - Why does raw HTML render in one Markdown platform and break in another?
+  - Which HTML tags are most likely to be sanitized or unsupported?
+  - How should teams write Markdown when sanitization rules are outside their control?
+notFor:
+  - HTML-only publishing stacks
+  - Readers looking only for a Markdown syntax cheat sheet
+updateTriggers:
+  - Material changes in common Markdown renderer sanitization behavior
+  - Platform changes affecting supported HTML tags or unsafe content rules
+---
+
+# Markdown HTML sanitization and unsupported tags across platforms
+
+Raw HTML is one of the most misunderstood parts of Markdown authoring. Authors often see a tag render once and assume it is safe everywhere. That assumption breaks quickly when the same source file moves between GitHub, docs platforms, CMS renderers, export tools, note apps, or image-generation workflows.
+
+## Quick answer
+
+Raw HTML in Markdown is not governed by one universal rendering contract.
+
+Three different things can happen:
+
+- the HTML is allowed and rendered;
+- the HTML is parsed but sanitized or partially stripped;
+- the HTML is rejected, escaped, or ignored by the renderer.
+
+If the source must travel, treat raw HTML as a **renderer-specific dependency**, not portable Markdown.
+
+## Which tags usually fail first
+
+The highest-risk HTML patterns are usually:
+
+- `<script>`, `<style>`, and similar active or potentially unsafe tags;
+- iframes, embeds, and arbitrary media wrappers;
+- custom div or span patterns that rely on site CSS;
+- HTML that assumes custom IDs, classes, or JavaScript behavior;
+- anything that expects the Markdown renderer to behave like a full HTML document.
+
+These patterns often look fine in one publishing stack and collapse elsewhere.
+
+## Sanitization is not random
+
+Sanitization usually follows one of these motives:
+
+| Motive | What it means for the author |
+| --- | --- |
+| Security | Scripts, embeds, and unsafe tags are stripped or blocked |
+| Content integrity | Platforms reject layout tricks that break consistency |
+| Portability | Minimal renderers simply do not support richer HTML behavior |
+| Product simplicity | Some editors and viewers intentionally ignore complex raw HTML |
+
+That means "it got removed" is often the platform working exactly as designed.
+
+## A safer authoring policy
+
+If Markdown is the canonical source, a safer policy is:
+
+1. prefer standard Markdown first;
+2. allow raw HTML only for documented exceptions;
+3. keep those exceptions small and visible;
+4. test them across the actual render path, not just one editor preview.
+
+This keeps HTML as an exception layer instead of turning the source into fragile pseudo-HTML.
+
+## What portable teams should avoid
+
+Avoid treating raw HTML as the default solution for alignment, layout, responsive embeds, custom classes, font sizing, or design embellishment. Those usually belong in the renderer, the site theme, or the export layer, not the Markdown source.
+
+## The practical decision rule
+
+Use raw HTML in Markdown only when:
+
+- the render path is known;
+- the behavior is documented or repeatable;
+- the source is not expected to move broadly;
+- and the HTML solves a real publishing need, not cosmetic preference alone.
+
+If those conditions are missing, the safer choice is usually simpler Markdown plus a better rendering layer.

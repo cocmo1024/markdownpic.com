@@ -1,0 +1,173 @@
+---
+title: Markdown relative links for READMEs docs and static sites
+description: How relative links behave in Markdown across GitHub READMEs, docs folders, static sites, and export workflows, plus the safest patterns for long-term portability.
+referenceType: guide
+adProfile: guide
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Helps teams decide when relative links are the right Markdown choice, when absolute or root-based links are safer, and how to avoid breaking links across repo, docs, and publishing contexts.
+readerTakeaway: You should leave with a practical linking policy for Markdown that survives repository browsing, docs builds, local notes, and static-site publishing.
+primaryKeyword: markdown relative link
+searchIntent: learn
+decisionStage: solution-aware
+targetRoles:
+  - Developers
+  - Documentation teams
+  - README maintainers
+  - Static site owners
+keyQuestions:
+  - How do relative links in Markdown behave across GitHub, docs folders, and static sites?
+  - When should teams prefer relative links, root-based links, or absolute URLs?
+  - How do you stop Markdown links from breaking when files move between repo and published docs?
+notFor:
+  - Web router configuration unrelated to Markdown source
+  - Teams that only publish one fixed static site and never reuse the source elsewhere
+updateTriggers:
+  - Major GitHub relative-link behavior changes
+  - New static-site linking conventions that materially affect authoring policy
+  - Docs-platform changes that alter relative-path resolution in Markdown files
+---
+
+## Quick answer
+
+Relative links are usually the healthiest default when the Markdown file belongs to a repository- or folder-based content system and should stay portable with nearby files.
+
+They become dangerous when the same source is reused in a static site, copied into a CMS, mirrored into a docs platform, or exported to formats where file-relative context disappears.
+
+The right question is not "Are relative links valid?" It is:
+
+**Which context is canonical for this Markdown file?**
+
+## Why this is a real traffic question
+
+Many Markdown guides answer relative links with one line of syntax. That misses the real problem.
+
+Teams struggle because one Markdown file might need to work in all of these places:
+
+- inside a GitHub README,
+- inside `/docs/` folders in the same repository,
+- inside a static site generator,
+- inside a knowledge base import,
+- and inside copy-paste or export workflows.
+
+The link syntax can be correct and still fail the publishing system.
+
+## The three link models that matter
+
+### 1. Relative file links
+
+Example:
+
+```md
+[Setup guide](../guides/setup.md)
+```
+
+Best when source files move together and repository adjacency is the truth.
+
+### 2. Site-root links
+
+Example:
+
+```md
+[Setup guide](/guides/setup/)
+```
+
+Best when the published site is canonical and the source is authored for that site.
+
+### 3. Absolute URLs
+
+Example:
+
+```md
+[Setup guide](https://example.com/guides/setup/)
+```
+
+Best when the destination must work everywhere, including outside the repository and outside the site build context.
+
+## When relative links are the right answer
+
+Relative links are the best choice when:
+
+- the Markdown file is stored with the linked content,
+- the repository structure is stable,
+- the source should still work in raw Git browsing,
+- and the content is likely to move as a folder, not as isolated copied pages.
+
+This is why relative links are often ideal for READMEs, docs trees, and structured content repositories.
+
+## When relative links become risky
+
+Relative links become fragile when:
+
+- the same source is rendered by a static site that expects site-root URLs,
+- content is imported into tools that flatten folder structure,
+- links need to resolve after Markdown is copied into chat, CMS, or email,
+- or the file may be relocated independently of the pages it links to.
+
+In those cases, relative links are not wrong. They are just not stable enough for the real workflow.
+
+## GitHub versus static-site reality
+
+GitHub is often the first place teams validate relative links, which creates a false sense of safety.
+
+A link that works perfectly in a repository may still be wrong for:
+
+- a static-site route,
+- an extensionless URL pattern,
+- or a docs platform that no longer serves `.md` paths directly.
+
+This is why teams need a publishing policy, not just syntax knowledge.
+
+## The safest rule for long-term systems
+
+Choose one canonical truth:
+
+- **Repository truth:** use relative links in source, then transform if necessary in publishing.
+- **Published-site truth:** use site-root links if the Markdown is authored specifically for the site.
+- **Cross-channel truth:** use absolute URLs when the content will leave its home renderer often.
+
+Most portability failures happen when teams mix all three models without saying which one is authoritative.
+
+## A practical policy that works
+
+For many teams, the cleanest rule is:
+
+- use relative links inside repository-native docs and READMEs,
+- use site-root links in site-authored content that will not be reused raw,
+- use absolute URLs only for external references or truly channel-independent destinations,
+- and never force one file to satisfy every environment without a conversion layer.
+
+That policy keeps authoring predictable.
+
+## What to test before standardizing
+
+Before locking in link policy, test these paths:
+
+1. GitHub repository rendering
+2. local editor preview
+3. static site build
+4. published production URLs
+5. copied or exported content where context may be lost
+
+If one of those paths is mission-critical, it should drive the policy.
+
+## The common mistake
+
+The common mistake is optimizing link style for the easiest current renderer instead of the long-term content system.
+
+That creates:
+
+- broken docs migrations,
+- brittle README moves,
+- hard-coded site assumptions in reusable Markdown,
+- or constant cleanup work every time files are reorganized.
+
+Link policy should reduce operational debt, not create it.
+
+## Compare next
+
+- [Markdown links: inline, reference, and autolinks](/syntax/markdown-links-inline-vs-reference-and-autolinks/)
+- [Markdown wiki links vs standard links](/syntax/markdown-wiki-links-vs-standard-links/)
+- [Markdown portability between GitHub, Notion, Obsidian, and static sites](/fundamentals/markdown-portability-between-github-notion-obsidian-and-static-sites/)
+- [GitHub README Markdown vs docs-site Markdown: what breaks](/guides/github-readme-markdown-vs-docs-site-markdown-what-breaks/)

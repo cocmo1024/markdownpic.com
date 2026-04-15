@@ -1,0 +1,143 @@
+---
+title: Markdown table rowspan and colspan why HTML is required
+description: Why standard Markdown tables do not support rowspan or colspan, when raw HTML tables are the only correct answer, and how to avoid breaking portability.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Explains why Markdown table syntax cannot merge rows or columns, what HTML fallback is actually required, and how to decide whether the portability cost is acceptable.
+readerTakeaway: You should leave with a clear rule for when pipe tables are still enough, when HTML tables are unavoidable, and how to keep merged-cell layouts from polluting otherwise portable Markdown.
+primaryKeyword: markdown colspan
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Technical writers
+  - Developers
+  - Documentation teams
+  - Markdown learners
+keyQuestions:
+  - Does Markdown support rowspan or colspan?
+  - Why do merged cells require HTML instead of normal pipe-table syntax?
+  - How should teams handle merged-cell layouts without damaging portability everywhere else?
+notFor:
+  - Spreadsheet software users looking for editor-specific merge commands
+  - Teams that control one HTML-only publishing surface and do not care about Markdown portability
+updateTriggers:
+  - Material changes in CommonMark or GFM table support
+  - Major renderer changes that introduce safer merged-cell workflows
+  - New docs-platform patterns that normalize HTML table fallbacks differently
+---
+
+## Quick answer
+
+Standard Markdown tables do **not** support `rowspan` or `colspan`.
+
+If a table truly needs merged cells, the correct answer is usually to switch from pipe-table syntax to an HTML table. That works because merged cells are an HTML table feature, not a Markdown table feature.
+
+The practical cost is portability. Once you move into HTML tables, you are depending on renderer support, sanitization rules, CSS defaults, export behavior, and authoring discipline that plain Markdown tables usually avoid.
+
+## The boundary checked April 15, 2026
+
+The standards boundary is straightforward:
+
+| Source | Current signal | What it means |
+| --- | --- | --- |
+| [CommonMark 0.31.2](https://spec.commonmark.org/0.31.2/) | Core CommonMark does not define pipe-table syntax as part of the base spec | Merged cells are far outside core Markdown expectations |
+| [GitHub Flavored Markdown spec](https://github.github.com/gfm/) | GFM tables support header and cell layout in pipe syntax, but not merged rows or columns | A normal Markdown table cannot express rowspan or colspan |
+| [GitHub Docs](https://docs.github.com/en/get-started/writing-on-github) | GitHub teaches basic Markdown table syntax, not merged-cell table semantics | If you need merged cells, you have already crossed into HTML territory |
+
+This is why people keep searching for "markdown colspan" or "markdown rowspan" and end up confused. The syntax they want belongs to HTML, not Markdown.
+
+## Why Markdown tables stop early
+
+Pipe tables are intentionally simple. They are good at:
+
+- simple header rows,
+- regular rectangular data,
+- quick comparison tables,
+- and source that remains readable in plain text.
+
+They are poor at:
+
+- layout-heavy comparison charts,
+- grouped headers with merged cells,
+- multi-row category labels,
+- and tables that are trying to behave like a spreadsheet or magazine layout.
+
+That limitation is not a bug. It is one of the reasons pipe tables remain readable as source.
+
+## The correct fallback
+
+If merged cells are truly required, use HTML directly:
+
+```html
+<table>
+  <tr>
+    <th rowspan="2">Category</th>
+    <th colspan="2">Output</th>
+  </tr>
+  <tr>
+    <th>Portable</th>
+    <th>Renderer-specific</th>
+  </tr>
+  <tr>
+    <td>Tables</td>
+    <td>Pipe table</td>
+    <td>HTML table with merged cells</td>
+  </tr>
+</table>
+```
+
+That is more honest than pretending Markdown can express the same structure.
+
+## When HTML tables are justified
+
+HTML tables are justified when:
+
+- the merged structure carries real meaning,
+- grouped headers materially improve comprehension,
+- the publishing surface is controlled and known,
+- and the organization accepts a less portable source format in exchange for better output.
+
+This is common in technical comparison matrices, standard mappings, and docs pages where merged headers carry the logic of the table.
+
+## When HTML tables are not worth it
+
+Switching to HTML is usually a bad trade when:
+
+- the merge is mostly cosmetic,
+- the same information can be expressed with repeated labels,
+- the content must survive GitHub, docs exports, CMS reuse, and image capture,
+- or the authoring team needs source files to stay simple for non-HTML-heavy contributors.
+
+In those cases, repeated labels often beat clever layout.
+
+## The better portability move
+
+If the real goal is portability, use one of these instead:
+
+- repeat the category label instead of merging it,
+- split one complex table into two smaller tables,
+- convert layout intent into headings plus smaller tables,
+- or move commentary out of the table and back into prose.
+
+The real question is not "How do I hack colspan into Markdown?" It is whether you want portable source or richer layout.
+
+## Implementation rule for teams
+
+A good team rule is:
+
+- use pipe tables for canonical Markdown,
+- allow HTML tables only when merged cells materially improve comprehension,
+- document which renderers are expected to preserve the HTML,
+- and test export paths before relying on the result.
+
+That rule stops table markup from slowly turning the whole content system into hidden HTML.
+
+## Compare next
+
+- [HTML tables vs pipe tables for portable Markdown](/guides/html-tables-vs-pipe-tables-for-portable-markdown/)
+- [Markdown table alignment and column formatting that survives export](/syntax/markdown-table-alignment-and-column-formatting-that-survives-export/)
+- [Markdown tables that survive mobile, PDF, and image export](/syntax/markdown-tables-that-survive-mobile-pdf-and-image-export/)
+- [HTML in Markdown: when to use it and when it becomes debt](/fundamentals/html-in-markdown-when-to-use-it-and-when-it-becomes-debt/)

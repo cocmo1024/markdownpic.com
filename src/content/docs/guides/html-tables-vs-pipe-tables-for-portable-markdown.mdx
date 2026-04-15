@@ -1,0 +1,139 @@
+---
+title: HTML tables vs pipe tables for portable Markdown
+description: When Markdown pipe tables are enough, when HTML tables are justified, and how to keep table-heavy content portable across GitHub, docs sites, export, and screenshots.
+referenceType: guide
+adProfile: guide
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Helps authors decide whether a table should stay in plain Markdown or move to HTML, especially when portability, merged cells, export behavior, and layout pressure conflict.
+readerTakeaway: You should leave with a practical decision rule for choosing pipe tables or HTML tables without quietly damaging portability across the rest of the Markdown system.
+primaryKeyword: markdown table vs html table
+searchIntent: compare
+decisionStage: solution-aware
+targetRoles:
+  - Technical writers
+  - Documentation teams
+  - Developers
+  - Content system owners
+keyQuestions:
+  - When should a team keep a table in plain Markdown instead of switching to HTML?
+  - What portability cost comes with HTML tables in Markdown files?
+  - How do export, screenshots, and docs pipelines change the right table choice?
+notFor:
+  - Pure HTML authors not maintaining Markdown source
+  - Spreadsheet formatting questions unrelated to Markdown publishing
+updateTriggers:
+  - Material GFM or docs-platform table behavior changes
+  - Renderer changes that improve or weaken HTML table support in Markdown
+  - New export workflows that alter how tables survive PDF or image generation
+---
+
+## Quick answer
+
+Use pipe tables when the content is structurally simple and portability matters.
+
+Use HTML tables when the layout itself carries meaning and pipe-table syntax cannot express it without distortion.
+
+The mistake is not choosing HTML. The mistake is choosing HTML casually and then forgetting that portability, sanitization, export, and maintenance rules all changed.
+
+## Why this comparison matters
+
+Tables are one of the first places where people try to force Markdown into layout work it was not designed to do.
+
+That pressure shows up when authors want:
+
+- merged headers,
+- grouped rows,
+- precise alignment,
+- captions,
+- width control,
+- or export behavior that looks identical everywhere.
+
+Pipe tables are good at simple structure. HTML tables are better at complex structure. The tradeoff is source portability and maintenance cost.
+
+## Pipe tables are better when structure is simple
+
+Pipe tables win when:
+
+- the table is rectangular,
+- headers are simple,
+- the content should remain readable in raw Markdown,
+- the same source needs to survive multiple renderers,
+- or the table may be copied into tools with limited HTML support.
+
+That covers a large percentage of documentation tables.
+
+## HTML tables are better when layout is doing real work
+
+HTML tables win when:
+
+- `rowspan` or `colspan` are truly necessary,
+- grouped headers matter to comprehension,
+- cells need nested structure that pipe tables cannot express safely,
+- or the rendered output is more important than raw Markdown readability.
+
+If the table is carrying real semantic grouping, HTML can be the correct choice.
+
+## The portability tax of HTML tables
+
+The tax is not only syntax complexity. It includes:
+
+- renderer sanitization,
+- CSS and theme dependency,
+- email and PDF export differences,
+- image-generation quirks,
+- and a higher chance that future contributors will edit the source incorrectly.
+
+A pipe table usually fails visibly but predictably. An HTML table may fail later, in a different environment, after the author assumed the problem was solved.
+
+## The most reliable decision rule
+
+Ask four questions:
+
+1. Can repeated labels or a second table solve the layout need?
+2. Does the table need merged cells or only nicer formatting?
+3. Will the source travel across GitHub, docs, export, and screenshots?
+4. Who will maintain the source six months from now?
+
+If the answer to the first question is yes, keep the table in Markdown more often than not.
+
+## What export-safe authoring usually prefers
+
+For export-heavy workflows, simpler Markdown often wins.
+
+Why:
+
+- pipe tables are easier to normalize,
+- table width problems are easier to anticipate,
+- and the output degradation is usually less surprising than HTML table sanitization or style drift.
+
+This matters for PDF, email, screenshot, and Markdown-to-image workflows.
+
+## A good operational compromise
+
+Many teams do best with this rule:
+
+- pipe tables by default,
+- HTML tables only when merged structure or richer semantics clearly improve understanding,
+- and any HTML table must be tested in the real output paths, not just the local renderer.
+
+This prevents every table from becoming a design debate.
+
+## Where this intersects with search intent
+
+People do not search "markdown vs html tables" because they love syntax theory. They search it because:
+
+- a table broke,
+- merged cells are needed,
+- export is ugly,
+- or the current docs pipeline cannot represent the information cleanly.
+
+That is why the right answer is usually an authoring policy, not just one code sample.
+
+## Compare next
+
+- [Markdown table rowspan and colspan: why HTML is required](/syntax/markdown-table-rowspan-and-colspan-why-html-is-required/)
+- [Markdown table alignment and column formatting that survives export](/syntax/markdown-table-alignment-and-column-formatting-that-survives-export/)
+- [Markdown tables that survive mobile, PDF, and image export](/syntax/markdown-tables-that-survive-mobile-pdf-and-image-export/)
+- [HTML in Markdown: when to use it and when it becomes debt](/fundamentals/html-in-markdown-when-to-use-it-and-when-it-becomes-debt/)

@@ -1,0 +1,141 @@
+---
+title: Can Markdown change font size?
+description: Why standard Markdown does not include font-size controls, when HTML is the right fallback, and how to keep source files portable when presentation still matters.
+referenceType: faq
+adProfile: faq
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Answers the common question about changing font size in Markdown without confusing renderer tricks for portable Markdown syntax.
+readerTakeaway: You should leave knowing that font size is not standard Markdown syntax and where that control should live instead.
+primaryKeyword: can markdown change font size
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Technical writers
+  - Documentation teams
+  - Developers
+keyQuestions:
+  - Does standard Markdown have a font-size syntax?
+  - When is HTML inside Markdown justified for text sizing?
+  - Where should teams handle typography if the file must stay portable?
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Can Markdown change font size?
+
+## Quick answer
+
+No. **Standard Markdown does not have a native font-size syntax.**
+
+If text size must change, the solution usually lives in one of these layers:
+
+- HTML inside Markdown,
+- CSS or theme styling,
+- a renderer-specific extension,
+- or a downstream export tool.
+
+That means "change font size in Markdown" is really a Markdown-versus-presentation question.
+
+## Why this confuses so many people
+
+Markdown looks simple enough that people expect it to include common text-formatting controls such as:
+
+- font size,
+- alignment,
+- color,
+- and columns.
+
+But Markdown was designed for readable structure, not detailed typography. It handles headings, emphasis, links, images, code, and lists well. It does not aim to be a layout language.
+
+## What standard Markdown can do instead
+
+If the goal is visual hierarchy, Markdown already gives you:
+
+- headings,
+- paragraphs,
+- lists,
+- blockquotes,
+- and code formatting.
+
+Often the healthiest fix is not custom font size at all. It is choosing the right structural element and letting the renderer style it.
+
+## When HTML is the fallback
+
+If the target renderer allows inline HTML, authors sometimes use a tag like this:
+
+```html
+<span style="font-size: 1.125rem;">Important note</span>
+```
+
+That may work in one environment, but it creates tradeoffs:
+
+- portability drops,
+- sanitizing renderers may strip the style,
+- and the source file becomes more presentation-specific.
+
+This is why HTML should be a narrow escape hatch, not the default authoring model.
+
+## The better long-term rule
+
+If the file needs to travel across:
+
+- GitHub,
+- docs sites,
+- CMS fields,
+- chat tools,
+- email,
+- or visual export pipelines,
+
+then font-size control should usually live **outside** the Markdown source.
+
+That keeps the file readable, reusable, and easier to transform later.
+
+## Where font size should live instead
+
+In a healthier system:
+
+- Markdown carries the content and structure,
+- CSS or templates handle typography,
+- and image or PDF workflows handle visual packaging after the source is written.
+
+This is the same reason Markdown remains useful at scale: it works best as canonical content, not as hand-built page layout.
+
+## Use this rule
+
+If the text needs semantic hierarchy, use Markdown structure.
+
+If the text needs visual styling, use the renderer or export layer.
+
+Only use inline HTML when:
+
+- the target renderer is known,
+- the style is necessary,
+- and portability is not the top priority.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Markdown underline, center, and font size"
+		href="/syntax/markdown-underline-center-and-font-size-when-html-is-required/"
+		description="Use the deeper syntax page when you need the full Markdown-versus-HTML boundary for text styling."
+	/>
+	<LinkCard
+		title="HTML in Markdown: when to use it and when it becomes debt"
+		href="/fundamentals/html-in-markdown-when-to-use-it-and-when-it-becomes-debt/"
+		description="Use this page when inline HTML is starting to spread through the source layer."
+	/>
+	<LinkCard
+		title="Markdown text color, highlight, and callouts"
+		href="/syntax/markdown-text-color-highlight-and-callouts-what-is-portable/"
+		description="Use this page when the real need is broader text styling rather than size alone."
+	/>
+	<LinkCard
+		title="Markdown to image workflows"
+		href="/guides/markdown-to-image-workflows-for-docs-social-and-ai-content/"
+		description="Use this page when the output must become a visual asset instead of a portable Markdown source file."
+	/>
+</div>

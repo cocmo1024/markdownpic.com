@@ -1,0 +1,140 @@
+---
+title: Can Markdown center text or images?
+description: Why standard Markdown does not include centering controls, what usually works with HTML, and how to handle alignment without turning source files into layout hacks.
+referenceType: faq
+adProfile: faq
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Explains whether Markdown can center text or images and shows where alignment belongs when portability still matters.
+readerTakeaway: You should leave knowing that centering is not standard Markdown syntax and when HTML, CSS, or visual export workflows are the right answer.
+primaryKeyword: can markdown center text
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Documentation teams
+  - Technical writers
+  - Developers
+keyQuestions:
+  - Can standard Markdown center content?
+  - Is centering text different from centering images in practice?
+  - When should teams move alignment into the renderer instead of the Markdown source?
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Can Markdown center text or images?
+
+## Quick answer
+
+No. **Standard Markdown has no built-in centering syntax** for text or images.
+
+If you need centering, the solution usually comes from:
+
+- inline HTML,
+- CSS or theme styling,
+- renderer-specific support,
+- or a downstream visual layout workflow.
+
+So the honest answer is not "Markdown can do this." It is "your renderer might let HTML or styling do this around Markdown."
+
+## Why this keeps coming up
+
+Centering feels basic in document editing tools, so people expect Markdown to support it natively.
+
+But Markdown is intentionally narrow. It describes structure and a small set of inline conventions. Alignment is presentation logic.
+
+That is why two files with the same Markdown can end up centered in one system and left-aligned in another: the renderer is in charge.
+
+## Text centering versus image centering
+
+They are related but not identical.
+
+For **text**, people often want centered hero lines, disclaimers, or decorative headings.
+
+For **images**, they often want:
+
+- a centered logo,
+- a centered diagram,
+- or a cleaner visual block inside a document or page.
+
+Neither case is solved by standard Markdown syntax alone.
+
+## When HTML is the common fallback
+
+Authors often reach for patterns like:
+
+```html
+<p align="center">Centered text</p>
+```
+
+or:
+
+```html
+<p align="center">
+  <img src="./diagram.png" alt="Diagram" width="640" />
+</p>
+```
+
+These can work in some renderers, but the portability costs are real:
+
+- sanitization may strip attributes,
+- strict renderers may not respect the layout,
+- and the Markdown file becomes tied to presentation behavior.
+
+## The healthier rule
+
+If the content must remain portable, keep the Markdown source simple and move alignment into:
+
+- site styles,
+- template components,
+- or the export layer.
+
+That produces cleaner source files and more predictable output.
+
+## When centering in source is acceptable
+
+Use inline HTML only when:
+
+- the target renderer is known,
+- the design requirement is specific,
+- and you accept that the file is no longer purely portable Markdown.
+
+That can be reasonable for a tightly controlled docs site or one-off publishing path. It is weaker for reusable content that will travel.
+
+## When to stop fighting Markdown
+
+If the output needs:
+
+- precise placement,
+- side-by-side layout,
+- repeated brand styling,
+- or social-ready composition,
+
+then the real solution is not "more Markdown tricks." It is a renderer, template, or visual export workflow that owns layout deliberately.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Markdown underline, center, and font size"
+		href="/syntax/markdown-underline-center-and-font-size-when-html-is-required/"
+		description="Use the full syntax page when the centering question belongs at the Markdown-versus-HTML boundary."
+	/>
+	<LinkCard
+		title="Markdown image size and resizing"
+		href="/syntax/markdown-image-size-and-resizing-when-markdown-is-not-enough/"
+		description="Use this page when the image problem includes width and responsive behavior, not only alignment."
+	/>
+	<LinkCard
+		title="HTML in Markdown"
+		href="/fundamentals/html-in-markdown-when-to-use-it-and-when-it-becomes-debt/"
+		description="Use this page when the source file is taking on more layout behavior than it should."
+	/>
+	<LinkCard
+		title="Markdown to image workflows"
+		href="/guides/markdown-to-image-workflows-for-docs-social-and-ai-content/"
+		description="Use this page when the end product is a visual asset and layout quality matters more than portable source markup."
+	/>
+</div>

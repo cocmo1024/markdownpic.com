@@ -1,0 +1,135 @@
+---
+title: Can Markdown create columns or side-by-side layouts?
+description: Why standard Markdown cannot create portable columns, when HTML or CSS is required, and why tables are usually the wrong workaround for visual layout.
+referenceType: faq
+adProfile: faq
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Answers whether Markdown can create columns or side-by-side layouts and gives a practical rule for when layout should move out of the Markdown source.
+readerTakeaway: You should leave knowing that columns are not a standard Markdown feature and when HTML, templates, or visual outputs are the right layer.
+primaryKeyword: can markdown create columns
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Documentation teams
+  - Developers
+  - Content operators
+keyQuestions:
+  - Can standard Markdown do multi-column layout?
+  - Are tables a good workaround for side-by-side content?
+  - When should layout live in the renderer instead of the Markdown file?
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Can Markdown create columns or side-by-side layouts?
+
+## Quick answer
+
+No. **Standard Markdown does not support columns or side-by-side layout.**
+
+If you need two-column or grid-style presentation, you usually need:
+
+- HTML,
+- CSS,
+- a docs or site component,
+- or a visual export workflow.
+
+Markdown is built for linear content flow. Columns belong to the presentation layer.
+
+## Why this is a hard boundary
+
+Markdown handles content in a top-to-bottom stream:
+
+- headings,
+- paragraphs,
+- lists,
+- images,
+- code,
+- and tables.
+
+It does not define grid systems, sidebars, flex layouts, or reusable layout regions. Those are page-layout concerns, not markup concerns.
+
+## Are tables a workaround?
+
+Sometimes people try to use tables to fake columns.
+
+That may look acceptable in one renderer, but it is usually the wrong abstraction because tables are for **tabular data**, not visual layout.
+
+Using tables for side-by-side layout often creates:
+
+- poor mobile behavior,
+- export problems,
+- accessibility confusion,
+- and harder source reuse later.
+
+If the content is not actually a table, the table workaround usually becomes debt.
+
+## When HTML is appropriate
+
+If the renderer is controlled and portability is secondary, HTML containers may be reasonable.
+
+For example, a docs site might support custom blocks or CSS classes that let two sections sit side by side.
+
+That is not Markdown doing columns. It is the surrounding rendering system doing layout.
+
+## The better production rule
+
+Use Markdown for content structure.
+
+Use the site, template, or export system for layout.
+
+That separation keeps:
+
+- source files readable,
+- content easier to repurpose,
+- and design easier to change globally.
+
+## Where columns make sense instead
+
+If side-by-side layout truly matters, prefer one of these:
+
+- a docs-site component,
+- a theme or template partial,
+- CSS in a known rendering environment,
+- or a Markdown-to-image workflow when the final output is visual rather than source-oriented.
+
+All of these are better than forcing grid behavior into Markdown files.
+
+## When to keep the source linear
+
+Many times the right fix is simply to keep the Markdown linear and let the renderer reflow content for:
+
+- desktop,
+- mobile,
+- PDF,
+- and image export.
+
+This is especially important if the same Markdown will travel across several systems.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="HTML in Markdown"
+		href="/fundamentals/html-in-markdown-when-to-use-it-and-when-it-becomes-debt/"
+		description="Use this page when HTML layout blocks are starting to creep into Markdown source files."
+	/>
+	<LinkCard
+		title="HTML tables vs pipe tables"
+		href="/guides/html-tables-vs-pipe-tables-for-portable-markdown/"
+		description="Use this page when tables are part of the real content and the question is about portability rather than fake layout."
+	/>
+	<LinkCard
+		title="Markdown tables that survive mobile, PDF, and image export"
+		href="/syntax/markdown-tables-that-survive-mobile-pdf-and-image-export/"
+		description="Use this page when the table itself is valid but different output channels keep breaking the presentation."
+	/>
+	<LinkCard
+		title="Markdown to image workflows"
+		href="/guides/markdown-to-image-workflows-for-docs-social-and-ai-content/"
+		description="Use this page when the deliverable is a visual asset and layout matters more than portable Markdown source."
+	/>
+</div>

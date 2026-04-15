@@ -1,0 +1,158 @@
+---
+title: Why is my Markdown table not rendering?
+description: The most common reasons Markdown tables fail to render, including unsupported table syntax, broken separator rows, inconsistent pipes, and output formats that do not support the same table behavior.
+referenceType: faq
+adProfile: faq
+commercialIntent: high
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Helps authors debug broken Markdown tables by separating syntax mistakes from renderer limitations and export behavior.
+readerTakeaway: You should leave with a practical troubleshooting path for Markdown tables and a clearer sense of when the problem is the syntax versus the renderer.
+primaryKeyword: why is my markdown table not rendering
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Developers
+  - Technical writers
+  - Documentation teams
+keyQuestions:
+  - What syntax mistakes break Markdown tables most often?
+  - Which renderers do not support pipe tables the same way?
+  - When is the table problem really an export or layout problem instead of invalid Markdown?
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Why is my Markdown table not rendering?
+
+## Quick answer
+
+Markdown tables usually fail for one of five reasons:
+
+1. the renderer does not support pipe tables,
+2. the separator row is invalid,
+3. the column count is inconsistent,
+4. the table is indented or trapped inside another block,
+5. or the output channel handles tables differently from the editor where you wrote them.
+
+So the fix is not always "repair the Markdown." Sometimes the renderer is the real boundary.
+
+## First check: does the renderer support tables at all?
+
+Pipe tables are common, but they are not universal in the same way as headings or lists.
+
+Many systems support GitHub-style tables. Some do not. Others support them in HTML output but not in email, chat, or visual export paths.
+
+If the table looks fine in one editor and disappears somewhere else, start by questioning the renderer before rewriting the source.
+
+## Second check: is the separator row valid?
+
+A valid pipe table normally needs a header row and a separator row such as:
+
+```md
+| Name | Role |
+| --- | --- |
+| Maya | Editor |
+```
+
+Common failures include:
+
+- missing dashes,
+- too few separator cells,
+- broken spacing that changes column count,
+- or mixing decorative formatting into the separator line.
+
+## Third check: do all rows have the same number of cells?
+
+Tables fail or render strangely when one row has fewer or more cells than the header implies.
+
+This often happens when:
+
+- a pipe inside the content was not escaped,
+- a row was copied from somewhere else,
+- or a long sentence accidentally introduced an extra column break.
+
+If the structure feels unstable, inspect the literal pipe count row by row.
+
+## Fourth check: is the table inside another block?
+
+Tables often break when they are placed inside:
+
+- code fences,
+- indented blocks,
+- blockquotes with inconsistent spacing,
+- or nested list structures that the renderer handles differently.
+
+Sometimes the Markdown is valid but the table is being parsed as plain text because its surrounding context changed.
+
+## Fifth check: is the problem really output-specific?
+
+A table can render acceptably on the web and still become unusable in:
+
+- mobile view,
+- PDF export,
+- screenshot workflows,
+- or narrow content containers.
+
+That is not always a syntax failure. It may be a layout failure after parsing succeeded.
+
+## The safest troubleshooting order
+
+Use this sequence:
+
+1. confirm the renderer supports pipe tables,
+2. check the header and separator row,
+3. check column counts,
+4. escape pipes inside cell content,
+5. test the table outside nested blocks,
+6. then inspect the target output channel.
+
+This catches most table failures quickly.
+
+## When the table should not be a table
+
+Sometimes the real problem is that authors are using tables for:
+
+- visual layout,
+- column-based design,
+- comparison cards,
+- or side-by-side prose.
+
+Those cases are fragile even when the syntax renders, because Markdown tables are not general layout tools.
+
+## When to switch to HTML or another layer
+
+If the real need is:
+
+- merged cells,
+- precise width control,
+- responsive behavior,
+- or polished visual presentation,
+
+then the fix may be HTML, CSS, or a renderer-specific component rather than "better Markdown."
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Markdown table alignment and column formatting"
+		href="/syntax/markdown-table-alignment-and-column-formatting-that-survives-export/"
+		description="Use this page when the table renders but alignment and formatting keep drifting across outputs."
+	/>
+	<LinkCard
+		title="Markdown tables that survive mobile, PDF, and image export"
+		href="/syntax/markdown-tables-that-survive-mobile-pdf-and-image-export/"
+		description="Use this page when the table parses correctly but downstream outputs still break the reading experience."
+	/>
+	<LinkCard
+		title="Markdown table rowspan and colspan"
+		href="/syntax/markdown-table-rowspan-and-colspan-why-html-is-required/"
+		description="Use this page when the table problem is actually a merged-cell requirement that Markdown does not solve."
+	/>
+	<LinkCard
+		title="CommonMark vs GFM vs renderer differences"
+		href="/fundamentals/commonmark-vs-gfm-vs-renderer-differences/"
+		description="Use this page when the core issue is whether the target system supports GitHub-style table behavior at all."
+	/>
+</div>

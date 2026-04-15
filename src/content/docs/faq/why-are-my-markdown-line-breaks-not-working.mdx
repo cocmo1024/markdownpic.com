@@ -1,0 +1,130 @@
+---
+title: Why are my Markdown line breaks not working?
+description: Why Markdown line breaks often fail across renderers, what soft and hard breaks really mean, and how to write paragraphs that survive copy, export, and publishing.
+referenceType: faq
+adProfile: faq
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Helps authors debug missing or inconsistent Markdown line breaks by separating source formatting from visible rendered output.
+readerTakeaway: You should leave knowing why line breaks behave differently across Markdown systems and how to write text that stays readable when newline handling changes.
+primaryKeyword: why are my markdown line breaks not working
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Technical writers
+  - Developers
+  - Documentation teams
+keyQuestions:
+  - Why does a single newline not always create a visible line break?
+  - What is the difference between soft breaks and hard breaks?
+  - How should writers structure paragraphs when the Markdown will travel across platforms?
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Why are my Markdown line breaks not working?
+
+## Quick answer
+
+Markdown line breaks often fail because a single newline in the source is usually **not** the same thing as a visible line break in the output.
+
+What you see depends on:
+
+- whether the renderer treats the newline as a soft break or hard break,
+- whether explicit hard-break syntax was used,
+- and whether the content later moved into a different publishing or export system.
+
+That is why the same text can look correct in one tool and collapse into one paragraph somewhere else.
+
+## The root of the confusion
+
+Many people write Markdown the way they write plain text notes:
+
+- one thought per line,
+- short wrapped lines,
+- or copied paragraphs with manual newlines.
+
+But Markdown renderers often treat those newlines as source formatting, not as display formatting.
+
+## Soft breaks versus hard breaks
+
+A **soft break** is usually just a newline inside a paragraph.
+
+A **hard break** is an intentional visible line break in the rendered output.
+
+The problem is that many authors expect soft breaks to behave like hard breaks everywhere, which they do not.
+
+## Why the break seems to disappear
+
+Line breaks usually "stop working" because:
+
+1. the renderer collapses single newlines into one paragraph,
+2. the hard-break syntax was not used,
+3. trailing spaces were removed,
+4. copy-paste changed the source,
+5. or the target output handles paragraphs differently.
+
+The rendered result may still be valid Markdown. It is just not the output the writer expected.
+
+## The safest writing rule
+
+If the visible break matters, do not rely on casual source wrapping.
+
+Instead:
+
+- write proper paragraphs,
+- use explicit hard-break syntax only when necessary,
+- and test the exact renderer if the formatting is important.
+
+This is much more stable than assuming all Markdown tools display newlines the same way.
+
+## Why portability makes this worse
+
+Line breaks often break first when Markdown moves across:
+
+- GitHub,
+- docs sites,
+- CMSs,
+- email,
+- PDF export,
+- or image-generation workflows.
+
+That is because newline handling is one of the easiest places for renderer behavior to drift.
+
+## What to do instead of fighting newlines
+
+In most cases, the healthiest move is:
+
+- structure prose into real paragraphs,
+- use lists for list-like content,
+- use blockquotes for quoted material,
+- and reserve explicit hard breaks for the cases where the line break truly changes meaning.
+
+That gives the content a better chance of surviving reuse and export.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Markdown soft breaks vs hard breaks"
+		href="/syntax/markdown-soft-breaks-vs-hard-breaks-across-renderers/"
+		description="Use this page for the full renderer-level explanation behind newline behavior."
+	/>
+	<LinkCard
+		title="Markdown blockquotes, paragraphs, and line breaks"
+		href="/syntax/markdown-blockquotes-line-breaks-and-paragraphs/"
+		description="Use this page when the issue may be paragraph structure rather than line-break syntax alone."
+	/>
+	<LinkCard
+		title="Export-safe Markdown authoring"
+		href="/guides/export-safe-markdown-authoring-for-pdf-email-and-social/"
+		description="Use this page when line breaks keep changing after export into other channels."
+	/>
+	<LinkCard
+		title="Copy-paste-safe Markdown"
+		href="/guides/copy-paste-safe-markdown-for-chat-docs-and-cms/"
+		description="Use this page when copy-paste workflows keep damaging the intended paragraph structure."
+	/>
+</div>

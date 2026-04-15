@@ -1,0 +1,144 @@
+---
+title: Why is my Markdown image not showing?
+description: The most common reasons Markdown images fail to appear, including broken paths, unsupported local files, publishing differences, remote-host issues, and output channels that handle images differently.
+referenceType: faq
+adProfile: faq
+commercialIntent: high
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Helps authors debug missing Markdown images by separating source syntax from file-path, hosting, and rendering issues.
+readerTakeaway: You should leave with a practical troubleshooting path for missing Markdown images and a clearer sense of when the problem is local paths versus rendering and publishing behavior.
+primaryKeyword: why is my markdown image not showing
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Developers
+  - Technical writers
+  - Blog operators
+keyQuestions:
+  - What breaks Markdown images most often?
+  - Why do local images work in one tool but fail somewhere else?
+  - When is the issue really a publishing or hosting problem?
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Why is my Markdown image not showing?
+
+## Quick answer
+
+Markdown images usually fail because:
+
+1. the file path is wrong,
+2. the renderer cannot access the local file,
+3. the image URL is blocked or broken,
+4. the publishing system changed the path context,
+5. or the output channel handles images differently from the editor where you wrote them.
+
+So the fix is often not the image syntax itself. It is usually the path or delivery layer.
+
+## First check: is the syntax correct?
+
+A standard Markdown image looks like this:
+
+```md
+![Architecture diagram](./images/diagram.png)
+```
+
+If the alt text and path are structured correctly, the next question is not syntax. It is where the renderer is looking for the file.
+
+## Second check: is the path actually valid from this file?
+
+The most common failure is a path problem:
+
+- the file moved,
+- the image folder moved,
+- the relative path was copied from another document,
+- or the Markdown was pasted into a system that no longer has access to the local directory.
+
+If a local image works in one tool and disappears in another, path context is usually the reason.
+
+## Third check: is the renderer allowed to see local files?
+
+Not every Markdown environment resolves local files the same way.
+
+Some systems:
+
+- support repository-relative images,
+- support only hosted images,
+- or ignore local file references once content leaves the original filesystem.
+
+This is why an image can appear inside one notes app and disappear in a CMS or chat workflow.
+
+## Fourth check: is the remote image actually reachable?
+
+For remote images, the issue may be:
+
+- a broken URL,
+- a private host,
+- hotlink restrictions,
+- mixed-content rules,
+- or a file that was renamed or removed.
+
+If the Markdown syntax looks right but the remote image stays blank, inspect the destination URL directly.
+
+## Fifth check: is the output channel changing the rules?
+
+Images can behave differently in:
+
+- repository previews,
+- docs sites,
+- email,
+- screenshots,
+- PDF export,
+- and Markdown-to-image workflows.
+
+A valid image reference can still fail later because the output channel does not preserve the same path or network assumptions.
+
+## The safest troubleshooting order
+
+Use this sequence:
+
+1. confirm the image syntax,
+2. verify the path from the current file,
+3. confirm the renderer can access local files,
+4. test the remote image URL directly if applicable,
+5. then inspect the publishing or export path.
+
+That catches most image failures quickly.
+
+## The best long-term rule
+
+Choose image paths based on where the Markdown must live:
+
+- local relative paths for repo-native or docs-native content,
+- remote URLs for portable cross-system content,
+- and visual derivatives only after the canonical source is stable.
+
+The image problem often reveals a broader content-system problem.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Markdown image syntax: local vs remote paths"
+		href="/syntax/markdown-image-syntax-local-vs-remote-paths/"
+		description="Use this page when the real choice is where the image should live and how the path should be referenced."
+	/>
+	<LinkCard
+		title="Markdown image size and resizing"
+		href="/syntax/markdown-image-size-and-resizing-when-markdown-is-not-enough/"
+		description="Use this page when the image appears but the remaining problem is presentation rather than visibility."
+	/>
+	<LinkCard
+		title="Markdown image alt text and accessibility basics"
+		href="/syntax/markdown-image-alt-text-and-accessibility-basics/"
+		description="Use this page when the image renders and the next question is how to keep it meaningful and accessible."
+	/>
+	<LinkCard
+		title="Markdown to image workflows"
+		href="/guides/markdown-to-image-workflows-for-docs-social-and-ai-content/"
+		description="Use this page when the deliverable is a visual output and the image behavior changes in export workflows."
+	/>
+</div>

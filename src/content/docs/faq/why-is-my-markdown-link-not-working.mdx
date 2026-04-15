@@ -1,0 +1,145 @@
+---
+title: Why is my Markdown link not working?
+description: The most common reasons Markdown links fail, including bad paths, broken anchors, renderer limits, relative-link mistakes, and HTML behaviors that plain Markdown does not support.
+referenceType: faq
+adProfile: faq
+commercialIntent: high
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Helps authors debug Markdown links by separating syntax mistakes from path, anchor, renderer, and portability issues.
+readerTakeaway: You should leave with a practical troubleshooting order for broken Markdown links and a clearer sense of when the problem is the source versus the destination.
+primaryKeyword: why is my markdown link not working
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Developers
+  - Technical writers
+  - Documentation teams
+keyQuestions:
+  - What breaks Markdown links most often?
+  - Why do relative links work in one place and fail in another?
+  - When is the problem really an anchor or renderer issue rather than bad syntax?
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Why is my Markdown link not working?
+
+## Quick answer
+
+A Markdown link usually fails because of one of these:
+
+1. the path is wrong,
+2. the anchor target changed,
+3. the renderer resolves relative links differently,
+4. the destination exists locally but not after publishing,
+5. or the behavior you want needs HTML instead of plain Markdown.
+
+So the fix is not always "rewrite the link." Often the real problem is where the file moved or how the renderer interprets it.
+
+## First check: is the syntax valid?
+
+A normal Markdown link looks like this:
+
+```md
+[Read the guide](./guide.md)
+```
+
+If the visible text and destination are not paired correctly, the link will fail immediately. This is the easiest problem to catch and usually the least interesting.
+
+## Second check: is the path correct in the current environment?
+
+Many broken links come from path assumptions such as:
+
+- the file moved,
+- the folder structure changed,
+- the Markdown was copied into a CMS,
+- or the published docs route no longer matches the repository path.
+
+Links that work in a repository can break once the same file becomes a docs page or static-site route.
+
+## Third check: is the anchor still valid?
+
+Heading links break when:
+
+- the heading text changed,
+- the renderer generates different anchor slugs,
+- punctuation or casing is handled differently,
+- or the target platform strips custom HTML ids.
+
+If the file exists but the jump target fails, the anchor is usually the problem.
+
+## Fourth check: is the renderer changing relative-link behavior?
+
+Relative links are powerful, but they are not resolved identically everywhere.
+
+A link that works in:
+
+- GitHub,
+- Obsidian,
+- or a local docs folder
+
+may break in a static site, CMS preview, or exported HTML workflow because the destination is interpreted from a different base path.
+
+## Fifth check: are you expecting behavior Markdown does not define?
+
+Sometimes the "broken link" is actually a behavior mismatch.
+
+Examples:
+
+- opening in a new tab,
+- adding custom classes,
+- attaching `rel` attributes,
+- or wrapping richer custom markup.
+
+Those usually require HTML or a publishing-layer solution, not plain Markdown link syntax.
+
+## The safest troubleshooting order
+
+Use this sequence:
+
+1. verify the source syntax,
+2. verify the path from the current file,
+3. test whether the destination exists after publishing,
+4. inspect anchor generation if the page exists but the jump fails,
+5. then decide whether the desired behavior needs HTML instead of Markdown.
+
+That catches most broken-link cases quickly.
+
+## The most common portability mistake
+
+The most common long-term mistake is writing links for one environment and assuming they will survive unchanged in:
+
+- docs sites,
+- blogs,
+- exported HTML,
+- AI ingestion workflows,
+- or Markdown-to-image pipelines.
+
+If the Markdown has to travel, link strategy must be part of the content-system design.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Markdown links: inline, reference, and autolinks"
+		href="/syntax/markdown-links-inline-vs-reference-and-autolinks/"
+		description="Use this page when the issue may still be the underlying Markdown link form."
+	/>
+	<LinkCard
+		title="Markdown links vs HTML links"
+		href="/syntax/markdown-links-vs-html-links-when-to-switch/"
+		description="Use this page when the missing behavior is something plain Markdown links cannot express."
+	/>
+	<LinkCard
+		title="Markdown relative links for READMEs and docs"
+		href="/guides/markdown-relative-links-for-readmes-docs-and-static-sites/"
+		description="Use this page when the link works in one environment but breaks after publishing."
+	/>
+	<LinkCard
+		title="Markdown anchors and heading links that stay stable"
+		href="/syntax/markdown-anchors-and-heading-links-that-stay-stable/"
+		description="Use this page when the destination page loads but the heading jump no longer works."
+	/>
+</div>

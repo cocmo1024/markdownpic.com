@@ -1,0 +1,126 @@
+---
+title: Can Markdown open links in a new tab?
+description: Why standard Markdown links do not include a new-tab option, when HTML is required, and how to think about portability before adding target attributes.
+referenceType: faq
+adProfile: faq
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Answers whether Markdown can open links in a new tab and clarifies when the requirement belongs to HTML or the publishing layer instead of plain Markdown syntax.
+readerTakeaway: You should leave knowing that standard Markdown has no native new-tab syntax and when HTML or the site layer is the right solution.
+primaryKeyword: can markdown open links in a new tab
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Developers
+  - Technical writers
+  - Documentation teams
+keyQuestions:
+  - Does standard Markdown support opening links in a new tab?
+  - When is raw HTML the right fallback?
+  - How does the new-tab requirement affect portability?
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Can Markdown open links in a new tab?
+
+## Quick answer
+
+No. **Standard Markdown does not have a native syntax for opening a link in a new tab.**
+
+If you need that behavior, the solution usually comes from:
+
+- raw HTML with `target="_blank"`,
+- a renderer or docs-site component,
+- or site-level JavaScript or template logic.
+
+This is a behavior issue, not a Markdown syntax feature.
+
+## Why this question keeps appearing
+
+Links are one of the most common things people write in Markdown, so they expect basic browser behavior controls to be part of the same syntax.
+
+But Markdown links are intentionally simple:
+
+```md
+[Visit the docs](https://example.com)
+```
+
+That syntax defines the destination. It does not define browser-window behavior.
+
+## When HTML is the fallback
+
+If the renderer allows raw HTML, the common fallback is:
+
+```html
+<a href="https://example.com" target="_blank" rel="noopener noreferrer">Visit the docs</a>
+```
+
+That can work, but it changes the tradeoff:
+
+- you gain behavior control,
+- you lose some portability,
+- and you rely more heavily on the renderer not stripping or sanitizing the attributes.
+
+## Why portability matters here
+
+If the Markdown file needs to travel across:
+
+- GitHub,
+- docs sites,
+- CMS fields,
+- email,
+- or export workflows,
+
+then HTML attributes may not survive consistently.
+
+That is why "open in new tab" is often better handled by the surrounding site or app instead of by the Markdown file itself.
+
+## The better long-term rule
+
+Use plain Markdown links by default.
+
+Switch to HTML only when:
+
+- the target renderer is known,
+- the new-tab behavior is genuinely necessary,
+- and the file does not need maximum portability.
+
+If the same content must move through several systems, keep the source clean and let the publishing layer own the behavior.
+
+## When not to force it
+
+Do not force new-tab behavior into Markdown just because it is possible somewhere.
+
+In many content systems, the healthier move is:
+
+- keep the Markdown canonical,
+- let the site theme or docs system decide external-link behavior,
+- and avoid embedding browser-specific behavior into reusable source content.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Markdown links vs HTML links"
+		href="/syntax/markdown-links-vs-html-links-when-to-switch/"
+		description="Use this page when the decision is really Markdown portability versus HTML attributes."
+	/>
+	<LinkCard
+		title="Why is my Markdown link not working?"
+		href="/faq/why-is-my-markdown-link-not-working/"
+		description="Use this page when the issue may be path or anchor failure rather than browser-tab behavior."
+	/>
+	<LinkCard
+		title="Markdown links: inline, reference, and autolinks"
+		href="/syntax/markdown-links-inline-vs-reference-and-autolinks/"
+		description="Use this page when the underlying problem is still the core Markdown link syntax."
+	/>
+	<LinkCard
+		title="HTML in Markdown"
+		href="/fundamentals/html-in-markdown-when-to-use-it-and-when-it-becomes-debt/"
+		description="Use this page when the Markdown source is accumulating more HTML behavior than it should."
+	/>
+</div>

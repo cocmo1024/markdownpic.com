@@ -1,0 +1,148 @@
+---
+title: Markdown columns and side by side layouts why CSS or components are required
+description: Why Markdown does not support true columns or side-by-side layout, when HTML or components are required, and how to preserve portability without forcing layout into source.
+referenceType: guide
+adProfile: guide
+commercialIntent: medium
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Explains why Markdown cannot create real columns on its own, what layout systems actually solve the problem, and how teams should decide whether the source should stay portable or become renderer-specific.
+readerTakeaway: You should leave with a clear rule for when Markdown should stay structural, when HTML or components should take over, and how to avoid breaking portability for layout alone.
+primaryKeyword: markdown columns
+searchIntent: learn
+decisionStage: solution-aware
+targetRoles:
+  - Markdown users
+  - Documentation teams
+  - Static site authors
+  - Content system owners
+keyQuestions:
+  - Can Markdown create columns or side-by-side layouts?
+  - Why is side-by-side layout outside normal Markdown syntax?
+  - When should teams use HTML, CSS, or components instead of forcing layout into Markdown?
+notFor:
+  - General CSS layout tutorials unrelated to Markdown source
+  - Visual page builders that do not use Markdown as canonical content
+updateTriggers:
+  - Material changes in Markdown renderer support for layout directives
+  - New docs-platform component patterns that affect Markdown layout practice
+  - Significant shifts in how Markdown-to-HTML systems handle content components
+---
+
+## Quick answer
+
+Markdown does not support true columns or side-by-side layout.
+
+If content must appear in columns, cards, or two-up blocks, the real solution is usually:
+
+- CSS,
+- HTML layout wrappers,
+- or renderer-specific components.
+
+Markdown itself is designed for document structure, not page layout.
+
+## Why people keep searching for this
+
+The request is understandable. Authors want:
+
+- two images next to each other,
+- text beside an image,
+- side-by-side comparison boxes,
+- or multi-column sections in docs and READMEs.
+
+Markdown feels like it should have a simple syntax for that, but it does not. The format intentionally avoids layout-level abstractions.
+
+## What Markdown is good at instead
+
+Markdown is strong at:
+
+- headings,
+- paragraphs,
+- lists,
+- links,
+- images,
+- code blocks,
+- and simple tables.
+
+These are content structures, not layout systems.
+
+As soon as the question becomes "where should this sit on the page?", you are usually outside standard Markdown.
+
+## The common wrong move
+
+The common wrong move is trying to simulate columns with:
+
+- tables used only for layout,
+- manual spacing,
+- repeated empty cells,
+- or fragile HTML snippets copied from random tutorials.
+
+That may appear to work in one renderer, but it usually degrades quickly in portability, responsiveness, export, or maintenance.
+
+## What actually solves the problem
+
+### CSS layout
+
+Best when the site controls the rendering layer and the content should stay mostly structural.
+
+### HTML wrappers
+
+Best when a specific document needs a custom layout and the renderer will preserve raw HTML safely.
+
+### Components or directives
+
+Best when the publishing system already supports richer content primitives and wants them to be reusable.
+
+These are real layout tools. Markdown is not.
+
+## The portability rule
+
+If portability matters, keep layout intent out of canonical Markdown source as much as possible.
+
+That usually means:
+
+- keep Markdown structural,
+- let the renderer style repeated patterns,
+- or wrap special layout needs in controlled components instead of ad hoc HTML.
+
+This preserves the ability to move the content later.
+
+## When HTML is acceptable
+
+HTML is acceptable when:
+
+- the output surface is controlled,
+- the layout need is real,
+- the team accepts weaker portability,
+- and the page is not expected to survive many Markdown environments unchanged.
+
+But once HTML layout wrappers enter the source, the file stops being simple portable Markdown and starts depending on the renderer contract.
+
+## A better decision framework
+
+Ask:
+
+1. Is this a content problem or a layout problem?
+2. Does the same source need to travel across platforms?
+3. Would repeated structural content plus CSS solve this without changing the source?
+4. Is a component better than raw HTML for long-term maintainability?
+
+Those questions usually make the right answer obvious.
+
+## The best team rule
+
+For most Markdown systems:
+
+- plain Markdown for content,
+- CSS for site-wide layout,
+- components for repeated rich blocks,
+- raw HTML only for narrow exceptions.
+
+That rule keeps the source usable and the presentation flexible.
+
+## Compare next
+
+- [HTML in Markdown: when to use it and when it becomes debt](/fundamentals/html-in-markdown-when-to-use-it-and-when-it-becomes-debt/)
+- [HTML tables vs pipe tables for portable Markdown](/guides/html-tables-vs-pipe-tables-for-portable-markdown/)
+- [Can Markdown create columns or side-by-side layouts?](/faq/can-markdown-create-columns-or-side-by-side-layouts/)
+- [Markdown to image workflows for docs, social, and AI content](/guides/markdown-to-image-workflows-for-docs-social-and-ai-content/)

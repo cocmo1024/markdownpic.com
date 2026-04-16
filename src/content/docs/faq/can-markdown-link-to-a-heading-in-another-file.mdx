@@ -1,0 +1,123 @@
+---
+title: Can Markdown link to a heading in another file?
+description: How cross-file heading links work in Markdown, what fragment syntax usually looks like, and why renderer-specific anchor rules make this less portable than it appears.
+referenceType: faq
+adProfile: faq
+commercialIntent: high
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Explains how to link from one Markdown file to a heading in another file without assuming all renderers generate the same anchors or final routes.
+readerTakeaway: You should leave with a safe mental model for cross-file heading links and a clearer sense of when they become brittle across repos, docs sites, and export workflows.
+primaryKeyword: can markdown link to a heading in another file
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Developers
+  - Technical writers
+  - Documentation teams
+keyQuestions:
+  - What syntax is used to link to a heading in another Markdown file?
+  - Why do cross-file heading links fail after publishing?
+  - Are heading fragments portable across renderers?
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Can Markdown link to a heading in another file?
+
+## Quick answer
+
+Yes, often.
+
+A common pattern looks like this:
+
+```md
+[Go to installation](./guide.md#installation)
+```
+
+But that only works reliably when:
+
+- the relative path resolves correctly,
+- the target file keeps that route after publishing,
+- and the renderer generates the heading anchor you expected.
+
+So the syntax is simple. The portability is not.
+
+## What has to work at the same time
+
+A cross-file heading link combines **two** fragile things:
+
+1. a file path,
+2. and a fragment target.
+
+The page may fail because the file path is wrong, the heading slug changed, or both.
+
+## Why these links break so often
+
+Cross-file heading links break when:
+
+- the target heading text changes,
+- the renderer changes slug rules,
+- the file becomes a route like `/guide/` instead of `guide.md`,
+- the docs framework strips or rewrites IDs,
+- or the content moves into a system that no longer respects the original relative path.
+
+That is why these links are powerful but not universally safe.
+
+## The safest way to use them
+
+Use cross-file heading links when:
+
+- the content lives in a controlled docs system,
+- headings are reasonably stable,
+- and the team treats heading changes like link changes that need verification.
+
+If the content is copied frequently across platforms, the links become much more brittle.
+
+## The safest troubleshooting order
+
+Check in this order:
+
+1. does the target file load,
+2. does the target heading still exist,
+3. what slug did the final renderer generate,
+4. did the publish layer rewrite the path,
+5. did duplicate headings or punctuation change the fragment?
+
+That sequence catches most failures quickly.
+
+## When not to rely on them
+
+Do not lean heavily on cross-file heading links when:
+
+- the content is reused in multiple publishing systems,
+- the docs framework auto-generates routes aggressively,
+- or heading edits happen often and link maintenance is loose.
+
+In those cases, page-level links or generated navigation may age better.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Markdown anchors and heading links that stay stable"
+		href="/syntax/markdown-anchors-and-heading-links-that-stay-stable/"
+		description="Use this page when the fragment target itself is the weak point."
+	/>
+	<LinkCard
+		title="Why is my Markdown anchor link not working?"
+		href="/faq/why-is-my-markdown-anchor-link-not-working/"
+		description="Use this page when the file loads but the heading jump still fails."
+	/>
+	<LinkCard
+		title="Markdown relative links for READMEs, docs, and static sites"
+		href="/guides/markdown-relative-links-for-readmes-docs-and-static-sites/"
+		description="Use this page when the file path is the unstable part of the cross-file heading link."
+	/>
+	<LinkCard
+		title="Markdown table of contents options and anchor stability"
+		href="/syntax/markdown-table-of-contents-options-and-anchor-stability/"
+		description="Use this page when you need a less fragile long-form navigation model than hand-written cross-file fragments."
+	/>
+</div>

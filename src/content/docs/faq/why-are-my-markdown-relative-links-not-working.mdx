@@ -1,0 +1,142 @@
+---
+title: Why are my Markdown relative links not working?
+description: The most common reasons Markdown relative links fail, including wrong base paths, publishing-route changes, case mismatches, and assumptions copied from one renderer into another.
+referenceType: faq
+adProfile: faq
+commercialIntent: high
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Helps authors debug Markdown relative-link failures across repositories, docs folders, static sites, and exported HTML.
+readerTakeaway: You should leave with a clearer rule for how relative links are resolved, why they break after publishing, and when a different linking strategy is safer.
+primaryKeyword: why are my markdown relative links not working
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Developers
+  - Technical writers
+  - Documentation teams
+keyQuestions:
+  - How are relative links in Markdown resolved?
+  - Why do relative links work locally but fail on a docs site?
+  - When should teams stop using relative links and switch to another link policy?
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Why are my Markdown relative links not working?
+
+## Quick answer
+
+Relative links usually fail because the destination is being resolved from a different base path than you expected.
+
+That often happens when:
+
+- the current file moved,
+- the published route no longer matches the repo path,
+- the renderer rewrites `.md` files into HTML routes,
+- path casing differs across environments,
+- or the content was copied into a system that no longer understands the original folder structure.
+
+The syntax can be correct while the environment is wrong.
+
+## Relative links only make sense relative to something
+
+A normal relative link looks like this:
+
+```md
+[Guide](./guide.md)
+```
+
+That link is valid only if the renderer resolves it from the current file in the way you expect.
+
+The fragile assumption is believing that all Markdown tools share the same base-path logic.
+
+## The most common failure: repo paths are not site routes
+
+A relative link may work inside:
+
+- a GitHub repository,
+- a local docs folder,
+- or a note app
+
+and still fail after publishing because the final site route is now:
+
+- HTML instead of `.md`,
+- nested under a docs base path,
+- or generated from frontmatter and framework rules.
+
+That is why relative links are often a publishing problem, not a syntax problem.
+
+## Another common failure: file extensions and route rewriting
+
+Some systems want:
+
+- `./guide.md`
+
+while others want:
+
+- `/guide/`
+- `/guide`
+- or a framework-specific route.
+
+If your source moves across systems, one relative-link form may stop being stable enough.
+
+## Case sensitivity still breaks real sites
+
+Many local workflows are forgiving. Many deployed environments are not.
+
+So links can break because:
+
+- `Guide.md` is not `guide.md`,
+- folder names changed,
+- or imported assets use different case than the published file tree.
+
+These failures look small and waste a lot of time.
+
+## The safest troubleshooting order
+
+Check in this order:
+
+1. confirm the destination file really exists,
+2. confirm the path is correct from the current file,
+3. inspect the final published route,
+4. test whether the system expects `.md`, `.html`, or route-style links,
+5. then check casing and path rewrites.
+
+That order usually finds the actual break faster than changing syntax forms blindly.
+
+## When relative links are still the right answer
+
+Relative links remain strong when:
+
+- the content lives in a stable repo tree,
+- the publishing system respects source structure,
+- and the team values portability inside that repository.
+
+They become weak when the content is constantly copied, transformed, or published into systems with different routing assumptions.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Markdown relative links for READMEs, docs, and static sites"
+		href="/guides/markdown-relative-links-for-readmes-docs-and-static-sites/"
+		description="Use this page for the broader linking policy behind repositories, docs trees, and published routes."
+	/>
+	<LinkCard
+		title="Why is my Markdown link not working?"
+		href="/faq/why-is-my-markdown-link-not-working/"
+		description="Use this page when the problem may still be a more general path, anchor, or renderer issue."
+	/>
+	<LinkCard
+		title="Why does my Markdown work locally but break after publishing?"
+		href="/faq/why-does-my-markdown-work-locally-but-break-after-publishing/"
+		description="Use this page when the relative-link failure is only one symptom of a broader publishing mismatch."
+	/>
+	<LinkCard
+		title="GitHub README Markdown vs docs-site Markdown"
+		href="/guides/github-readme-markdown-vs-docs-site-markdown-what-breaks/"
+		description="Use this page when links work in GitHub but not in the published documentation stack."
+	/>
+</div>

@@ -1,0 +1,126 @@
+---
+title: Why does my Markdown work locally but break after publishing?
+description: The most common reasons Markdown behaves differently after publishing, including route rewrites, anchor changes, HTML sanitization, asset handling, and renderer-specific feature loss.
+referenceType: faq
+adProfile: faq
+commercialIntent: high
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Helps authors debug the gap between local Markdown success and published-site failure by separating source validity from renderer and publishing-system behavior.
+readerTakeaway: You should leave with a practical way to test whether the problem comes from links, images, anchors, extensions, raw HTML, or route generation after publish time.
+primaryKeyword: markdown works locally but breaks after publishing
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Developers
+  - Technical writers
+  - Documentation teams
+keyQuestions:
+  - Why does Markdown render differently after publishing?
+  - Which local Markdown assumptions usually fail on docs sites or exported HTML?
+  - How should teams debug Markdown portability after a publish step?
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Why does my Markdown work locally but break after publishing?
+
+## Quick answer
+
+Because local success does not prove publishing compatibility.
+
+Markdown often breaks after publishing when:
+
+- file paths become routes,
+- heading anchors change,
+- raw HTML is sanitized,
+- local assets are not copied into the final build,
+- or one renderer supported a feature the published renderer does not.
+
+The Markdown source can be valid while the publishing stack still breaks it.
+
+## Local rendering is often too forgiving
+
+A local preview may:
+
+- resolve relative paths from the file system,
+- tolerate local assets,
+- support editor-specific extensions,
+- or render HTML that a published platform later strips.
+
+That creates a false sense of safety.
+
+## The most common failures after publishing
+
+The most common post-publish breaks are:
+
+- links that still point to `.md` files instead of final routes,
+- anchor fragments that no longer match generated heading IDs,
+- images that existed locally but were not deployed,
+- tables, callouts, or task lists that depended on one renderer,
+- and raw HTML that the final system sanitizes or ignores.
+
+These are portability failures more than syntax failures.
+
+## The real question to ask
+
+Do not ask only:
+
+**"Is the Markdown valid?"**
+
+Ask:
+
+**"Is this Markdown valid for the publishing system that will own the final page?"**
+
+That question catches far more real-world problems.
+
+## The safest troubleshooting order
+
+Inspect failures in this order:
+
+1. path and route changes,
+2. anchor and heading-ID changes,
+3. asset copying and image paths,
+4. renderer-specific syntax or extensions,
+5. raw HTML sanitization or stripped attributes.
+
+That order usually identifies the break faster than rewriting the file blindly.
+
+## The healthiest long-term fix
+
+The best fix is usually not more local hacks.
+
+It is:
+
+- a clear link policy,
+- a known extension policy,
+- deliberate asset handling,
+- and a publishing workflow that treats portability as part of authoring.
+
+Markdown works best when the team knows where syntax ends and publishing rules begin.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Markdown relative links for READMEs, docs, and static sites"
+		href="/guides/markdown-relative-links-for-readmes-docs-and-static-sites/"
+		description="Use this page when the publishing break is mostly about path and route assumptions."
+	/>
+	<LinkCard
+		title="GitHub README Markdown vs docs-site Markdown"
+		href="/guides/github-readme-markdown-vs-docs-site-markdown-what-breaks/"
+		description="Use this page when local or GitHub rendering looks fine but the docs framework behaves differently."
+	/>
+	<LinkCard
+		title="Why is my Markdown image not showing?"
+		href="/faq/why-is-my-markdown-image-not-showing/"
+		description="Use this page when the publishing break is really an asset-path or image-hosting failure."
+	/>
+	<LinkCard
+		title="Why are my Markdown relative links not working?"
+		href="/faq/why-are-my-markdown-relative-links-not-working/"
+		description="Use this page when broken routes and relative-path assumptions are the main failure mode."
+	/>
+</div>

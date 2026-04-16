@@ -1,0 +1,143 @@
+---
+title: Why is my Markdown anchor link not working?
+description: The most common reasons Markdown anchor links fail, including changed headings, renderer-specific slug rules, stripped IDs, and publishing systems that rewrite fragment targets.
+referenceType: faq
+adProfile: faq
+commercialIntent: high
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Helps authors debug Markdown anchor links by separating valid link syntax from unstable heading IDs, fragment mismatches, and publishing-layer rewrites.
+readerTakeaway: You should leave with a practical way to test whether the problem is the heading slug, the renderer, the publishing route, or an assumption that Markdown does not guarantee.
+primaryKeyword: why is my markdown anchor link not working
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Developers
+  - Technical writers
+  - Documentation teams
+keyQuestions:
+  - Why do heading links work in one renderer and fail in another?
+  - How are Markdown anchor slugs generated?
+  - What breaks fragment links after a heading edit or publish step?
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Why is my Markdown anchor link not working?
+
+## Quick answer
+
+A Markdown anchor link usually breaks because:
+
+1. the heading text changed,
+2. the renderer generated a different slug than expected,
+3. custom IDs were stripped or ignored,
+4. the file published to a different route,
+5. or the link targets a fragment rule Markdown itself does not standardize.
+
+The page may still load correctly while the jump fails. That usually means the fragment target, not the path, is the real problem.
+
+## Markdown does not define one universal anchor rule
+
+Markdown syntax can create a link with a fragment:
+
+```md
+[Jump to section](#installation)
+```
+
+But Markdown does **not** define one universal way every renderer must generate heading IDs.
+
+That is why the same heading can produce different anchors across:
+
+- GitHub,
+- static site generators,
+- note apps,
+- docs frameworks,
+- and HTML export tools.
+
+## The most common reason: the heading changed
+
+If the heading text changes, the generated anchor often changes too.
+
+That means links break when:
+
+- wording is edited,
+- punctuation is added or removed,
+- duplicated headings force suffixes,
+- or the title casing changes in a renderer that normalizes slugs differently.
+
+Anchor links are cheap to create and easy to break later.
+
+## The second common reason: slug rules are different
+
+Different renderers handle:
+
+- punctuation,
+- emoji,
+- non-Latin characters,
+- duplicate headings,
+- and special symbols
+
+differently.
+
+So a fragment that worked in GitHub may fail in a docs site because the slugging logic is not identical.
+
+## The third common reason: the publishing system rewrote the page
+
+Even if the source Markdown is correct, the publish step may:
+
+- wrap headings in components,
+- strip raw HTML ids,
+- alter heading text during rendering,
+- or generate routes that no longer match local assumptions.
+
+At that point the anchor problem is no longer a source-only problem. It is a publishing-system problem.
+
+## The safest troubleshooting order
+
+Check in this order:
+
+1. confirm the page itself loads,
+2. inspect the rendered heading ID in the final output,
+3. compare the fragment you wrote against the renderer's actual slug,
+4. test whether a heading edit introduced the break,
+5. then inspect whether the publish layer rewrote the page structure.
+
+That catches most broken-anchor cases faster than repeatedly rewriting the link.
+
+## The safest long-term habit
+
+If anchor stability matters:
+
+- keep headings simple,
+- avoid unnecessary punctuation,
+- avoid duplicate heading text when possible,
+- and treat heading edits as link changes that need verification.
+
+Markdown makes anchor links easy, but stable anchors still require editorial discipline.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Markdown anchors and heading links that stay stable"
+		href="/syntax/markdown-anchors-and-heading-links-that-stay-stable/"
+		description="Use this page for the deeper model behind heading IDs, fragment stability, and safer long-term anchor habits."
+	/>
+	<LinkCard
+		title="Why is my Markdown link not working?"
+		href="/faq/why-is-my-markdown-link-not-working/"
+		description="Use this page when the real failure might still be the path or renderer rather than the heading fragment."
+	/>
+	<LinkCard
+		title="Markdown table of contents options and anchor stability"
+		href="/syntax/markdown-table-of-contents-options-and-anchor-stability/"
+		description="Use this page when the broken anchor problem appears inside a manual or generated table of contents."
+	/>
+	<LinkCard
+		title="GitHub README Markdown vs docs-site Markdown"
+		href="/guides/github-readme-markdown-vs-docs-site-markdown-what-breaks/"
+		description="Use this page when headings and anchor IDs change between repository rendering and published documentation."
+	/>
+</div>

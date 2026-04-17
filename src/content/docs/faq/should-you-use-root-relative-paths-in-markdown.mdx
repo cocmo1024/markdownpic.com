@@ -1,0 +1,112 @@
+---
+title: Should you use root-relative paths in Markdown?
+description: When root-relative paths are safe in Markdown, when they break portability, and how to decide between site-root links and file-relative links.
+referenceType: faq
+adProfile: faq
+commercialIntent: high
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Helps authors decide whether root-relative paths belong in Markdown source or whether they quietly couple the file to one specific published site structure.
+readerTakeaway: You should leave with a practical rule for when root-relative paths are useful, when they become portability debt, and how they differ from file-relative links.
+primaryKeyword: root relative paths in markdown
+searchIntent: compare
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Developers
+  - Technical writers
+  - Documentation teams
+keyQuestions:
+  - Are root-relative paths good in Markdown?
+  - When do root-relative links break local portability?
+  - How are root-relative paths different from normal relative links?
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Should you use root-relative paths in Markdown?
+
+## Quick answer
+
+Use root-relative paths only when the Markdown belongs to a site with a stable, known root that owns the final routes.
+
+Avoid them when the file needs to stay portable across:
+
+- repositories,
+- local previews,
+- note apps,
+- docs migrations,
+- or multiple publishing systems.
+
+Root-relative paths are convenient inside one site. They are often brittle outside it.
+
+## What root-relative means
+
+A root-relative path starts from the site root, for example:
+
+```md
+[Docs](/guides/setup/)
+```
+
+That is different from a file-relative path such as:
+
+```md
+[Docs](./setup.md)
+```
+
+One assumes a site root. The other assumes a file location.
+
+## When root-relative paths are healthy
+
+Root-relative paths are usually healthy when:
+
+- the site root is stable,
+- the content is already part of one publishing system,
+- routes matter more than repository structure,
+- and local portability is not the primary goal.
+
+They can simplify navigation in large sites where page routes are the canonical truth.
+
+## When root-relative paths become debt
+
+They become debt when:
+
+- the Markdown also lives in a repository as reusable source,
+- the file is copied into other systems,
+- local preview tools do not share the same root assumption,
+- or the site later changes base path or deployment structure.
+
+At that point the path is no longer simple. It is coupled to one publishing environment.
+
+## The practical rule
+
+Use root-relative paths when the site route is the real source of truth.
+
+Use file-relative paths when the repository or docs tree is the source of truth.
+
+If the team cannot say which of those is primary, the content system still needs a linking policy.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Should you use relative or absolute links in Markdown?"
+		href="/faq/should-you-use-relative-or-absolute-links-in-markdown/"
+		description="Use this page when the larger decision is which linking style fits the whole content system."
+	/>
+	<LinkCard
+		title="Markdown relative links for READMEs, docs, and static sites"
+		href="/guides/markdown-relative-links-for-readmes-docs-and-static-sites/"
+		description="Use this page when file-relative linking is still the main candidate."
+	/>
+	<LinkCard
+		title="Why are my Markdown relative links not working?"
+		href="/faq/why-are-my-markdown-relative-links-not-working/"
+		description="Use this page when the path strategy is already producing broken links after publishing."
+	/>
+	<LinkCard
+		title="Why does my Markdown work locally but break after publishing?"
+		href="/faq/why-does-my-markdown-work-locally-but-break-after-publishing/"
+		description="Use this page when root-relative assumptions behave differently between local source and deployed site."
+	/>
+</div>

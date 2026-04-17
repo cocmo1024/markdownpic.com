@@ -1,0 +1,104 @@
+---
+title: Should you use relative or absolute links in Markdown?
+description: How to choose between relative and absolute links in Markdown based on repository structure, publishing paths, portability, and long-term maintenance.
+referenceType: faq
+adProfile: faq
+commercialIntent: high
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Helps authors choose between relative and absolute Markdown links without assuming one linking style is always correct across repos, docs sites, and published pages.
+readerTakeaway: You should leave with a practical rule for when relative links are healthier, when absolute links are safer, and how to choose based on the environment that owns the content.
+primaryKeyword: relative vs absolute links in markdown
+searchIntent: compare
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Developers
+  - Technical writers
+  - Documentation teams
+keyQuestions:
+  - Should Markdown links be relative or absolute?
+  - When do relative links become fragile?
+  - When are absolute links safer even if they look heavier?
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Should you use relative or absolute links in Markdown?
+
+## Quick answer
+
+Use **relative links** when the Markdown lives inside a stable repository, docs tree, or content system that moves together.
+
+Use **absolute links** when the content will travel across sites, systems, or publishing surfaces that do not share one consistent file structure.
+
+The right question is not "Which style is cleaner?" It is:
+
+**"Which environment owns the truth of this content?"**
+
+## When relative links are stronger
+
+Relative links are usually stronger when:
+
+- the files live in one repository,
+- the docs structure is stable,
+- branches and forks should keep links working,
+- and portability inside that content tree matters most.
+
+That is why relative links are often right for READMEs and structured docs repos.
+
+## When absolute links are stronger
+
+Absolute links are usually safer when:
+
+- the content is copied into multiple systems,
+- the destination lives outside the current repository,
+- publishing rewrites local paths aggressively,
+- or the business needs one canonical public URL regardless of source location.
+
+They are heavier to maintain, but often more honest about where the content actually lives.
+
+## The common mistake
+
+The common mistake is choosing relative links because they look elegant, then expecting them to survive:
+
+- site generation,
+- CMS import,
+- docs migrations,
+- image export,
+- or AI-assisted reuse workflows.
+
+At that point the link problem is not syntax style. It is content portability.
+
+## A simple decision rule
+
+Choose relative links when the source tree is the system of record.
+
+Choose absolute links when the published site is the system of record.
+
+If the content has to serve both, the team needs a deliberate linking policy instead of ad hoc habits.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Markdown relative links for READMEs, docs, and static sites"
+		href="/guides/markdown-relative-links-for-readmes-docs-and-static-sites/"
+		description="Use this page for the deeper linking policy behind repo-native docs and published routes."
+	/>
+	<LinkCard
+		title="Should you use root-relative paths in Markdown?"
+		href="/faq/should-you-use-root-relative-paths-in-markdown/"
+		description="Use this page when the real decision is site-root linking versus file-relative linking."
+	/>
+	<LinkCard
+		title="Why are my Markdown relative links not working?"
+		href="/faq/why-are-my-markdown-relative-links-not-working/"
+		description="Use this page when the decision has already turned into a broken-link problem."
+	/>
+	<LinkCard
+		title="GitHub README Markdown vs docs-site Markdown"
+		href="/guides/github-readme-markdown-vs-docs-site-markdown-what-breaks/"
+		description="Use this page when one source file is trying to survive both repository rendering and published documentation."
+	/>
+</div>

@@ -1,0 +1,120 @@
+---
+title: Why is my Markdown table of contents not working?
+description: The most common reasons Markdown tables of contents fail, including missing anchor support, stale manual links, renderer-specific plugins, and heading IDs that changed after edits or publishing.
+referenceType: faq
+adProfile: faq
+commercialIntent: high
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Helps authors debug broken Markdown tables of contents by separating manual link mistakes from anchor instability, plugin assumptions, and renderer differences.
+readerTakeaway: You should leave with a practical way to tell whether the TOC problem comes from stale anchor links, missing generator support, or a publishing system that rewrote heading IDs.
+primaryKeyword: why is my markdown table of contents not working
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Developers
+  - Technical writers
+  - Documentation teams
+keyQuestions:
+  - Why do Markdown TOCs break after edits or publishing?
+  - Does Markdown have a universal TOC syntax?
+  - When is the problem really anchor generation instead of the TOC itself?
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Why is my Markdown table of contents not working?
+
+## Quick answer
+
+A Markdown table of contents usually breaks because:
+
+1. the links point to anchors that changed,
+2. the renderer does not support the TOC format you expected,
+3. a plugin-generated TOC was never rebuilt,
+4. heading IDs changed after editing or publishing,
+5. or the platform does not define TOC behavior the way your editor did.
+
+The most common mistake is assuming Markdown has one universal TOC syntax. It does not.
+
+## Markdown does not define one TOC standard
+
+Markdown supports headings and links.
+
+It does **not** define one portable table-of-contents mechanism that every renderer must generate the same way.
+
+That means TOCs are usually built with:
+
+- manual anchor links,
+- renderer-generated navigation,
+- or a plugin or tool that inserts the TOC for you.
+
+Each path breaks differently.
+
+## Manual TOCs go stale easily
+
+A manual TOC fails when:
+
+- heading text changes,
+- duplicate headings create different slugs,
+- punctuation changes the fragment,
+- or the published renderer generates different IDs than the local tool.
+
+That is why the TOC may look correct in source while the links still fail.
+
+## Generated TOCs depend on the renderer
+
+Generated TOCs fail when:
+
+- the site does not support the generator,
+- the plugin uses different slug rules,
+- the insertion step did not run,
+- or the final publishing pipeline ignored the local tool's TOC behavior.
+
+At that point the problem is not only Markdown. It is renderer behavior.
+
+## The safest troubleshooting order
+
+Check in this order:
+
+1. confirm whether the TOC is manual or generated,
+2. inspect whether the target headings still exist,
+3. compare the rendered heading IDs with the links in the TOC,
+4. check whether a plugin or generator actually ran,
+5. then inspect whether the publish layer changed the anchors.
+
+That sequence catches most TOC failures quickly.
+
+## The healthiest long-term habit
+
+Use manual TOCs only when the document is stable enough to maintain them.
+
+Use generated TOCs when the publishing system owns heading navigation reliably.
+
+The real risk is not TOC syntax. It is anchor stability over time.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Markdown table of contents options and anchor stability"
+		href="/syntax/markdown-table-of-contents-options-and-anchor-stability/"
+		description="Use this page for the deeper model behind manual TOCs, generated TOCs, and anchor-safe heading structure."
+	/>
+	<LinkCard
+		title="Why is my Markdown anchor link not working?"
+		href="/faq/why-is-my-markdown-anchor-link-not-working/"
+		description="Use this page when the TOC problem is really a fragment and heading-ID problem."
+	/>
+	<LinkCard
+		title="Markdown anchors and heading links that stay stable"
+		href="/syntax/markdown-anchors-and-heading-links-that-stay-stable/"
+		description="Use this page when heading slugs and fragment rules are the unstable part of the document."
+	/>
+	<LinkCard
+		title="Can Markdown link to a heading in another file?"
+		href="/faq/can-markdown-link-to-a-heading-in-another-file/"
+		description="Use this page when the TOC or navigation needs cross-file heading links rather than same-page jumps."
+	/>
+</div>

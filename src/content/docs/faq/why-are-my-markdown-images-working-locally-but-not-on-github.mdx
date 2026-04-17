@@ -1,0 +1,139 @@
+---
+title: Why are my Markdown images working locally but not on GitHub?
+description: The most common reasons Markdown images appear locally but fail on GitHub, including missing repo files, path mistakes, case sensitivity, and assumptions copied from local preview tools.
+referenceType: faq
+adProfile: faq
+commercialIntent: high
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Helps authors debug Markdown images that show up in local editors or preview tools but disappear once the file is pushed to GitHub.
+readerTakeaway: You should leave with a practical checklist for GitHub-specific image failures and a clearer sense of how repository paths differ from local filesystem assumptions.
+primaryKeyword: markdown images work locally but not on github
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Developers
+  - README authors
+  - Documentation teams
+keyQuestions:
+  - Why do local Markdown images fail on GitHub?
+  - How does GitHub resolve image paths differently from local tools?
+  - Which image-path mistakes show up only after pushing to a repository?
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Why are my Markdown images working locally but not on GitHub?
+
+## Quick answer
+
+Because local preview and GitHub do not share the same file system assumptions.
+
+Images often work locally but fail on GitHub when:
+
+- the image file was never committed,
+- the path is correct on your machine but wrong in the repository,
+- filename case differs,
+- the image sits outside the repo,
+- or the local tool resolved a path GitHub cannot see.
+
+The Markdown syntax can be valid while the repository path is still wrong.
+
+## The first common problem: the file is not actually in the repo
+
+A local editor can render:
+
+- files on your machine,
+- images outside the current folder,
+- or paths that exist only in local preview context.
+
+GitHub can only render what exists inside the repository path it knows about.
+
+If the image was never committed, GitHub cannot load it.
+
+## The second common problem: the relative path changed
+
+A local preview may resolve the image from:
+
+- the current file,
+- the editor workspace,
+- or another preview base path.
+
+GitHub resolves the path from the committed Markdown file in the repository tree.
+
+That is why the same path can look right locally and still break on GitHub.
+
+## The third common problem: case sensitivity
+
+A filename like:
+
+- `Logo.png`
+
+is not the same as:
+
+- `logo.png`
+
+Many local workflows hide this mistake. GitHub and other deployed environments often expose it immediately.
+
+## The fourth common problem: the image is outside the repository
+
+Paths that point to:
+
+- parent directories,
+- local downloads,
+- desktop folders,
+- or other machine-specific locations
+
+are not portable to GitHub.
+
+They may render locally because your machine can see them. GitHub cannot.
+
+## The safest troubleshooting order
+
+Check in this order:
+
+1. confirm the image file is committed,
+2. confirm the path from the Markdown file is correct in the repo,
+3. check filename and folder case exactly,
+4. confirm the image is inside the repository path,
+5. then inspect whether the issue is GitHub rendering versus docs-site rendering.
+
+That order catches most GitHub image failures fast.
+
+## The healthiest long-term habit
+
+Write image references for the repository and publishing system, not for the local machine.
+
+That usually means:
+
+- keeping images inside the repo,
+- using deliberate relative paths,
+- and testing with the same structure that GitHub will read.
+
+Local success is helpful. Repository success is what matters.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Why is my Markdown image not showing?"
+		href="/faq/why-is-my-markdown-image-not-showing/"
+		description="Use this page for the broader troubleshooting path once the problem is not only GitHub-specific."
+	/>
+	<LinkCard
+		title="Markdown image syntax: local vs remote paths"
+		href="/syntax/markdown-image-syntax-local-vs-remote-paths/"
+		description="Use this page when the real decision is where images should live and how they should be referenced."
+	/>
+	<LinkCard
+		title="Why does my Markdown work locally but break after publishing?"
+		href="/faq/why-does-my-markdown-work-locally-but-break-after-publishing/"
+		description="Use this page when the same portability problem also affects links, anchors, or renderer-specific features."
+	/>
+	<LinkCard
+		title="GitHub README Markdown vs docs-site Markdown"
+		href="/guides/github-readme-markdown-vs-docs-site-markdown-what-breaks/"
+		description="Use this page when GitHub and the published docs site each behave differently from your local preview."
+	/>
+</div>

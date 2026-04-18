@@ -1,0 +1,140 @@
+---
+title: Why does Markdown render differently on GitHub and VS Code?
+description: The most common reasons Markdown looks different on GitHub and VS Code, including renderer differences, extensions, preview settings, path handling, and GitHub-specific behavior.
+referenceType: faq
+adProfile: faq
+commercialIntent: high
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Helps authors understand why the same Markdown file can look correct in VS Code and different on GitHub, or the other way around.
+readerTakeaway: You should leave with a practical model for separating Markdown syntax from renderer behavior so GitHub and VS Code differences stop feeling random.
+primaryKeyword: markdown render differently github vs vscode
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Developers
+  - README authors
+  - Documentation teams
+keyQuestions:
+  - Why does Markdown look different on GitHub and VS Code?
+  - Is the issue the Markdown file or the renderer?
+  - Which features work in one environment but not the other?
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Why does Markdown render differently on GitHub and VS Code?
+
+## Quick answer
+
+Because GitHub and VS Code are not the same renderer.
+
+They may differ in:
+
+- supported extensions,
+- image and link resolution,
+- heading anchors,
+- task-list behavior,
+- raw HTML handling,
+- and preview configuration.
+
+The file can be valid Markdown while the rendered output still differs.
+
+## The first mistake: treating "Markdown" as one uniform thing
+
+Many authors think:
+
+**"If it works in one Markdown viewer, it should work everywhere."**
+
+That is not how Markdown works in practice.
+
+GitHub, VS Code preview, docs frameworks, and note apps each apply their own rendering rules on top of Markdown parsing.
+
+## Where GitHub and VS Code diverge most often
+
+The most common differences show up in:
+
+- task lists and GFM-specific features,
+- anchor generation,
+- emoji shortcodes,
+- raw HTML support,
+- local image paths,
+- and link behavior tied to the repository versus the local workspace.
+
+That is why the same file can look polished in one environment and awkward in another.
+
+## Paths are a common hidden cause
+
+VS Code may preview files relative to:
+
+- your local workspace,
+- local filesystem access,
+- or extension-specific preview behavior.
+
+GitHub resolves paths from the committed repository tree.
+
+That difference alone explains many image and link mismatches.
+
+## Extensions and preview settings matter too
+
+VS Code can be influenced by:
+
+- installed extensions,
+- preview configuration,
+- theme and CSS overrides,
+- or workspace-specific tooling.
+
+GitHub will ignore most of that and render through its own rules.
+
+So sometimes the issue is not Markdown at all. It is your editor environment.
+
+## The safest troubleshooting order
+
+Check in this order:
+
+1. does the raw syntax follow a portable form,
+2. does the file depend on GitHub-flavored features,
+3. are paths valid in the committed repository,
+4. is VS Code preview being affected by extensions or local assumptions,
+5. does GitHub sanitize or ignore HTML that the editor preview tolerated?
+
+That usually shows whether the difference is a syntax problem or a renderer problem.
+
+## The healthiest long-term rule
+
+Write for the most important rendering environment, then test the others deliberately.
+
+If the file must survive both GitHub and other platforms, prefer:
+
+- standard syntax,
+- known GFM features only when intentional,
+- stable paths,
+- and minimal dependence on custom preview behavior.
+
+Markdown is portable only when the team treats renderer differences as real.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="CommonMark vs GFM vs renderer differences"
+		href="/fundamentals/commonmark-vs-gfm-vs-renderer-differences/"
+		description="Use this page for the deeper explanation of why two Markdown environments can both be 'correct' and still render differently."
+	/>
+	<LinkCard
+		title="GitHub README Markdown vs docs-site Markdown"
+		href="/guides/github-readme-markdown-vs-docs-site-markdown-what-breaks/"
+		description="Use this page when the renderer difference is really about repository viewing versus published documentation."
+	/>
+	<LinkCard
+		title="Why are my Markdown images working locally but not on GitHub?"
+		href="/faq/why-are-my-markdown-images-working-locally-but-not-on-github/"
+		description="Use this page when the biggest mismatch is image rendering between local preview and repository view."
+	/>
+	<LinkCard
+		title="Why is my Markdown checklist not rendering?"
+		href="/faq/why-is-my-markdown-checklist-not-rendering/"
+		description="Use this page when the mismatch is specifically about checkboxes and task-list syntax."
+	/>
+</div>

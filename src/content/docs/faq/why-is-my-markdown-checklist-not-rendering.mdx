@@ -1,0 +1,122 @@
+---
+title: Why is my Markdown checklist not rendering?
+description: The most common reasons Markdown checklists fail to render, including non-GFM renderers, bad spacing, nesting issues, and environments that treat task lists as plain text.
+referenceType: faq
+adProfile: faq
+commercialIntent: high
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Helps authors debug Markdown checklists by separating valid task-list syntax from renderer-specific support and portability problems.
+readerTakeaway: You should leave with a practical way to tell whether the problem is your checklist syntax or the fact that the current renderer does not support task lists as interactive checkboxes.
+primaryKeyword: markdown checklist not rendering
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Developers
+  - README authors
+  - Documentation teams
+keyQuestions:
+  - Why is my Markdown checklist showing as plain text?
+  - Are task lists standard Markdown?
+  - What checklist mistakes are syntax problems and which are renderer problems?
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Why is my Markdown checklist not rendering?
+
+## Quick answer
+
+Markdown checklists usually fail because:
+
+1. the renderer does not support task lists,
+2. the syntax spacing is wrong,
+3. the list nesting is malformed,
+4. the environment supports plain lists but not checkbox rendering,
+5. or the content moved into a platform that does not follow GitHub-style Markdown behavior.
+
+The biggest surprise is that task lists are common, but they are not universal Markdown.
+
+## Task lists are not the same as core Markdown
+
+Checklist syntax such as:
+
+```md
+- [ ] open issue
+- [x] fix bug
+```
+
+is widely recognized because of GitHub Flavored Markdown.
+
+That does **not** mean every Markdown renderer will show it as a checkbox instead of plain text.
+
+## The most common syntax mistakes
+
+Even in task-list-aware environments, checklists can fail if:
+
+- the spacing is wrong,
+- indentation is inconsistent,
+- the brackets are malformed,
+- or the item is mixed into a broken nested list.
+
+So the first question is whether the syntax is valid for a normal task list.
+
+## The most common renderer mistake
+
+Many authors test in one place and assume support everywhere.
+
+That fails when the checklist moves from:
+
+- GitHub,
+- one docs site,
+- or one editor preview
+
+into another renderer that treats task lists as ordinary text.
+
+At that point the issue is not your file alone. It is renderer support.
+
+## The safest troubleshooting order
+
+Check in this order:
+
+1. confirm the checklist syntax is correct,
+2. test whether the renderer actually supports task lists,
+3. simplify nested lists if needed,
+4. compare the behavior in GitHub or another known GFM renderer,
+5. then decide whether the checklist is portable enough for the workflow.
+
+That usually tells you whether the problem is syntax or support.
+
+## The healthiest long-term rule
+
+Use Markdown checklists when the target renderer is known and the checklist is mainly for readable presentation.
+
+If checklist state is critical across multiple systems, do not assume Markdown alone should carry that responsibility.
+
+That is where many teams confuse a useful display pattern with a durable workflow system.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Markdown task lists, checkboxes, and portability"
+		href="/syntax/markdown-task-lists-checkboxes-and-portability/"
+		description="Use this page for the deeper explanation of when task lists are safe and when they quietly become portability debt."
+	/>
+	<LinkCard
+		title="Why does Markdown render differently on GitHub and VS Code?"
+		href="/faq/why-does-markdown-render-differently-on-github-and-vs-code/"
+		description="Use this page when the checklist mismatch only appears between editor preview and GitHub or another platform."
+	/>
+	<LinkCard
+		title="CommonMark vs GFM vs renderer differences"
+		href="/fundamentals/commonmark-vs-gfm-vs-renderer-differences/"
+		description="Use this page when the bigger issue is understanding why some Markdown extensions feel standard but are not universal."
+	/>
+	<LinkCard
+		title="Why does my Markdown work locally but break after publishing?"
+		href="/faq/why-does-my-markdown-work-locally-but-break-after-publishing/"
+		description="Use this page when the checklist is only one of several features that changed after the content moved."
+	/>
+</div>

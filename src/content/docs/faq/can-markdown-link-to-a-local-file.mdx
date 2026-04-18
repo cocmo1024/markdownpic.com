@@ -1,0 +1,121 @@
+---
+title: Can Markdown link to a local file?
+description: How Markdown local-file links work, why they often break outside your machine, and when local file links are acceptable versus too brittle for real publishing.
+referenceType: faq
+adProfile: faq
+commercialIntent: high
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Helps authors understand whether Markdown can link to local files, what that means in practice, and why those links often fail once content leaves the local machine.
+readerTakeaway: You should leave with a practical rule for when local-file links are acceptable in Markdown and when they become a portability or publishing mistake.
+primaryKeyword: can markdown link to a local file
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Developers
+  - Technical writers
+  - Documentation teams
+keyQuestions:
+  - Can Markdown link to local files on my machine?
+  - Why do local file links break after sharing or publishing?
+  - When should local file links be avoided entirely?
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Can Markdown link to a local file?
+
+## Quick answer
+
+Sometimes, yes, but only in environments that can actually access that local path.
+
+A Markdown link can point to a local file, but that does **not** mean the link is portable, shareable, or useful outside your own machine or controlled environment.
+
+That is why local file links often work in:
+
+- note apps,
+- local previews,
+- or private internal systems
+
+and then fail everywhere else.
+
+## Markdown can point to a path, but the renderer still decides
+
+A link such as:
+
+```md
+[Open notes](./notes/today.md)
+```
+
+or a file URL may be readable to one tool and meaningless to another.
+
+Markdown can express the link. The environment still decides whether the destination is reachable.
+
+## Why local file links are usually fragile
+
+Local file links break when:
+
+- the file lives only on your machine,
+- the folder structure differs for another user,
+- the content is published to GitHub or a docs site,
+- the target platform blocks local file access,
+- or the path only made sense inside one app's workspace model.
+
+This is why local links are often fine for personal notes and poor for public documentation.
+
+## When local file links are acceptable
+
+Local file links are most acceptable when:
+
+- the workflow is private,
+- the environment is controlled,
+- all users share the same storage model,
+- and portability is not the goal.
+
+That can be true in personal knowledge bases or tightly managed internal systems.
+
+## When to avoid them
+
+Avoid local file links when the Markdown is meant for:
+
+- GitHub,
+- public docs,
+- exported HTML,
+- shared README files,
+- or any workflow where another machine must open the same link reliably.
+
+In those cases, local links are usually the wrong abstraction.
+
+## The practical rule
+
+Use local file links only when the file system is part of the intended environment.
+
+If the content is going to travel, use repository-relative, site-relative, or public URLs instead.
+
+That keeps the Markdown useful outside your own machine.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Why are my Markdown relative links not working?"
+		href="/faq/why-are-my-markdown-relative-links-not-working/"
+		description="Use this page when the local file link has already become a broken-path problem."
+	/>
+	<LinkCard
+		title="Should you use relative or absolute links in Markdown?"
+		href="/faq/should-you-use-relative-or-absolute-links-in-markdown/"
+		description="Use this page when the bigger choice is which link strategy fits the whole content system."
+	/>
+	<LinkCard
+		title="Can Markdown link to a heading in another file?"
+		href="/faq/can-markdown-link-to-a-heading-in-another-file/"
+		description="Use this page when the destination is another Markdown file and the real issue is file-plus-fragment behavior."
+	/>
+	<LinkCard
+		title="Why does my Markdown work locally but break after publishing?"
+		href="/faq/why-does-my-markdown-work-locally-but-break-after-publishing/"
+		description="Use this page when local file access is only one part of a larger portability failure."
+	/>
+</div>

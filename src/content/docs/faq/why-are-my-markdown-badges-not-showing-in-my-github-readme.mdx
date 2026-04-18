@@ -1,0 +1,127 @@
+---
+title: Why are my Markdown badges not showing in my GitHub README?
+description: The most common reasons badges fail in GitHub READMEs, including bad badge URLs, unsupported HTML, private assets, remote image issues, and Shields formatting mistakes.
+referenceType: faq
+adProfile: faq
+commercialIntent: high
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Helps README authors debug missing or broken Markdown badges in GitHub by separating badge-source issues from Markdown syntax problems.
+readerTakeaway: You should leave with a practical checklist for badge failures in GitHub READMEs and a clearer sense of when the problem is the badge URL, the repo, or GitHub rendering.
+primaryKeyword: markdown badges not showing github readme
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Developers
+  - README authors
+  - Open-source maintainers
+  - Documentation teams
+keyQuestions:
+  - Why are GitHub README badges not showing?
+  - When is the problem the badge URL rather than the Markdown?
+  - What badge-related HTML or image patterns fail on GitHub?
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Why are my Markdown badges not showing in my GitHub README?
+
+## Quick answer
+
+Badges usually fail in a GitHub README because:
+
+1. the badge URL is wrong,
+2. the badge image source is private or broken,
+3. the Markdown or HTML around the badge is malformed,
+4. GitHub sanitizes the HTML pattern you used,
+5. or the badge provider is returning something other than a normal image.
+
+The problem is often the badge source, not Markdown itself.
+
+## The most common badge problem: the image URL is wrong
+
+Many badge failures come from:
+
+- malformed Shields URLs,
+- missing separators,
+- bad query parameters,
+- copied example code that was never customized,
+- or a badge endpoint that no longer returns a valid image.
+
+If the URL does not return an image directly, GitHub cannot render it as a badge.
+
+## GitHub README badges are still images
+
+A badge in Markdown is usually just an image, often wrapped in a link:
+
+```md
+[![Build Status](https://img.shields.io/...)](https://github.com/...)
+```
+
+That means every normal image failure can also break a badge:
+
+- bad remote URL,
+- blocked or missing asset,
+- unsupported HTML wrapper,
+- or a source that changed after the README was written.
+
+## HTML can make the problem worse
+
+Some authors try to use:
+
+- custom HTML badge layouts,
+- inline styles,
+- complex wrappers,
+- or unsupported HTML around badges.
+
+GitHub sanitizes HTML aggressively. So a layout that works locally or on a docs site may fail in a README.
+
+## The safest troubleshooting order
+
+Check in this order:
+
+1. open the badge URL directly and confirm it returns an image,
+2. confirm the Markdown image syntax is correct,
+3. remove custom HTML wrappers and test the simplest form,
+4. check whether the source is public and reachable,
+5. then inspect whether the issue is provider formatting, not GitHub itself.
+
+That order catches most badge failures quickly.
+
+## The healthiest README badge rule
+
+Use only the badges that add real value.
+
+Keep them:
+
+- public,
+- simple,
+- image-based,
+- and easy to understand without custom HTML.
+
+If the README stops making sense when the badges disappear, the badge layer is too heavy anyway.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Markdown badges and clickable images for READMEs, docs, and social cards"
+		href="/guides/markdown-badges-and-clickable-images-for-readmes-docs-and-social-cards/"
+		description="Use this page for the broader strategy behind badges, linked images, and durable README design."
+	/>
+	<LinkCard
+		title="Why are my Markdown images working locally but not on GitHub?"
+		href="/faq/why-are-my-markdown-images-working-locally-but-not-on-github/"
+		description="Use this page when the badge failure looks more like a general GitHub image-rendering problem."
+	/>
+	<LinkCard
+		title="Why does Markdown render differently on GitHub and VS Code?"
+		href="/faq/why-does-markdown-render-differently-on-github-and-vs-code/"
+		description="Use this page when the badge or README looks fine locally but changes once GitHub renders it."
+	/>
+	<LinkCard
+		title="Why is my Markdown link not working?"
+		href="/faq/why-is-my-markdown-link-not-working/"
+		description="Use this page when the badge image appears but the surrounding click target or destination is broken."
+	/>
+</div>

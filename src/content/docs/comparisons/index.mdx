@@ -6,8 +6,8 @@ adProfile: comparison
 commercialIntent: high
 reviewCadence: Monthly review
 contentStatus: cornerstone
-problemSolved: Collects the highest-intent comparison pages across editors, toolchains, and publishing decisions.
-readerTakeaway: You should leave knowing where to start when the task is to choose between real Markdown tools, not just learn syntax.
+problemSolved: Collects the highest-intent comparison pages across editors, tooling, and publishing decisions that affect long-term Markdown ownership.
+readerTakeaway: You should leave knowing where to start when the task is to choose between real Markdown tools or workflow directions, not just learn syntax.
 primaryKeyword: markdown comparison
 searchIntent: compare
 decisionStage: shortlist
@@ -17,28 +17,41 @@ targetRoles:
   - Documentation leads
 ---
 
-Markdown comparison pages are where real product and workflow intent usually shows up.
+Markdown comparison pages matter because readers here are usually not learning syntax anymore. They are trying to decide which tool, renderer, or workflow should own real content over time.
 
-This section compares tools and workflows in ways that reflect portability, publishing friction, image handling, AI fit, and long-term content ownership.
-
-## Comparison pages should answer a decision
-
-A useful comparison page should help a reader narrow a real choice, not simply restate feature tables.
-
-The strongest comparison pages should explain:
+That means a good comparison page should answer four things:
 
 - which workflow each option is actually built for,
-- what migration cost or lock-in comes with the choice,
-- how output portability changes,
-- and what breaks later if the wrong tool wins for the wrong reason.
+- what portability cost comes with the choice,
+- what migration pain shows up later,
+- and which option creates the least long-term content debt.
 
-## High-intent comparison paths
+## Start here when the decision is operational
 
-Start with [Obsidian vs. Typora vs. VS Code](/comparisons/obsidian-vs-typora-vs-vs-code-for-markdown-publishing/) if your team is comparing knowledge-base, writing-first, and repo-first Markdown environments.
+Use this section when the question looks like:
 
-Over time, this section should expand into:
+- Should this team write in Obsidian, Typora, or VS Code?
+- Should a table stay a pipe table or become raw HTML?
+- Should Markdown source be optimized for GitHub, docs, or portability?
+- Should a Markdown workflow bend toward image output, static publishing, or repo-native reuse?
 
-- editor comparisons,
-- publishing stack comparisons,
-- Markdown-to-image workflow comparisons,
-- and portability-first tool decisions.
+## Current comparison paths
+
+- [Obsidian vs. Typora vs. VS Code for Markdown publishing](/comparisons/obsidian-vs-typora-vs-vs-code-for-markdown-publishing/)
+- More comparison pages should grow from actual publishing and portability decisions, not generic feature lists.
+
+## What weak comparison pages get wrong
+
+Weak Markdown comparisons usually stop at UI opinions and checklist features. That misses the real cost centers:
+
+- where the files live,
+- how links and images travel,
+- how portable the source remains,
+- whether the workflow survives docs, blog, README, export, and AI reuse,
+- and how hard it becomes to leave later.
+
+## Compare next
+
+- Start with [Guides](/guides/) if the choice is really about workflow design.
+- Start with [Fundamentals](/fundamentals/) if the disagreement is still about standards or renderer behavior.
+- Start with [Syntax](/syntax/) if the question is still about valid Markdown rather than tool choice.

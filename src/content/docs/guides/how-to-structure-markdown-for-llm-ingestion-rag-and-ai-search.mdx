@@ -1,0 +1,97 @@
+---
+title: How to Structure Markdown for LLM Ingestion, RAG, and AI Search
+description: A practical guide to writing Markdown that stays readable to humans while also chunking cleanly for AI ingestion, retrieval, and search systems.
+referenceType: guide
+adProfile: guide
+commercialIntent: medium
+reviewCadence: Monthly review
+contentStatus: growing
+problemSolved: Explains how to structure Markdown so it remains portable and human-readable while also working better for LLM ingestion, RAG pipelines, and AI search systems.
+readerTakeaway: You should leave with a cleaner mental model for headings, sections, tables, lists, links, and metadata when the same Markdown source must serve readers, search engines, and AI systems.
+primaryKeyword: markdown for rag
+searchIntent: design
+decisionStage: implementation
+targetRoles:
+  - Documentation leads
+  - AI product builders
+  - Technical writers
+  - Content operators
+keyQuestions:
+  - What Markdown structure makes chunking and retrieval cleaner?
+  - Which authoring habits make Markdown harder for AI systems to reuse well?
+  - How should teams balance human readability and AI-friendly structure?
+notFor:
+  - Pure prompt-engineering questions
+  - Teams that do not own the Markdown source
+updateTriggers:
+  - Changes in common retrieval and AI search patterns
+  - New markdown-to-AI publishing workflows
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# How to Structure Markdown for LLM Ingestion, RAG, and AI Search
+
+Markdown has become more valuable in the AI era because it is both human-readable and machine-friendly. That does not mean every Markdown file is automatically good for retrieval or AI search. Many files are visually acceptable but structurally noisy: headings are weak, tables are overloaded, lists hide important context, and HTML fragments blur section boundaries.
+
+## What AI systems need from Markdown
+
+Most retrieval and AI search systems benefit from source files that chunk cleanly. That usually means:
+
+- strong heading hierarchy,
+- sections that each answer one main question,
+- tables that are readable without heavy layout tricks,
+- links with meaningful anchor text,
+- and fewer renderer-specific hacks that hide the real structure.
+
+The point is not to write "for the crawler." It is to write source that stays understandable when the content is split, embedded, searched, summarized, or cited.
+
+## The structure that usually works best
+
+### Clear headings
+
+Headings should do real labeling work. "Overview" and "Notes" are weak headings. Headings that state the actual topic produce better chunks, better internal navigation, and more useful retrieval matches.
+
+### Self-contained sections
+
+A section should make sense when lifted out of the page. That means the important noun, decision, or concept should live inside the section, not only in the page title.
+
+### Lists that preserve meaning
+
+Dense bullet lists often compress nuance too aggressively. If the section matters, write a short explanatory paragraph first, then use bullets for the actual list. That gives both humans and AI systems more stable context.
+
+### Tables used carefully
+
+Tables are useful when they compare stable attributes. They are weak when they try to carry long explanations or nested logic. For AI reuse, clean pipe tables are often better than complex HTML tables unless layout is essential.
+
+## What usually hurts retrieval quality
+
+- vague headings
+- giant sections with multiple topics
+- renderer-specific HTML wrappers around important content
+- image-only explanations with no text equivalent
+- metadata stuffed into frontmatter that the reader never sees in the body
+
+## A practical rule
+
+Write Markdown so a human can skim it and still understand the document shape. If the structure is obvious to a reader, it is usually much easier for retrieval and AI search systems to segment and reuse correctly.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Markdown portability across GitHub, Notion, Obsidian, and static sites"
+		href="/fundamentals/markdown-portability-between-github-notion-obsidian-and-static-sites/"
+		description="Use this page when AI-readiness is only one part of a broader portability problem."
+	/>
+	<LinkCard
+		title="AI Markdown workflows for research, docs, and content reuse"
+		href="/workflows/ai-markdown-workflows-for-research-notes-docs-and-content-reuse/"
+		description="Use this page when the question expands from source formatting into a broader AI-assisted content workflow."
+	/>
+	<LinkCard
+		title="Export-safe Markdown authoring"
+		href="/guides/export-safe-markdown-authoring-for-pdf-email-and-social/"
+		description="Use this page when the same source also has to survive PDF, email, social, or screenshot export."
+	/>
+</div>

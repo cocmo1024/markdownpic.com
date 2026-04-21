@@ -16,10 +16,12 @@ export const siteMeta = {
 	ogImagePath: '/social-card.svg',
 	ogImageAlt:
 		'MarkdownPic social share card for Markdown syntax, editors, publishing workflows, and Markdown-to-image tooling.',
-	icon192Path: '/favicon.svg',
-	icon512Path: '/favicon.svg',
-	appleTouchIconPath: '/favicon.svg',
-	repoUrl: '',
+	icon192Path: '/icon-192.png',
+	icon512Path: '/icon-512.png',
+	appleTouchIconPath: '/apple-touch-icon.png',
+	repoUrl: 'https://github.com/cocmo1024/markdownpic.com',
+	xUrl: 'https://x.com/oocxx_com',
+	sameAs: ['https://x.com/oocxx_com', 'https://tool.markdownpic.com/'],
 	indexNowKey: 'e8244d4b-4b52-4fe7-b459-5a6ea4ee0a7d',
 	keywords: [
 		'markdown syntax',

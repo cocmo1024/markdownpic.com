@@ -2,14 +2,46 @@
 import EditLink from 'virtual:starlight/components/EditLink';
 import LastUpdated from 'virtual:starlight/components/LastUpdated';
 import Pagination from 'virtual:starlight/components/Pagination';
+import { siteMeta } from '../utils/site-meta.mjs';
 ---
 
 <footer class="sl-flex">
-	<div class="meta sl-flex">
+	<div class="meta sl-flex" data-nosnippet>
 		<EditLink />
 		<LastUpdated />
 	</div>
 	<Pagination />
+	<section class="footer-standards" data-nosnippet>
+		<div class="footer-standards__copy">
+			<h2>Editorial standards</h2>
+			<p>
+				MarkdownPic is maintained as a reference site for Markdown syntax, renderer differences,
+				portable authoring, and Markdown-to-image workflows.
+			</p>
+			<p>
+				Pages are reviewed against CommonMark, GitHub Flavored Markdown behavior, and real renderer
+				boundaries rather than one-tool assumptions.
+			</p>
+			<p class="footer-standards__links">
+				<a href="/about/">About</a>
+				<span aria-hidden="true"> / </span>
+				<a href="/editorial-desk/">Editorial Desk</a>
+				<span aria-hidden="true"> / </span>
+				<a href="/review-desk/">Review Desk</a>
+				<span aria-hidden="true"> / </span>
+				<a href="/editorial-policy/">Editorial Policy</a>
+				<span aria-hidden="true"> / </span>
+				<a href="/tool/">Tool details</a>
+				<span aria-hidden="true"> / </span>
+				<a href="https://tool.markdownpic.com/" target="_blank" rel="noopener noreferrer">Open tool</a>
+			</p>
+		</div>
+		<div class="footer-standards__meta">
+			<p><strong>Maintained by</strong> {siteMeta.editorialTeamName}</p>
+			<p><strong>Contact</strong> <a href={`mailto:${siteMeta.email}`}>{siteMeta.email}</a></p>
+			<p><strong>Follow updates</strong> <a href={siteMeta.xUrl}>X</a></p>
+		</div>
+	</section>
 </footer>
 
 <style>

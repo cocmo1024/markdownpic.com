@@ -1,6 +1,8 @@
 export const siteMeta = {
 	name: 'MarkdownPic',
 	shortName: 'MarkdownPic',
+	editorialTeamName: 'MarkdownPic Editorial Desk',
+	reviewDeskName: 'MarkdownPic Review Desk',
 	domain: 'markdownpic.com',
 	siteUrl: 'https://markdownpic.com',
 	description:
@@ -22,7 +24,77 @@ export const siteMeta = {
 	repoUrl: 'https://github.com/cocmo1024/markdownpic.com',
 	xUrl: 'https://x.com/oocxx_com',
 	sameAs: ['https://x.com/oocxx_com', 'https://tool.markdownpic.com/'],
+	editorialMethodSummary:
+		'Pages are built from CommonMark, GitHub Flavored Markdown behavior, renderer comparisons, and editorial analysis focused on portable authoring decisions.',
 	indexNowKey: 'e8244d4b-4b52-4fe7-b459-5a6ea4ee0a7d',
+	publishingPrinciplesPath: '/editorial-policy/',
+	richResultImages: [
+		{
+			path: '/social-card.svg',
+			width: 1200,
+			height: 630,
+			alt: 'MarkdownPic social share card for Markdown syntax, editors, publishing workflows, and Markdown-to-image tooling.',
+		},
+		{
+			path: '/search-preview-4x3.svg',
+			width: 1200,
+			height: 900,
+			alt: 'MarkdownPic reference map for Markdown syntax, renderer differences, and image export workflows.',
+		},
+		{
+			path: '/search-preview-1x1.svg',
+			width: 1200,
+			height: 1200,
+			alt: 'MarkdownPic square preview for Markdown syntax and publishing workflows.',
+		},
+	],
+	editorialEntities: {
+		'editorial-desk': {
+			name: 'MarkdownPic Editorial Desk',
+			path: '/editorial-desk/',
+			description:
+				'Maintains reference pages on Markdown syntax, renderer differences, authoring patterns, and Markdown-to-image workflows.',
+			expertise: [
+				'Markdown syntax',
+				'CommonMark and GFM',
+				'renderer portability',
+				'Markdown publishing workflows',
+			],
+		},
+		'review-desk': {
+			name: 'MarkdownPic Review Desk',
+			path: '/review-desk/',
+			description:
+				'Reviews pages for syntax accuracy, renderer-boundary claims, and tool-fit guidance before substantive updates are published.',
+			expertise: [
+				'syntax review',
+				'renderer comparison',
+				'portability checks',
+				'tool workflow review',
+			],
+		},
+	},
+	toolApplication: {
+		name: 'MarkdownPic Tool',
+		url: 'https://tool.markdownpic.com/',
+		category: 'UtilitiesApplication',
+		operatingSystem: 'Web browser',
+		priceCurrency: 'USD',
+		price: '0',
+		browserRequirements: 'Requires a modern web browser with JavaScript enabled.',
+		description:
+			'Browser-based Markdown-to-image tool for turning Markdown into long images, polished screenshots, and share-ready visual assets.',
+		features: [
+			'Markdown to PNG export',
+			'Browser-local auto-save',
+			'Inline image insertion',
+			'Watermark support',
+			'Theme presets for long-image export',
+		],
+		screenshotPath: '/tool-preview.svg',
+		screenshotAlt:
+			'MarkdownPic Tool interface showing local autosave, image export, image insertion, and watermark controls.',
+	},
 	keywords: [
 		'markdown syntax',
 		'markdown examples',

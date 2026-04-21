@@ -4,7 +4,7 @@ import { siteMeta } from '../utils/site-meta.mjs';
 
 const route = Astro.locals.starlightRoute;
 const seo = buildSeo(route, Astro.url);
-const imageType = seo.imageUrl.endsWith('.svg') ? 'image/svg+xml' : 'image/png';
+const imageType = seo.imageType;
 
 const filteredHead = route.head.filter((entry) => {
 	if (entry.tag !== 'meta' || !entry.attrs) return true;
@@ -29,8 +29,10 @@ const filteredHead = route.head.filter((entry) => {
 <meta name="googlebot" content={seo.robots} />
 <meta name="application-name" content={seo.siteName} />
 <meta name="apple-mobile-web-app-title" content={seo.siteName} />
-<meta name="author" content={seo.siteName} />
-<meta name="creator" content={seo.siteName} />
+<meta name="author" content={seo.authorName} />
+<meta name="creator" content={seo.authorName} />
+{seo.editorName && <meta name="editor" content={seo.editorName} />}
+{seo.authorUrl && <link rel="author" href={seo.authorUrl} />}
 <meta property="og:type" content={seo.ogType} />
 <meta property="og:site_name" content={seo.siteName} />
 <meta property="og:locale" content={seo.ogLocale} />

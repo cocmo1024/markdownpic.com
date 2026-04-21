@@ -1,0 +1,22 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 675' role='img' aria-labelledby='title desc'>
+  <title>MarkdownPic Tool preview</title>
+  <desc>MarkdownPic Tool interface preview showing local autosave, markdown input, export, watermark, and theme controls.</desc>
+  <rect width='1200' height='675' rx='36' fill='#f5f7fc'/>
+  <rect x='36' y='36' width='1128' height='603' rx='28' fill='white' stroke='#2a6df4' stroke-opacity='0.18'/>
+  <rect x='72' y='84' width='736' height='472' rx='20' fill='#ffffff' stroke='#dbe4ff'/>
+  <text x='108' y='136' fill='#111827' font-family='Arial, sans-serif' font-size='34' font-weight='700'>MarkdownPic Tool</text>
+  <text x='108' y='176' fill='#475569' font-family='Arial, sans-serif' font-size='22'>Local auto-save ? Markdown to PNG ? Insert image ? Watermark</text>
+  <rect x='108' y='220' width='664' height='28' rx='14' fill='#eef4ff'/>
+  <rect x='108' y='268' width='624' height='18' rx='9' fill='#e2e8f0'/>
+  <rect x='108' y='304' width='540' height='18' rx='9' fill='#e2e8f0'/>
+  <rect x='108' y='340' width='586' height='18' rx='9' fill='#e2e8f0'/>
+  <rect x='108' y='390' width='208' height='42' rx='21' fill='#2a6df4'/>
+  <text x='154' y='418' fill='white' font-family='Arial, sans-serif' font-size='20' font-weight='700'>Export PNG</text>
+  <rect x='850' y='84' width='278' height='472' rx='20' fill='#f8fbff' stroke='#dbe4ff'/>
+  <text x='886' y='136' fill='#173b8f' font-family='Arial, sans-serif' font-size='24' font-weight='700'>Controls</text>
+  <text x='886' y='192' fill='#334155' font-family='Arial, sans-serif' font-size='20'>Theme presets</text>
+  <text x='886' y='232' fill='#334155' font-family='Arial, sans-serif' font-size='20'>Insert image</text>
+  <text x='886' y='272' fill='#334155' font-family='Arial, sans-serif' font-size='20'>Watermark text</text>
+  <text x='886' y='312' fill='#334155' font-family='Arial, sans-serif' font-size='20'>Clear saved data</text>
+  <rect x='72' y='584' width='1056' height='18' rx='9' fill='#eef4ff'/>
+</svg>

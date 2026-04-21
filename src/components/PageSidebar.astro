@@ -7,7 +7,7 @@ const route = Astro.locals.starlightRoute;
 
 {
 	route.toc && (
-		<div class="lg:sl-hidden">
+		<div class="lg:sl-hidden" data-nosnippet>
 			<MobileTableOfContents />
 		</div>
 	)
@@ -15,7 +15,11 @@ const route = Astro.locals.starlightRoute;
 
 <div class="right-sidebar-panel sl-hidden lg:sl-block">
 	<div class="right-sidebar-panel__inner">
-		{route.toc && <TableOfContents />}
+		{route.toc && (
+			<div data-nosnippet>
+				<TableOfContents />
+			</div>
+		)}
 		<ReferenceSignals />
 	</div>
 </div>

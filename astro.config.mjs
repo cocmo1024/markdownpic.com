@@ -25,42 +25,15 @@ export default defineConfig({
 				{
 					label: 'Markdown Encyclopedia',
 					items: [
-						{
-							label: 'Syntax',
-							autogenerate: { directory: 'syntax' },
-						},
-						{
-							label: 'Fundamentals',
-							autogenerate: { directory: 'fundamentals' },
-						},
-						{
-							label: 'Guides',
-							autogenerate: { directory: 'guides' },
-						},
-						{
-							label: 'Editors',
-							autogenerate: { directory: 'editors' },
-						},
-						{
-							label: 'Publishing',
-							autogenerate: { directory: 'publishing' },
-						},
-						{
-							label: 'Workflows',
-							autogenerate: { directory: 'workflows' },
-						},
-						{
-							label: 'Editors & Tooling',
-							autogenerate: { directory: 'comparisons' },
-						},
-						{
-							label: 'FAQ',
-							autogenerate: { directory: 'faq' },
-						},
-						{
-							label: 'Posts',
-							autogenerate: { directory: 'posts' },
-						},
+						'syntax',
+						'fundamentals',
+						'guides',
+						'editors',
+						'publishing',
+						'workflows',
+						'comparisons',
+						'faq',
+						'posts',
 						{
 							label: 'Tool',
 							link: 'https://tool.markdownpic.com/',

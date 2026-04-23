@@ -1,0 +1,109 @@
+---
+title: Why is my Markdown math not rendering?
+description: The most common reasons math fails in Markdown, including unsupported renderers, wrong delimiters, local preview differences, and confusing Markdown with MathJax or KaTeX support.
+referenceType: faq
+adProfile: faq
+commercialIntent: high
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Helps authors debug inline and block math in Markdown by separating LaTeX syntax issues from renderer support and platform behavior.
+readerTakeaway: You should leave with a practical checklist for Markdown math failures and a clearer sense of when the problem is the math syntax versus the rendering engine.
+primaryKeyword: markdown math not rendering
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Developers
+  - Technical writers
+  - Documentation teams
+  - Markdown learners
+keyQuestions:
+  - Why is my Markdown math not rendering?
+  - Does Markdown support math by default?
+  - When is the issue the renderer rather than the formula?
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Why is my Markdown math not rendering?
+
+## What matters first
+
+Math is not a guaranteed built-in Markdown feature.
+
+Math only renders when the destination platform supports a math engine such as MathJax or KaTeX and your expression uses the expected delimiters.
+
+If that support is missing, the formula usually appears as raw text.
+
+## The most common mistake
+
+The most common mistake is assuming Markdown itself renders math.
+
+It does not.
+
+Markdown can carry the expression, but the platform still has to interpret and typeset it.
+
+Without that extra support, `$...$`, `$$...$$`, or math code fences stay visible as plain text.
+
+## Delimiters matter too
+
+Math often fails because:
+
+- inline delimiters are malformed,
+- block math is not placed on its own line,
+- dollar signs are being interpreted as normal text,
+- or the renderer expects a different format than the one you copied.
+
+A valid formula can still fail if the delimiter pattern is wrong for the destination platform.
+
+## Local preview and published output are often different
+
+Math can also break because:
+
+- your editor preview lacks math support,
+- a docs site enables math but your local preview does not,
+- or one platform supports math while another treats it as plain Markdown text.
+
+That is why the same file can look broken locally and fine after publishing, or the reverse.
+
+## The safest troubleshooting order
+
+Check in this order:
+
+1. confirm the target platform actually supports math rendering,
+2. test a tiny known-good inline or block expression,
+3. verify the delimiters are correct for that platform,
+4. escape dollar signs that are meant to be plain text,
+5. then compare local preview with the real destination environment.
+
+That separates syntax mistakes from missing math support quickly.
+
+## The healthiest long-term rule
+
+Treat math as a renderer capability layered on top of Markdown.
+
+If the file must travel across many tools, do not assume math will render everywhere just because it worked once in one environment.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Markdown math and diagrams: where standard syntax stops"
+		href="/fundamentals/markdown-math-and-diagrams-where-standard-syntax-stops/"
+		description="Use this page for the deeper explanation of where Markdown ends and math rendering engines begin."
+	/>
+	<LinkCard
+		title="Why does Markdown render differently on GitHub and VS Code?"
+		href="/faq/why-does-markdown-render-differently-on-github-and-vs-code/"
+		description="Use this page when math works in one environment but not another."
+	/>
+	<LinkCard
+		title="Why is my Mermaid diagram not rendering in Markdown?"
+		href="/faq/why-is-my-mermaid-diagram-not-rendering-in-markdown/"
+		description="Use this page when the broader issue is renderer support for non-core Markdown features."
+	/>
+	<LinkCard
+		title="Markdown soft breaks vs hard breaks across renderers"
+		href="/syntax/markdown-soft-breaks-vs-hard-breaks-across-renderers/"
+		description="Use this page when line breaks around formulas are part of the problem."
+	/>
+</div>

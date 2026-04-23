@@ -1,0 +1,125 @@
+---
+title: Why is my Mermaid diagram not rendering in Markdown?
+description: The most common reasons Mermaid diagrams fail in Markdown, including unsupported renderers, wrong code fences, plugin conflicts, syntax errors, and platform differences.
+referenceType: faq
+adProfile: faq
+commercialIntent: high
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Helps authors debug Mermaid diagrams that stay as code blocks or fail entirely by separating syntax issues from renderer support and plugin behavior.
+readerTakeaway: You should leave with a practical checklist for Mermaid rendering failures and a clearer sense of when the issue is the diagram, the Markdown, or the platform.
+primaryKeyword: mermaid diagram not rendering markdown
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Developers
+  - Technical writers
+  - Documentation teams
+  - Markdown learners
+keyQuestions:
+  - Why is my Mermaid diagram not rendering in Markdown?
+  - Does Markdown support Mermaid by default?
+  - When is the issue the renderer instead of the diagram syntax?
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Why is my Mermaid diagram not rendering in Markdown?
+
+## What matters first
+
+Mermaid is not part of core Markdown.
+
+A Mermaid diagram only renders when the destination platform explicitly supports Mermaid and the code block is written in the expected form.
+
+If either of those is missing, you usually get a plain fenced code block instead of a diagram.
+
+## The most common renderer mistake
+
+The most common mistake is assuming Markdown alone renders Mermaid.
+
+It does not.
+
+A renderer has to recognize a fenced code block like this:
+
+```md
+```mermaid
+graph TD;
+  A-->B;
+```
+```
+
+If the platform does not enable Mermaid, the diagram will remain plain code.
+
+## The second common problem: the fence is wrong
+
+Mermaid often fails because:
+
+- the language identifier is missing,
+- the fence is malformed,
+- indentation is wrong,
+- or the diagram syntax itself contains an error.
+
+If the fence is not exactly what the renderer expects, it will not switch into Mermaid mode.
+
+## Platform differences matter a lot
+
+Some platforms support Mermaid in specific Markdown surfaces.
+
+Others do not support it at all, or support it only through plugins, themes, or build steps.
+
+That is why a Mermaid diagram can work on GitHub or a docs stack and still fail in a local preview, exported document, or another publishing system.
+
+## Plugins can also be the problem
+
+Mermaid failures are sometimes caused by:
+
+- outdated plugins,
+- conflicting Mermaid extensions,
+- unsupported Mermaid syntax for the renderer version,
+- or preview tooling that is not using the same Mermaid engine as the destination platform.
+
+The issue can be the environment, not the diagram itself.
+
+## The safest troubleshooting order
+
+Check in this order:
+
+1. confirm the fenced block uses the `mermaid` language identifier,
+2. test a tiny known-good diagram,
+3. check whether the target platform actually supports Mermaid,
+4. disable conflicting preview plugins or extensions,
+5. then inspect whether the Mermaid syntax is valid for that renderer version.
+
+That order catches most failures quickly.
+
+## The healthiest long-term rule
+
+Treat Mermaid as a renderer feature, not as guaranteed portable Markdown.
+
+If the file has to travel across many tools, expect Mermaid support to vary and test the real destination instead of trusting one preview.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Mermaid diagrams in Markdown: where they render and where they do not"
+		href="/fundamentals/mermaid-diagrams-in-markdown-where-they-render-and-where-they-dont/"
+		description="Use this page for the deeper explanation of Mermaid as a renderer-dependent feature rather than standard Markdown."
+	/>
+	<LinkCard
+		title="Why does Markdown render differently on GitHub and VS Code?"
+		href="/faq/why-does-markdown-render-differently-on-github-and-vs-code/"
+		description="Use this page when the diagram works in one environment and fails in another."
+	/>
+	<LinkCard
+		title="Markdown math and diagrams: where standard syntax stops"
+		href="/fundamentals/markdown-math-and-diagrams-where-standard-syntax-stops/"
+		description="Use this page when the real issue is the boundary between Markdown and renderer-specific extensions."
+	/>
+	<LinkCard
+		title="Why is my Markdown HTML not rendering?"
+		href="/faq/why-is-my-markdown-html-not-rendering/"
+		description="Use this page when the debugging path shifts from Mermaid support to raw HTML or sanitization issues."
+	/>
+</div>

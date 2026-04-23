@@ -104,7 +104,9 @@ If your file needs to travel, choose the form that survives the broadest path.
 - [Can Markdown change font size?](/faq/can-markdown-change-font-size/)
 - [Can Markdown center text or images?](/faq/can-markdown-center-text-or-images/)
 - [Can Markdown create columns or side-by-side layouts?](/faq/can-markdown-create-columns-or-side-by-side-layouts/)
+- [Why are my Markdown footnotes not rendering?](/faq/why-are-my-markdown-footnotes-not-rendering/)
 - [Why does Markdown render differently on GitHub and VS Code?](/faq/why-does-markdown-render-differently-on-github-and-vs-code/)
+- [Why is my Markdown HTML not rendering?](/faq/why-is-my-markdown-html-not-rendering/)
 - [Why is my Markdown table not rendering?](/faq/why-is-my-markdown-table-not-rendering/)
 - [Why is my Markdown link not working?](/faq/why-is-my-markdown-link-not-working/)
 - [Why is my Markdown anchor link not working?](/faq/why-is-my-markdown-anchor-link-not-working/)
@@ -113,11 +115,13 @@ If your file needs to travel, choose the form that survives the broadest path.
 - [Should you use root-relative paths in Markdown?](/faq/should-you-use-root-relative-paths-in-markdown/)
 - [Can Markdown link to a heading in another file?](/faq/can-markdown-link-to-a-heading-in-another-file/)
 - [Why is my Markdown table of contents not working?](/faq/why-is-my-markdown-table-of-contents-not-working/)
+- [Why is my Mermaid diagram not rendering in Markdown?](/faq/why-is-my-mermaid-diagram-not-rendering-in-markdown/)
 - [Why is my Markdown image not showing?](/faq/why-is-my-markdown-image-not-showing/)
 - [Why are my Markdown badges not showing in my GitHub README?](/faq/why-are-my-markdown-badges-not-showing-in-my-github-readme/)
 - [Why are my Markdown images working locally but not on GitHub?](/faq/why-are-my-markdown-images-working-locally-but-not-on-github/)
 - [Why does my Markdown work locally but break after publishing?](/faq/why-does-my-markdown-work-locally-but-break-after-publishing/)
 - [Why are my Markdown line breaks not working?](/faq/why-are-my-markdown-line-breaks-not-working/)
+- [Why is my Markdown math not rendering?](/faq/why-is-my-markdown-math-not-rendering/)
 - [Why is my Markdown checklist not rendering?](/faq/why-is-my-markdown-checklist-not-rendering/)
 - [Can Markdown link to a local file?](/faq/can-markdown-link-to-a-local-file/)
 - [Can Markdown open links in a new tab?](/faq/can-markdown-open-links-in-a-new-tab/)
@@ -162,20 +166,24 @@ If a new reader lands on this section from search, these are the strongest first
 - [Can Markdown change font size?](/faq/can-markdown-change-font-size/) for the persistent typography question that is really a Markdown-versus-presentation boundary issue.
 - [Can Markdown center text or images?](/faq/can-markdown-center-text-or-images/) for the alignment question that often gets misanswered as if centering were standard syntax.
 - [Can Markdown create columns or side-by-side layouts?](/faq/can-markdown-create-columns-or-side-by-side-layouts/) for authors trying to force page layout into source files that should stay portable.
+- [Why are my Markdown footnotes not rendering?](/faq/why-are-my-markdown-footnotes-not-rendering/) for the recurring footnote failure where renderer support gets confused with broken syntax.
 - [Why is my Markdown table not rendering?](/faq/why-is-my-markdown-table-not-rendering/) for the troubleshooting path that separates broken syntax from unsupported or fragile renderers.
 - [Why is my Markdown link not working?](/faq/why-is-my-markdown-link-not-working/) for the common path and anchor failures that appear once Markdown moves across repos, docs sites, and published routes.
 - [Why does Markdown render differently on GitHub and VS Code?](/faq/why-does-markdown-render-differently-on-github-and-vs-code/) for the editor-versus-platform drift that causes many “it worked over there” Markdown debugging sessions.
+- [Why is my Markdown HTML not rendering?](/faq/why-is-my-markdown-html-not-rendering/) for the raw-HTML failures caused by sanitization, parsing boundaries, and platform policy differences.
 - [Why is my Markdown anchor link not working?](/faq/why-is-my-markdown-anchor-link-not-working/) for the fragment-level failures caused by changed headings, slug rules, and unstable generated IDs.
 - [Why are my Markdown relative links not working?](/faq/why-are-my-markdown-relative-links-not-working/) for the route and base-path problems that show up when repository links become published pages.
 - [Should you use relative or absolute links in Markdown?](/faq/should-you-use-relative-or-absolute-links-in-markdown/) for the compare-style decision that sits underneath many broken-link and portability questions.
 - [Should you use root-relative paths in Markdown?](/faq/should-you-use-root-relative-paths-in-markdown/) for teams deciding whether site-root navigation is worth the portability tradeoff.
 - [Can Markdown link to a heading in another file?](/faq/can-markdown-link-to-a-heading-in-another-file/) for the cross-file fragment behavior that looks simple in syntax and turns fragile in real publishing systems.
 - [Why is my Markdown table of contents not working?](/faq/why-is-my-markdown-table-of-contents-not-working/) for the common case where manual TOCs, anchor drift, and renderer-specific generation get mixed together.
+- [Why is my Mermaid diagram not rendering in Markdown?](/faq/why-is-my-mermaid-diagram-not-rendering-in-markdown/) for the fenced-diagram failures caused by missing renderer support, bad fences, and preview plugin conflicts.
 - [Why is my Markdown image not showing?](/faq/why-is-my-markdown-image-not-showing/) for the visibility failures caused by local paths, hosting assumptions, and publishing context changes.
 - [Why are my Markdown badges not showing in my GitHub README?](/faq/why-are-my-markdown-badges-not-showing-in-my-github-readme/) for the frequent README issue where badge URLs, caching, and branch assumptions quietly break trust signals.
 - [Why are my Markdown images working locally but not on GitHub?](/faq/why-are-my-markdown-images-working-locally-but-not-on-github/) for the repository-specific image failures caused by missing commits, path mistakes, and case mismatches.
 - [Why does my Markdown work locally but break after publishing?](/faq/why-does-my-markdown-work-locally-but-break-after-publishing/) for the broader portability failures that only appear after routes, assets, and renderer rules change.
 - [Why are my Markdown line breaks not working?](/faq/why-are-my-markdown-line-breaks-not-working/) for the newline behavior that repeatedly surprises users moving content across renderers.
+- [Why is my Markdown math not rendering?](/faq/why-is-my-markdown-math-not-rendering/) for the repeated math-support failure where Markdown source is fine but the renderer never typesets the expression.
 - [Why is my Markdown checklist not rendering?](/faq/why-is-my-markdown-checklist-not-rendering/) for the task-list failures caused by GFM assumptions, indentation mistakes, and export paths with no checkbox support.
 - [Can Markdown link to a local file?](/faq/can-markdown-link-to-a-local-file/) for the portability question where local-machine convenience collides with repo sharing and published-site reality.
 - [Can Markdown open links in a new tab?](/faq/can-markdown-open-links-in-a-new-tab/) for the recurring behavior question that belongs at the Markdown-versus-HTML boundary.

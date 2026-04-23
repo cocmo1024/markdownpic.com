@@ -1,0 +1,127 @@
+---
+title: Why are my Markdown footnotes not rendering?
+description: The most common reasons Markdown footnotes fail, including renderer support, non-standard syntax, malformed references, indentation mistakes, and platform differences.
+referenceType: faq
+adProfile: faq
+commercialIntent: high
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Helps authors debug missing or broken Markdown footnotes by separating syntax mistakes from renderer support and platform limitations.
+readerTakeaway: You should leave with a practical checklist for Markdown footnote failures and a clearer sense of when the problem is the syntax versus the renderer.
+primaryKeyword: markdown footnotes not rendering
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Technical writers
+  - Developers
+  - Documentation teams
+  - Markdown learners
+keyQuestions:
+  - Why are my Markdown footnotes not rendering?
+  - Are footnotes standard Markdown?
+  - When is the problem the renderer instead of the syntax?
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Why are my Markdown footnotes not rendering?
+
+## What matters first
+
+Markdown footnotes often fail for one of four reasons:
+
+1. your renderer does not support footnotes,
+2. the reference and definition do not match,
+3. the footnote syntax is malformed,
+4. or the platform supports footnotes differently than your local preview.
+
+The biggest hidden issue is that footnotes are not universal portable Markdown.
+
+## Footnotes are not a guaranteed core Markdown feature
+
+Many authors assume footnotes are part of standard Markdown everywhere.
+
+They are not.
+
+Some renderers support them well. Others ignore them, show them as plain text, or only support them in specific publishing surfaces.
+
+That means the same source can look correct in one environment and broken in another.
+
+## The most common syntax mistake
+
+The most common mistake is mismatched footnote syntax:
+
+```md
+Here is a statement with a footnote.[^1]
+
+[^1]: This is the note.
+```
+
+If the label in the reference and the label in the definition do not match exactly, the footnote will not resolve cleanly.
+
+## Formatting mistakes also break footnotes
+
+Footnotes often fail because of:
+
+- missing colons,
+- broken indentation,
+- extra spaces in the wrong place,
+- definitions placed where the renderer does not expect them,
+- or copied Markdown that mixed renderer-specific styles.
+
+Even small formatting drift can break the note.
+
+## Renderer support is often the real issue
+
+If the syntax looks correct but nothing renders, the problem is often the renderer.
+
+A platform may:
+
+- support footnotes in one Markdown surface but not another,
+- support them in published docs but not in local preview,
+- or require a specific parser or plugin.
+
+That is why "it works on GitHub" and "it works in my editor" are not the same guarantee.
+
+## The safest troubleshooting order
+
+Check in this order:
+
+1. confirm the reference and definition labels match exactly,
+2. confirm the footnote definition syntax is correct,
+3. simplify the example to one basic footnote,
+4. check whether the target renderer actually supports footnotes,
+5. then compare local preview against the real publishing environment.
+
+That sequence catches most failures quickly.
+
+## The healthiest long-term rule
+
+Use footnotes only when the publishing environment is known to support them.
+
+If the file must travel across many tools, treat footnotes as a renderer-dependent enhancement rather than guaranteed portable Markdown.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Markdown footnotes: where they work and where they fail"
+		href="/syntax/markdown-footnotes-where-they-work-and-where-they-fail/"
+		description="Use this page for the deeper standards and portability explanation behind Markdown footnotes."
+	/>
+	<LinkCard
+		title="Why does Markdown render differently on GitHub and VS Code?"
+		href="/faq/why-does-markdown-render-differently-on-github-and-vs-code/"
+		description="Use this page when the footnote works in one environment and breaks in another."
+	/>
+	<LinkCard
+		title="CommonMark vs GFM vs renderer differences"
+		href="/fundamentals/commonmark-vs-gfm-vs-renderer-differences/"
+		description="Use this page when the real question is whether the feature belongs to core Markdown, GitHub-flavored Markdown, or a specific renderer."
+	/>
+	<LinkCard
+		title="Why does my Markdown work locally but break after publishing?"
+		href="/faq/why-does-my-markdown-work-locally-but-break-after-publishing/"
+		description="Use this page when the footnote problem appears only after deployment or export."
+	/>
+</div>

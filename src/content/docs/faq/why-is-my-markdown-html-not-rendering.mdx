@@ -1,0 +1,121 @@
+---
+title: Why is my Markdown HTML not rendering?
+description: The most common reasons raw HTML fails in Markdown, including sanitization, unsupported tags, block parsing rules, renderer differences, and platform-specific restrictions.
+referenceType: faq
+adProfile: faq
+commercialIntent: high
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Helps authors debug raw HTML that disappears, breaks, or behaves differently inside Markdown across GitHub, editors, docs sites, and publishing pipelines.
+readerTakeaway: You should leave with a practical model for when raw HTML in Markdown is allowed, when it is sanitized, and why correct HTML can still fail in a Markdown workflow.
+primaryKeyword: markdown html not rendering
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Developers
+  - Technical writers
+  - Documentation teams
+  - Markdown learners
+keyQuestions:
+  - Why is my Markdown HTML not rendering?
+  - Does Markdown allow raw HTML?
+  - When is the problem parsing versus sanitization?
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Why is my Markdown HTML not rendering?
+
+## What matters first
+
+Raw HTML in Markdown can fail for two very different reasons:
+
+1. the Markdown parser treats the HTML differently than you expected,
+2. the renderer or platform sanitizes, strips, or ignores the HTML afterward.
+
+That is why valid HTML can still fail in a Markdown workflow.
+
+## Markdown allowing HTML is not the same as the platform allowing HTML
+
+Many Markdown systems will parse raw HTML.
+
+But the platform may still:
+
+- remove unsafe tags,
+- strip attributes,
+- ignore scripts and styles,
+- or block layout-heavy HTML patterns entirely.
+
+So the right question is not only "is this valid HTML?" but also "does this renderer allow it?"
+
+## HTML blocks can change Markdown parsing
+
+Raw HTML can also affect how surrounding Markdown is parsed.
+
+That means you can run into problems with:
+
+- blank lines,
+- indentation,
+- block boundaries,
+- or Markdown that you expected to render inside an HTML block.
+
+Sometimes the issue is not sanitization. It is the parser switching modes.
+
+## The most common failure patterns
+
+HTML in Markdown often fails because of:
+
+- unsupported tags like script-heavy or embed-heavy elements,
+- inline styles getting stripped,
+- raw HTML blocks swallowing nearby Markdown unexpectedly,
+- custom classes that only work on one docs stack,
+- or an editor preview that tolerates HTML a publishing surface later sanitizes.
+
+These are renderer problems more often than syntax problems.
+
+## The safest troubleshooting order
+
+Check in this order:
+
+1. simplify the HTML to the smallest possible example,
+2. test whether the target renderer allows that tag at all,
+3. remove styles, scripts, and custom attributes,
+4. check whether block-level HTML changed Markdown parsing around it,
+5. then compare local preview with the actual destination platform.
+
+That usually shows whether the failure is parsing, sanitization, or platform policy.
+
+## The healthiest long-term rule
+
+Use raw HTML in Markdown only when:
+
+- the destination platform is known,
+- the HTML is simple,
+- and portability is not your top requirement.
+
+The more layout or behavior you force into HTML, the less portable the Markdown source becomes.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="HTML in Markdown: when to use it and when it becomes debt"
+		href="/fundamentals/html-in-markdown-when-to-use-it-and-when-it-becomes-debt/"
+		description="Use this page for the deeper tradeoff between raw HTML convenience and long-term Markdown portability."
+	/>
+	<LinkCard
+		title="Markdown HTML sanitization and unsupported tags across platforms"
+		href="/fundamentals/markdown-html-sanitization-and-unsupported-tags-across-platforms/"
+		description="Use this page when the real issue is platform sanitization rather than Markdown parsing."
+	/>
+	<LinkCard
+		title="Raw HTML blocks vs inline HTML in Markdown"
+		href="/fundamentals/raw-html-blocks-vs-inline-html-in-markdown/"
+		description="Use this page when block-level HTML is changing how nearby Markdown is parsed."
+	/>
+	<LinkCard
+		title="Can Markdown create columns or side-by-side layouts?"
+		href="/faq/can-markdown-create-columns-or-side-by-side-layouts/"
+		description="Use this page when the HTML is trying to force layout behavior that really belongs to CSS or the renderer."
+	/>
+</div>

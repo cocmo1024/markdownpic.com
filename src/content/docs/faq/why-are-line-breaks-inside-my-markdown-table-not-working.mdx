@@ -1,0 +1,139 @@
+---
+title: Why are line breaks inside my Markdown table not working?
+description: The real reasons line breaks inside Markdown table cells fail, including pipe-table limits, renderer differences, HTML fallbacks, and export behavior.
+referenceType: faq
+adProfile: faq
+commercialIntent: high
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Helps authors understand why line breaks inside Markdown table cells so often fail and which fixes are actually portable.
+readerTakeaway: You should leave with a clear rule for when plain Markdown tables are enough, when HTML is required, and when the table should be redesigned.
+primaryKeyword: markdown table line break
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Markdown learners
+  - Technical writers
+  - Documentation teams
+  - README authors
+keyQuestions:
+  - Why do line breaks inside Markdown table cells not render?
+  - When does a pipe table need HTML to support multi-line content?
+  - Which fixes are portable and which are renderer-specific?
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Why are line breaks inside my Markdown table not working?
+
+The short answer is that plain Markdown tables are much flatter than people expect. A pipe table is good at rows and columns. It is not a reliable container for paragraphs, rich layout, or multi-line formatting across renderers.
+
+That is why a table can look acceptable in one editor and collapse into a single line, broken spacing, or raw HTML in another.
+
+## What matters first
+
+Most table-cell line-break failures come from one of these realities:
+
+1. the renderer supports pipe tables but not multi-line cell formatting in the way you expect;
+2. the author is trying to put paragraphs into a syntax that only wants flat cell content;
+3. the fix uses raw HTML, but the target renderer sanitizes or strips it;
+4. the table survives on the web but breaks in export, email, or screenshot workflows.
+
+So the real question is not only "how do I force a line break?" It is "what output path must this table survive?"
+
+## Why plain pipe tables break here
+
+Markdown pipe tables are best treated as simple grid syntax. They handle:
+
+- short labels,
+- compact comparisons,
+- small code snippets,
+- and simple single-line content.
+
+They become fragile when a cell needs:
+
+- multiple paragraphs,
+- nested lists,
+- rich callouts,
+- or layout behavior that depends on explicit HTML structure.
+
+That is not a bug. It is a limit of what portable Markdown tables are meant to do.
+
+## What usually works
+
+If the renderer allows raw HTML, the most common workaround is an HTML line break inside the cell:
+
+```md
+| Plan | Notes |
+| --- | --- |
+| Team | First line<br>Second line |
+```
+
+That often works in GitHub-style rendering, but it is not universal. Some pipelines sanitize HTML. Others render it in HTML output but not in downstream exports.
+
+## What usually does not travel well
+
+These approaches often create renderer-specific debt:
+
+- multiple literal Markdown lines inside one pipe-table cell;
+- block-level HTML structures inside a cell;
+- nested Markdown lists that depend on forgiving parsing;
+- and layout tricks that only one docs system or editor accepts.
+
+If the table must survive GitHub, docs sites, CMS ingestion, PDF export, and image workflows, these tricks often become a maintenance problem.
+
+## The practical rule
+
+Use a normal pipe table when the content can stay compact and mostly single-line.
+
+Use an HTML table when:
+
+- cells need deliberate line breaks or richer formatting;
+- the presentation is part of the meaning;
+- or the document lives in a controlled renderer that you own.
+
+Do not force a table at all when the information is really:
+
+- a comparison card layout,
+- a two-column prose explanation,
+- or a set of notes that would read better as headings and lists.
+
+## Why export makes this worse
+
+Table-cell line breaks may appear acceptable in a web renderer and still fail later in:
+
+- PDF export,
+- email rendering,
+- screenshots,
+- social-card generation,
+- or narrow mobile layouts.
+
+That is why export-safe authoring matters. A source file that is "good enough for one page" is not automatically good enough for the whole publishing stack.
+
+## The safest troubleshooting order
+
+1. Confirm the target renderer supports pipe tables.
+2. Test whether raw HTML line breaks are preserved.
+3. Decide whether the table must stay portable across multiple renderers.
+4. If portability matters, simplify the cell content.
+5. If richer layout matters more, move to HTML or another layout pattern.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Why is my Markdown table not rendering?"
+		href="/faq/why-is-my-markdown-table-not-rendering/"
+		description="Use this page when the table itself is unstable, not only the line breaks inside it."
+	/>
+	<LinkCard
+		title="Markdown tables that survive mobile, PDF, and image export"
+		href="/syntax/markdown-tables-that-survive-mobile-pdf-and-image-export/"
+		description="Use this page when the table parses correctly but still breaks in real output channels."
+	/>
+	<LinkCard
+		title="HTML tables vs pipe tables for portable Markdown"
+		href="/guides/html-tables-vs-pipe-tables-for-portable-markdown/"
+		description="Use this page when the real decision is not syntax repair, but whether the document should still be using a pipe table at all."
+	/>
+</div>

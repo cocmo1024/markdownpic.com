@@ -1,0 +1,216 @@
+---
+title: Markdown docs publishing checklist before going live
+description: A practical go-live checklist for Markdown docs and blog sites covering source ownership, metadata, links, images, redirects, search, mobile reading, exports, and AI reuse.
+referenceType: publishing
+adProfile: publishing
+commercialIntent: high
+reviewCadence: Monthly review
+contentStatus: cornerstone
+problemSolved: Helps teams launch Markdown-based docs, blogs, and knowledge bases with fewer broken links, rendering surprises, metadata gaps, asset failures, and source-of-truth problems.
+readerTakeaway: You should leave with a go-live checklist for turning Markdown files into a reliable public publishing system.
+primaryKeyword: markdown docs publishing checklist
+searchIntent: deploy
+decisionStage: implementation
+targetRoles:
+  - Documentation leads
+  - Content strategists
+  - Developers
+  - Blog operators
+keyQuestions:
+  - What should you check before publishing Markdown docs?
+  - How do you prepare a Markdown site for launch?
+  - Which Markdown publishing problems should be fixed before going live?
+notFor:
+  - Writers publishing a private note
+  - Readers looking only for Markdown syntax examples
+updateTriggers:
+  - Changes in major docs-site and static-site publishing frameworks
+  - Changes in search, sitemap, or metadata practices for Markdown sites
+  - Changes in MarkdownPic tool and export guidance
+---
+
+import { LinkCard, Steps } from '@astrojs/starlight/components';
+
+# Markdown docs publishing checklist before going live
+
+## What matters first
+
+Publishing Markdown is not the same as having Markdown files.
+
+Before going live, the system needs:
+
+- a canonical source,
+- reliable routes,
+- useful metadata,
+- working links,
+- stable assets,
+- readable pages,
+- searchable HTML,
+- and a plan for updates.
+
+Markdown is the source layer. The site is the operating layer.
+
+## Checklist 1: source ownership
+
+Confirm:
+
+- where the canonical Markdown lives,
+- who owns updates,
+- how edits are reviewed,
+- whether generated outputs are downstream only,
+- and whether old drafts are excluded from publishing.
+
+If the source is unclear on launch day, the site will drift after launch.
+
+## Checklist 2: route and URL plan
+
+Check:
+
+- slug format,
+- trailing slash policy,
+- canonical URLs,
+- section paths,
+- redirect rules,
+- old URLs from previous sites,
+- and internal link style.
+
+Do not wait until after launch to discover that old search paths or README links now fail.
+
+## Checklist 3: metadata
+
+Every important page should have:
+
+- title,
+- description,
+- section,
+- update status,
+- owner or review cadence when relevant,
+- and a clear purpose.
+
+Metadata is not decoration. It feeds navigation, search snippets, previews, sitemaps, and editorial operations.
+
+## Checklist 4: links
+
+Before launch, test:
+
+- internal links,
+- external links,
+- heading anchors,
+- image links,
+- download links,
+- README carryover links,
+- and links generated from Markdown headings.
+
+A Markdown site with broken links feels unfinished even when the writing is strong.
+
+## Checklist 5: images and assets
+
+Check:
+
+- local asset paths,
+- public asset paths,
+- remote images,
+- alt text,
+- dimensions,
+- dark or light background readability,
+- screenshot freshness,
+- and whether generated visuals point back to the canonical page.
+
+Images should support the source, not replace it.
+
+## Checklist 6: mobile reading
+
+Mobile check:
+
+- line length,
+- heading wrap,
+- tables,
+- code blocks,
+- images,
+- blockquotes,
+- navigation,
+- and tap targets.
+
+Many Markdown pages are technically correct but unpleasant on phones because tables, code, or long links overflow.
+
+## Checklist 7: search basics
+
+Before launch, confirm:
+
+- indexable HTML exists,
+- canonical pages are not hidden behind images only,
+- titles and descriptions are specific,
+- sitemap is generated,
+- robots rules are intentional,
+- duplicate pages are controlled,
+- and high-value pages are internally linked.
+
+Markdown-to-image output can help distribution, but indexable HTML still carries search value.
+
+## Checklist 8: export and distribution
+
+If the same Markdown will feed exports, test:
+
+- PDF,
+- email,
+- screenshots,
+- social images,
+- long images,
+- and snippets copied into other systems.
+
+The public site should remain the canonical source even when visual derivatives are distributed elsewhere.
+
+## Checklist 9: AI and reuse
+
+If the site will support AI search, RAG, or internal knowledge reuse, check:
+
+- clean headings,
+- stable URLs,
+- concise sections,
+- non-duplicated pages,
+- citation-friendly wording,
+- and source updates that can be reviewed later.
+
+Publishing messy Markdown makes AI reuse messy too.
+
+## Go-live sequence
+
+<Steps>
+	1. Freeze the launch source and remove stale drafts.
+	2. Build the site and resolve warnings.
+	3. Test routes, redirects, links, images, and mobile reading.
+	4. Confirm sitemap, metadata, canonical URLs, and indexing policy.
+	5. Test export or visual workflows if they are part of distribution.
+	6. Publish, then record owners and review cadence for future updates.
+</Steps>
+
+## Practical rule
+
+Do not launch a Markdown site because the pages render locally.
+
+Launch when the source, routes, metadata, assets, search surface, and update process are all coherent.
+
+## Related pages
+
+<div class="portal-links">
+	<LinkCard
+		title="Markdown content audit checklist for docs and blogs"
+		href="/guides/markdown-content-audit-checklist-for-docs-and-blogs/"
+		description="Use this page when the site needs a broader source-quality audit before launch."
+	/>
+	<LinkCard
+		title="How to test Markdown rendering before publishing"
+		href="/guides/how-to-test-markdown-rendering-before-publishing/"
+		description="Use this page when launch risk is mostly rendering, preview, build, or export behavior."
+	/>
+	<LinkCard
+		title="Markdown migration checklist between tools and docs sites"
+		href="/guides/markdown-migration-checklist-between-tools-and-docs-sites/"
+		description="Use this page when launch follows a migration from another tool, repository, or publishing system."
+	/>
+	<LinkCard
+		title="Markdown for docs, blogs, and AI-ready content systems"
+		href="/publishing/markdown-for-docs-blogs-and-ai-ready-content-systems/"
+		description="Use this page when the team needs the larger source-layer model behind a Markdown publishing system."
+	/>
+</div>

@@ -1,0 +1,229 @@
+---
+title: Markdown migration checklist between tools and docs sites
+description: A practical checklist for migrating Markdown between editors, READMEs, CMSs, static sites, docs frameworks, and AI-ready content systems.
+referenceType: guide
+adProfile: guide
+commercialIntent: high
+reviewCadence: Monthly review
+contentStatus: cornerstone
+problemSolved: Helps teams migrate Markdown without breaking links, images, headings, tables, metadata, code examples, renderer-specific syntax, or canonical-source ownership.
+readerTakeaway: You should leave with a migration plan that protects Markdown source quality while moving content between tools and publishing systems.
+primaryKeyword: markdown migration checklist
+searchIntent: deploy
+decisionStage: implementation
+targetRoles:
+  - Documentation teams
+  - Developers
+  - Content operators
+  - Technical writers
+keyQuestions:
+  - How do you migrate Markdown between tools without breaking content?
+  - What usually breaks when Markdown moves from one renderer to another?
+  - How should teams test a Markdown migration?
+notFor:
+  - Readers moving one small personal note
+  - Teams that do not control the destination publishing pipeline
+updateTriggers:
+  - Changes in major Markdown editors or docs frameworks
+  - Changes in GitHub, CommonMark, or common renderer behavior
+  - New MarkdownPic guidance around publishing and export workflows
+---
+
+import { LinkCard, Steps } from '@astrojs/starlight/components';
+
+# Markdown migration checklist between tools and docs sites
+
+## What matters first
+
+Markdown migration is not just file conversion.
+
+It is a renderer, routing, metadata, asset, and source-of-truth migration.
+
+The content may still look like Markdown after the move, but the meaning can change when:
+
+- heading IDs are regenerated,
+- relative paths point somewhere else,
+- images move,
+- raw HTML is sanitized,
+- callouts stop rendering,
+- frontmatter is required,
+- or old URLs lose redirects.
+
+The migration is successful only when the source remains maintainable and the published output still works.
+
+## Step 1: identify source and destination rules
+
+Before moving files, document:
+
+- current source location,
+- destination source location,
+- current renderer,
+- destination renderer,
+- URL structure,
+- asset directory rules,
+- frontmatter requirements,
+- supported Markdown extensions,
+- and unsupported syntax.
+
+Many migrations fail because teams compare raw files instead of comparing renderer behavior.
+
+## Step 2: inventory risky features
+
+Search the content for:
+
+- relative links,
+- heading links,
+- local images,
+- raw HTML,
+- tables,
+- Mermaid diagrams,
+- math,
+- iframes or embeds,
+- custom components,
+- GitHub alerts,
+- footnotes,
+- and fenced code blocks with unusual languages.
+
+These are not automatically bad. They are the features most likely to change meaning.
+
+## Step 3: normalize links
+
+Links deserve special attention.
+
+Check:
+
+- `./relative.md` links,
+- `../parent/` links,
+- root-relative site links,
+- README anchors,
+- generated heading IDs,
+- file extension assumptions,
+- and links to images or downloadable assets.
+
+Do not assume a link that works in GitHub will work in a docs site.
+
+## Step 4: move images deliberately
+
+Create a clear image strategy:
+
+- keep images beside content,
+- move images to a public assets directory,
+- rewrite paths during build,
+- or host images remotely.
+
+Then test:
+
+- case sensitivity,
+- alt text,
+- image dimensions,
+- dark-background readability,
+- and whether screenshots are still current.
+
+Image path failures are one of the most common Markdown migration problems.
+
+## Step 5: map metadata
+
+Destination systems often need metadata that source files did not have.
+
+Map:
+
+- title,
+- description,
+- slug,
+- section,
+- order,
+- tags,
+- last updated date,
+- owner,
+- draft status,
+- redirect source,
+- and canonical URL.
+
+Metadata is what lets Markdown become a site instead of a folder of pages.
+
+## Step 6: handle renderer-specific syntax
+
+Decide what to do with features that are not portable:
+
+- convert GitHub alerts into destination callouts,
+- replace raw HTML with components where needed,
+- keep simple HTML only when the destination allows it,
+- convert diagrams to supported blocks or static images,
+- and document where Markdown stops and the renderer takes over.
+
+Avoid silently dropping unsupported syntax.
+
+## Step 7: test a representative batch
+
+Do not migrate everything blindly.
+
+Test a batch that includes:
+
+- a simple article,
+- a page with tables,
+- a page with many images,
+- a page with relative links,
+- a page with code examples,
+- a page with raw HTML or components,
+- and a page with diagrams or math if the library uses them.
+
+If the batch fails, the migration plan needs adjustment before bulk conversion.
+
+## Step 8: preserve redirects and canonical paths
+
+If old URLs have traffic or links, preserve them.
+
+Plan:
+
+- redirects,
+- canonical URLs,
+- old README links,
+- sitemap changes,
+- internal link rewrites,
+- and search-index cleanup.
+
+Migration should not reset content equity unless the old structure was intentionally disposable.
+
+## Migration checklist
+
+<Steps>
+	1. Document source renderer, destination renderer, routing, assets, metadata, and supported extensions.
+	2. Inventory risky Markdown features before moving files.
+	3. Normalize links and image paths with actual destination behavior in mind.
+	4. Convert renderer-specific syntax intentionally.
+	5. Test representative pages before bulk migration.
+	6. Preserve redirects, canonical URLs, and source ownership.
+</Steps>
+
+## Practical rule
+
+Do not ask "did the Markdown convert?"
+
+Ask:
+
+**Does the migrated page still read correctly, link correctly, render correctly, and remain maintainable as the source?**
+
+## Related pages
+
+<div class="portal-links">
+	<LinkCard
+		title="GitHub README Markdown vs docs-site Markdown"
+		href="/guides/github-readme-markdown-vs-docs-site-markdown-what-breaks/"
+		description="Use this page when migration starts from GitHub READMEs and the destination is a structured docs site."
+	/>
+	<LinkCard
+		title="Markdown relative links for READMEs, docs, and static sites"
+		href="/guides/markdown-relative-links-for-readmes-docs-and-static-sites/"
+		description="Use this page when migration risk is mostly links, anchors, routes, and asset paths."
+	/>
+	<LinkCard
+		title="How to test Markdown rendering before publishing"
+		href="/guides/how-to-test-markdown-rendering-before-publishing/"
+		description="Use this page when the migration needs a renderer test plan before publishing."
+	/>
+	<LinkCard
+		title="Markdown docs publishing checklist before going live"
+		href="/publishing/markdown-docs-publishing-checklist-before-going-live/"
+		description="Use this page when the migrated content is close to launch."
+	/>
+</div>

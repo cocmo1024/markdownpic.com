@@ -1,0 +1,226 @@
+---
+title: How to test Markdown rendering before publishing
+description: A practical guide to testing Markdown rendering before publishing docs, blogs, READMEs, newsletters, PDFs, social images, or AI-ready content.
+referenceType: guide
+adProfile: guide
+commercialIntent: high
+reviewCadence: Monthly review
+contentStatus: cornerstone
+problemSolved: Helps teams catch Markdown rendering problems before content goes live across docs sites, GitHub, CMSs, PDF exports, email, images, and AI ingestion pipelines.
+readerTakeaway: You should leave with a repeatable Markdown rendering test plan that checks source, preview, build output, published pages, exports, and downstream reuse.
+primaryKeyword: test markdown rendering before publishing
+searchIntent: deploy
+decisionStage: implementation
+targetRoles:
+  - Documentation teams
+  - Developers
+  - Content operators
+  - Technical writers
+keyQuestions:
+  - How do you test Markdown before publishing?
+  - What Markdown rendering problems should teams check before launch?
+  - Why does Markdown look right in one preview but break after publishing?
+notFor:
+  - Readers looking only for a Markdown preview app
+  - Writers publishing one casual note with no downstream outputs
+updateTriggers:
+  - Changes in major Markdown rendering engines or docs frameworks
+  - Changes in MarkdownPic tool behavior or export guidance
+  - New compatibility issues across GitHub, docs sites, email, PDFs, and AI ingestion
+---
+
+import { LinkCard, Steps } from '@astrojs/starlight/components';
+
+# How to test Markdown rendering before publishing
+
+## What matters first
+
+Testing Markdown means testing the **actual render path**, not only the editor preview.
+
+A page can look right in an editor and still fail when it reaches:
+
+- a docs site,
+- GitHub,
+- a CMS,
+- PDF export,
+- email,
+- a social-image workflow,
+- or an AI ingestion pipeline.
+
+The preview is only one renderer. The published output is the real test.
+
+## The common failure pattern
+
+Many teams test Markdown like this:
+
+1. open a preview,
+2. skim the page,
+3. publish.
+
+That misses the hidden failure points:
+
+- broken relative links,
+- heading anchors that changed,
+- images that work locally but not in production,
+- tables that overflow,
+- raw HTML that gets sanitized,
+- Mermaid or math blocks that the destination does not support,
+- code fences that copy badly,
+- and metadata that the site needs but the preview ignores.
+
+## Test 1: source validity
+
+Start with the raw Markdown.
+
+Check:
+
+- one clear title,
+- logical heading levels,
+- blank lines around lists and code blocks,
+- closed fences,
+- escaped pipes in tables,
+- no accidental tabs in list indentation,
+- and no duplicate content pasted from generated outputs.
+
+Source issues become renderer issues later.
+
+## Test 2: local preview
+
+Use local preview to catch obvious reading problems:
+
+- broken paragraphs,
+- list nesting,
+- code formatting,
+- table readability,
+- image placement,
+- and long headings.
+
+But do not treat preview as proof of publishability.
+
+## Test 3: build output
+
+If the content is part of a docs site or static site, build it.
+
+Check:
+
+- build errors,
+- warnings,
+- missing frontmatter,
+- invalid internal links,
+- missing images,
+- broken components,
+- duplicate slugs,
+- and generated table of contents.
+
+The build step catches issues that editor previews cannot know.
+
+## Test 4: published HTML
+
+Review the actual page or staging output.
+
+Check:
+
+- page title,
+- meta description,
+- canonical URL,
+- heading anchors,
+- internal links,
+- external links,
+- mobile readability,
+- table overflow,
+- code copying,
+- image loading,
+- and search-facing content visibility.
+
+The published page is what readers and search engines see.
+
+## Test 5: export paths
+
+If the Markdown feeds exports, test the export itself.
+
+Examples:
+
+- PDF,
+- email,
+- newsletter,
+- long image,
+- social card,
+- screenshot,
+- or pasted CMS field.
+
+Export paths often have stricter layout limits than web pages.
+
+## Test 6: AI and retrieval use
+
+If the content feeds AI search, RAG, or LLM ingestion, test whether the source has:
+
+- clear headings,
+- compact sections,
+- unambiguous references,
+- stable source links,
+- enough context per section,
+- and no hidden image-only information.
+
+AI systems cannot reliably recover structure that the source never expressed.
+
+## What to test on mobile
+
+Mobile is where Markdown pages often reveal layout debt.
+
+Check:
+
+- long links,
+- wide tables,
+- code blocks,
+- images,
+- blockquotes,
+- nested lists,
+- and headings that wrap awkwardly.
+
+If mobile reading fails, the Markdown may be technically valid but publishing quality is still poor.
+
+## Rendering test checklist
+
+<Steps>
+	1. Check raw Markdown source for structure, fences, lists, tables, and duplication.
+	2. Preview locally for obvious reading and formatting issues.
+	3. Build the destination site or export pipeline.
+	4. Review the staged or published HTML, including metadata and links.
+	5. Test export paths such as PDF, email, social images, or screenshots.
+	6. Test AI or retrieval structure if the content will feed search or RAG.
+</Steps>
+
+## Practical rule
+
+The correct question is not:
+
+**Does this Markdown render somewhere?**
+
+The correct question is:
+
+**Does this Markdown render correctly in the place where this content must create value?**
+
+## Related pages
+
+<div class="portal-links">
+	<LinkCard
+		title="Markdown content audit checklist for docs and blogs"
+		href="/guides/markdown-content-audit-checklist-for-docs-and-blogs/"
+		description="Use this page when testing is part of a broader content audit before launch or migration."
+	/>
+	<LinkCard
+		title="Markdown migration checklist between tools and docs sites"
+		href="/guides/markdown-migration-checklist-between-tools-and-docs-sites/"
+		description="Use this page when rendering tests are needed because content is moving between tools or renderers."
+	/>
+	<LinkCard
+		title="Markdown docs publishing checklist before going live"
+		href="/publishing/markdown-docs-publishing-checklist-before-going-live/"
+		description="Use this page when tested content is close to a public launch."
+	/>
+	<LinkCard
+		title="Export-safe Markdown authoring"
+		href="/guides/export-safe-markdown-authoring-for-pdf-email-and-social/"
+		description="Use this page when Markdown must survive PDF, email, social-image, or screenshot workflows."
+	/>
+</div>

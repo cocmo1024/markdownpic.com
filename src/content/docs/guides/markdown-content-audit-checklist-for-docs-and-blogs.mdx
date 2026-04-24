@@ -1,0 +1,228 @@
+---
+title: Markdown content audit checklist for docs and blogs
+description: A practical Markdown content audit checklist for teams reviewing docs, blogs, knowledge bases, links, images, headings, metadata, examples, and publishing readiness.
+referenceType: guide
+adProfile: guide
+commercialIntent: high
+reviewCadence: Monthly review
+contentStatus: cornerstone
+problemSolved: Helps content and documentation teams audit Markdown libraries before publishing, migration, SEO cleanup, or AI reuse.
+readerTakeaway: You should leave with a reusable audit model for finding Markdown content issues that hurt readability, publishing reliability, search quality, and reuse.
+primaryKeyword: markdown content audit checklist
+searchIntent: deploy
+decisionStage: implementation
+targetRoles:
+  - Documentation leads
+  - Content operators
+  - Technical writers
+  - Blog operators
+keyQuestions:
+  - How do you audit Markdown content before publishing?
+  - What should teams check in a Markdown docs or blog library?
+  - Which Markdown issues hurt reuse, search, and migration?
+notFor:
+  - Writers auditing a single personal note
+  - Readers looking only for syntax definitions
+updateTriggers:
+  - Changes in major Markdown publishing frameworks
+  - New search or AI-ingestion requirements for content systems
+  - Changes in MarkdownPic publishing and export workflows
+---
+
+import { LinkCard, Steps } from '@astrojs/starlight/components';
+
+# Markdown content audit checklist for docs and blogs
+
+## What matters first
+
+A Markdown content audit should decide whether the content is still usable as a source system.
+
+That means checking more than typos.
+
+The audit should answer:
+
+- Is the structure clear?
+- Are links and assets reliable?
+- Does the Markdown render where it needs to render?
+- Is the metadata useful?
+- Can humans read it comfortably?
+- Can publishing tools and AI workflows reuse it safely?
+
+If the answer is unclear, the content library may be searchable but operationally weak.
+
+## When to run this audit
+
+Run a Markdown audit before:
+
+- launching a docs site,
+- migrating from one editor or CMS to another,
+- merging blog and docs content,
+- exporting Markdown into PDF or email,
+- using Markdown for AI ingestion,
+- rebuilding a knowledge base,
+- or turning old notes into public pages.
+
+Small Markdown mistakes compound when many pages move through the same pipeline.
+
+## Audit 1: source ownership
+
+Confirm:
+
+- where the canonical Markdown lives,
+- who can edit it,
+- how changes are reviewed,
+- whether generated copies are marked as downstream,
+- and whether old drafts are still being treated as live source.
+
+The most expensive content problems often start with two sources of truth.
+
+## Audit 2: heading structure
+
+Check whether each page has:
+
+- one clear page title,
+- logical heading order,
+- descriptive section names,
+- stable anchors when links depend on headings,
+- and no oversized heading stack created only for visual emphasis.
+
+Headings are navigation, search structure, accessibility structure, and AI-ingestion structure at the same time.
+
+## Audit 3: links
+
+Review:
+
+- relative links,
+- root-relative links,
+- external links,
+- heading anchors,
+- README links reused in docs sites,
+- and links that work only in one renderer.
+
+Broken links are not just a reader problem. They also reveal that the content has no reliable publishing model.
+
+## Audit 4: images and assets
+
+Check:
+
+- local image paths,
+- remote image URLs,
+- case sensitivity,
+- missing alt text,
+- oversized images,
+- generated screenshots,
+- and whether image derivatives are replacing the Markdown source.
+
+Images are where Markdown publishing pipelines often fail after migration.
+
+## Audit 5: tables and layout
+
+Identify pages that depend on:
+
+- wide pipe tables,
+- merged cells,
+- nested layout,
+- HTML tables,
+- columns,
+- side-by-side cards,
+- or custom CSS classes.
+
+Markdown can describe simple structure. Layout-heavy pages may need HTML, components, or renderer-specific templates.
+
+## Audit 6: code and examples
+
+Check:
+
+- code fence languages,
+- nested fences,
+- copy-paste safety,
+- line wrapping,
+- shell prompts,
+- placeholder values,
+- and examples that assume one editor or platform.
+
+Code examples should survive both reading and copying.
+
+## Audit 7: metadata
+
+For docs, blogs, and knowledge bases, check whether pages have:
+
+- title,
+- description,
+- canonical slug,
+- section or category,
+- update cadence,
+- owner,
+- tags if the system uses them,
+- and any migration or redirect notes.
+
+Markdown files without metadata can still render, but they are harder to operate as a site.
+
+## Audit 8: renderer portability
+
+Flag content that depends on:
+
+- GitHub-only alerts,
+- Mermaid support,
+- math rendering,
+- raw HTML,
+- custom components,
+- embedded iframes,
+- or editor-only syntax.
+
+This does not mean you cannot use those features. It means the dependency should be explicit.
+
+## Audit 9: AI and search reuse
+
+If the content will feed AI search or retrieval, check:
+
+- descriptive headings,
+- clear section boundaries,
+- concise paragraphs,
+- stable source URLs,
+- citation-friendly text,
+- no duplicated near-identical pages,
+- and no generated fragments that drift from the source.
+
+AI workflows reward clean source structure and punish messy duplication.
+
+## Audit template
+
+<Steps>
+	1. Inventory pages and identify the canonical source.
+	2. Check heading order, metadata, links, images, tables, and code fences.
+	3. Flag renderer-specific syntax and portability risks.
+	4. Test representative pages in the actual publishing pipeline.
+	5. Fix source problems before generating images, PDFs, newsletters, or AI-ready derivatives.
+</Steps>
+
+## Practical rule
+
+Audit the Markdown source before auditing the rendered page.
+
+If the source is messy, every downstream output becomes a negotiation with that mess.
+
+## Related pages
+
+<div class="portal-links">
+	<LinkCard
+		title="How to test Markdown rendering before publishing"
+		href="/guides/how-to-test-markdown-rendering-before-publishing/"
+		description="Use this page when the audit needs a concrete renderer-testing workflow before launch."
+	/>
+	<LinkCard
+		title="Markdown migration checklist between tools and docs sites"
+		href="/guides/markdown-migration-checklist-between-tools-and-docs-sites/"
+		description="Use this page when the audit is part of a migration from notes, READMEs, or one publishing stack into another."
+	/>
+	<LinkCard
+		title="Markdown docs publishing checklist before going live"
+		href="/publishing/markdown-docs-publishing-checklist-before-going-live/"
+		description="Use this page when audited content is about to become a public docs, blog, or knowledge-base site."
+	/>
+	<LinkCard
+		title="How to structure Markdown for LLM ingestion, RAG, and AI search"
+		href="/guides/how-to-structure-markdown-for-llm-ingestion-rag-and-ai-search/"
+		description="Use this page when the audit includes AI search, RAG, or citation-heavy reuse."
+	/>
+</div>

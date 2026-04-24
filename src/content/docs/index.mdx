@@ -29,25 +29,25 @@ import { Card, CardGrid, LinkCard, Steps } from '@astrojs/starlight/components';
 
 <CardGrid stagger>
 	<Card title="Syntax" icon="list-format">
-		Reference pages for headings, links, emphasis, code blocks, lists, tables, blockquotes, and renderer-safe patterns that survive real publishing.
+		Reference pages for headings, links, emphasis, code blocks, lists, tables, blockquotes, and renderer-safe patterns.
 	</Card>
 	<Card title="Fundamentals" icon="document">
-		Foundational pages on what Markdown is, what CommonMark standardizes, what GitHub extends, and where renderer differences start to matter.
+		CommonMark, GitHub Flavored Markdown, raw HTML boundaries, renderer differences, and portable authoring policy.
 	</Card>
 	<Card title="Guides" icon="open-book">
-		Long-form Markdown guides built to solve publishing, export, image, and workflow problems instead of repeating syntax basics.
+		Long-form guides for publishing, export, image workflows, README reuse, AI ingestion, and cross-platform Markdown.
 	</Card>
 	<Card title="Editors" icon="list-format">
-		Comparisons and fit analysis for Obsidian, Typora, VS Code, and adjacent tools used in serious Markdown publishing workflows.
+		Comparisons for Obsidian, Typora, VS Code, and tools used in serious Markdown publishing workflows.
 	</Card>
 	<Card title="Publishing" icon="add-document">
-		Canonical workflows for static sites, docs, newsletters, and image-first Markdown distribution in the AI era.
+		Canonical workflows for static sites, docs, newsletters, social assets, and image-first Markdown distribution.
 	</Card>
 	<Card title="Workflows" icon="approve-check-circle">
-		High-value systems for AI-assisted research, reusable content, screenshot generation, and Markdown operations at scale.
+		AI-assisted research, reusable content, screenshot generation, export-safe authoring, and Markdown operations at scale.
 	</Card>
 	<Card title="Tool" icon="external-link">
-		The companion tool at `tool.markdownpic.com` converts Markdown into polished long images for social, docs, and share workflows. See the [tool guide](/tool/) for feature scope and workflow fit.
+		The companion tool at `tool.markdownpic.com` converts Markdown into polished long images. See the [tool guide](/tool/) for scope and workflow fit.
 	</Card>
 </CardGrid>
 
@@ -62,29 +62,29 @@ import { Card, CardGrid, LinkCard, Steps } from '@astrojs/starlight/components';
 	<LinkCard
 		title="Understand standards and renderer differences"
 		href="/fundamentals/commonmark-vs-gfm-vs-renderer-differences/"
-		description="Use the standards path when you need to know whether a behavior comes from CommonMark, GitHub Flavored Markdown, or a local renderer."
+		description="Use the standards path when behavior depends on CommonMark, GitHub Flavored Markdown, raw HTML, or local renderer rules."
 	/>
 	<LinkCard
 		title="Choose an editor"
 		href="/comparisons/obsidian-vs-typora-vs-vs-code-for-markdown-publishing/"
-		description="Use decision pages that compare editor ecosystems, portability, AI fit, and publishing friction."
+		description="Compare editor ecosystems, portability, AI fit, export behavior, and publishing friction."
 	/>
 	<LinkCard
 		title="Plan a publishing stack"
 		href="/publishing/"
-		description="Move from isolated Markdown files into a reusable publishing system for blogs, docs, and image-first distribution."
+		description="Move from isolated Markdown files into a reusable publishing system for blogs, docs, images, and AI-era reuse."
 	/>
 	<LinkCard
 		title="Tool details and feature guide"
 		href="/tool/"
-		description="See exactly what the MarkdownPic Tool does, what it does not replace, and where it belongs in a Markdown-first workflow."
+		description="See what the MarkdownPic Tool does, what it does not replace, and where it belongs in a Markdown-first workflow."
 	/>
 	<LinkCard
 		title="Use the tool"
 		href="https://tool.markdownpic.com/"
 		target="_blank"
 		rel="noopener noreferrer"
-		description="Open the Markdown-to-image tool when the workflow calls for shareable long images, polished screenshots, or visual snippets."
+		description="Open the Markdown-to-image tool for long images, polished screenshots, and shareable visual snippets."
 	/>
 	<LinkCard
 		title="Review evergreen posts"
@@ -93,323 +93,115 @@ import { Card, CardGrid, LinkCard, Steps } from '@astrojs/starlight/components';
 	/>
 </div>
 
-## Strategic clusters
+## Current priority clusters
+
+The homepage is deliberately curated. New syntax and troubleshooting pages should enter their section hub first; the homepage promotes only stable cluster entrances with broad, durable search demand.
 
 <div class="portal-links">
 	<LinkCard
 		title="Markdown syntax standards and examples"
-		href="/syntax/"
-		description="A durable cluster around headings, links, lists, code blocks, tables, and renderer-safe Markdown patterns."
-	/>
-	<LinkCard
-		title="Markdown task lists and checkbox portability"
-		href="/syntax/markdown-task-lists-checkboxes-and-portability/"
-		description="A high-volume syntax cluster around GitHub-style checklists, checkbox rendering, and where task lists stop being portable Markdown."
-	/>
-	<LinkCard
-		title="Markdown emoji and shortcode rendering"
-		href="/syntax/markdown-emoji-shortcodes-and-unicode-emoji-across-renderers/"
-		description="A practical syntax cluster for one of the most common formatting questions where GitHub convenience often gets mistaken for standard Markdown."
-	/>
-	<LinkCard
-		title="Markdown image size and resizing"
-		href="/syntax/markdown-image-size-and-resizing-when-markdown-is-not-enough/"
-		description="A durable search cluster around one of the most common Markdown pain points: image sizing, HTML fallbacks, and renderer boundaries."
-	/>
-	<LinkCard
-		title="Markdown table of contents and anchor stability"
-		href="/syntax/markdown-table-of-contents-options-and-anchor-stability/"
-		description="A durable long-form docs cluster around manual TOCs, generated navigation, and why heading-link stability matters more than TOC syntax tricks."
-	/>
-	<LinkCard
-		title="Why line breaks inside Markdown tables fail"
-		href="/faq/why-are-line-breaks-inside-my-markdown-table-not-working/"
-		description="A high-frequency table troubleshooting cluster for authors who discover that multi-line cells are much less portable than they look."
-	/>
-	<LinkCard
-		title="Markdown text color, underline, and layout hacks"
-		href="/syntax/markdown-text-color-highlight-and-callouts-what-is-portable/"
-		description="A high-volume cluster around the formatting requests Markdown does not solve natively and the HTML tradeoffs people usually miss."
-	/>
-	<LinkCard
-		title="Markdown cheat sheet"
 		href="/syntax/markdown-cheat-sheet-with-standard-examples/"
-		description="A high-volume search entry page built around standard syntax examples that can be copied safely into real documents."
+		description="The main copy-safe syntax entry for headings, emphasis, lists, links, code, tables, blockquotes, and standard examples."
+	/>
+	<LinkCard
+		title="Tables and layout boundaries"
+		href="/guides/html-tables-vs-pipe-tables-for-portable-markdown/"
+		description="Pipe tables, HTML tables, line breaks, merged cells, sizing, and when Markdown table syntax stops being enough."
+	/>
+	<LinkCard
+		title="Links, anchors, and paths"
+		href="/guides/markdown-relative-links-for-readmes-docs-and-static-sites/"
+		description="Relative links, absolute links, heading anchors, root-relative paths, README reuse, and published-site routing."
+	/>
+	<LinkCard
+		title="Images, badges, and visual assets"
+		href="/guides/markdown-badges-and-clickable-images-for-readmes-docs-and-social-cards/"
+		description="Markdown images, badges, clickable images, image sizing, local path failures, and GitHub README asset behavior."
+	/>
+	<LinkCard
+		title="CommonMark, GFM, and renderer differences"
+		href="/fundamentals/commonmark-vs-gfm-vs-renderer-differences/"
+		description="A standards cluster for deciding what is portable Markdown and what only works in a specific renderer."
+	/>
+	<LinkCard
+		title="GFM-only features and portability"
+		href="/fundamentals/gfm-only-features-you-should-not-assume-everywhere/"
+		description="Task lists, alerts, autolinks, strikethrough, tables, and other GitHub conveniences that should not be assumed everywhere."
+	/>
+	<LinkCard
+		title="HTML in Markdown"
+		href="/fundamentals/html-in-markdown-when-to-use-it-and-when-it-becomes-debt/"
+		description="Raw HTML, inline HTML, sanitization, unsupported tags, custom classes, collapsible sections, and portability debt."
+	/>
+	<LinkCard
+		title="Math, Mermaid, and diagram boundaries"
+		href="/fundamentals/mermaid-diagrams-in-markdown-where-they-render-and-where-they-dont/"
+		description="Mermaid, math rendering, diagrams, iframes, embeds, and where publishing systems must take over from Markdown."
 	/>
 	<LinkCard
 		title="Markdown to image workflows"
 		href="/guides/markdown-to-image-workflows-for-docs-social-and-ai-content/"
-		description="A durable cluster around turning Markdown into shareable images without losing search value, reuse, or editorial control."
-	/>
-	<LinkCard
-		title="Markdown for LLM ingestion, RAG, and AI search"
-		href="/guides/how-to-structure-markdown-for-llm-ingestion-rag-and-ai-search/"
-		description="A current high-value cluster on structuring Markdown so it remains readable to people and reusable by AI systems."
-	/>
-	<LinkCard
-		title="Markdown relative links for READMEs and docs"
-		href="/guides/markdown-relative-links-for-readmes-docs-and-static-sites/"
-		description="A high-intent portability cluster around one of the easiest ways repo-native Markdown breaks when it becomes published documentation."
-	/>
-	<LinkCard
-		title="Markdown open links in a new tab"
-		href="/guides/markdown-open-links-in-a-new-tab-why-html-is-required/"
-		description="A high-volume workflow cluster for one of the most repeated Markdown questions where the real answer lives at the Markdown-versus-HTML boundary."
-	/>
-	<LinkCard
-		title="Markdown columns and side-by-side layouts"
-		href="/guides/markdown-columns-and-side-by-side-layouts-why-css-or-components-are-required/"
-		description="A high-volume layout-boundary cluster for readers trying to force page layout into Markdown source."
-	/>
-	<LinkCard
-		title="HTML tables vs pipe tables"
-		href="/guides/html-tables-vs-pipe-tables-for-portable-markdown/"
-		description="A durable authoring cluster for teams deciding whether richer table layout is worth giving up some Markdown portability."
-	/>
-	<LinkCard
-		title="Editor comparisons that actually decide tools"
-		href="/comparisons/obsidian-vs-typora-vs-vs-code-for-markdown-publishing/"
-		description="A high-intent cluster for real editor decisions instead of superficial feature lists."
-	/>
-	<LinkCard
-		title="Portable Markdown syntax"
-		href="/syntax/markdown-code-blocks-fenced-vs-indented/"
-		description="A practical cluster on syntax choices that survive GitHub, docs, export tools, email, and image workflows."
-	/>
-	<LinkCard
-		title="Portable Markdown policy"
-		href="/fundamentals/markdown-extensions-vs-portable-markdown-where-to-draw-the-line/"
-		description="A foundational cluster for teams deciding how far to lean into GFM extensions before portability, reuse, and AI-readability start to degrade."
-	/>
-	<LinkCard
-		title="GFM-only features you should not assume everywhere"
-		href="/fundamentals/gfm-only-features-you-should-not-assume-everywhere/"
-		description="A high-value standards page for teams that want GitHub convenience without quietly breaking Markdown source outside the GitHub path."
-	/>
-	<LinkCard
-		title="Markdown alerts, callouts, and admonitions"
-		href="/fundamentals/markdown-alerts-callouts-and-admonitions-portability/"
-		description="A high-intent standards page for teams trying to reconcile GitHub alerts, docs-site admonitions, and portable Markdown source."
-	/>
-	<LinkCard
-		title="Markdown portability across GitHub, Notion, Obsidian, and static sites"
-		href="/fundamentals/markdown-portability-between-github-notion-obsidian-and-static-sites/"
-		description="A cross-platform portability cluster built for one of the most common long-term Markdown migration problems."
-	/>
-	<LinkCard
-		title="Markdown HTML sanitization and unsupported tags"
-		href="/fundamentals/markdown-html-sanitization-and-unsupported-tags-across-platforms/"
-		description="A stronger renderer-boundary cluster for authors trying to understand why raw HTML survives in one platform and gets stripped in another."
-	/>
-	<LinkCard
-		title="Markdown frontmatter portability"
-		href="/fundamentals/markdown-frontmatter-portability-and-where-metadata-belongs/"
-		description="A metadata-boundary cluster for teams deciding how much publishing logic should live inside Markdown source files."
-	/>
-	<LinkCard
-		title="HTML, math, and diagram boundaries"
-		href="/fundamentals/html-in-markdown-when-to-use-it-and-when-it-becomes-debt/"
-		description="A standards-boundary cluster around where Markdown should stop and rendering systems, HTML, KaTeX, or Mermaid should take over."
-	/>
-	<LinkCard
-		title="Raw HTML blocks vs inline HTML"
-		href="/fundamentals/raw-html-blocks-vs-inline-html-in-markdown/"
-		description="A stronger HTML-boundary cluster for authors who need to understand why some HTML changes parsing and portability far more than others."
-	/>
-	<LinkCard
-		title="Mermaid rendering boundaries"
-		href="/fundamentals/mermaid-diagrams-in-markdown-where-they-render-and-where-they-dont/"
-		description="A high-intent standards page for teams trying to decide whether Mermaid belongs in portable Markdown source or only in controlled publishing stacks."
-	/>
-	<LinkCard
-		title="Escaping special characters"
-		href="/syntax/markdown-escaping-pipes-backticks-and-special-characters/"
-		description="A high-volume syntax cluster for literal Markdown examples, pipes in tables, and other syntax-teaching edge cases."
-	/>
-	<LinkCard
-		title="Autolinks and renderer-specific URL behavior"
-		href="/syntax/markdown-autolink-literals-and-url-rendering-across-platforms/"
-		description="A high-frequency syntax page for raw URLs, clickable links, and why GitHub-style auto-linking should not be assumed everywhere."
-	/>
-	<LinkCard
-		title="Soft breaks, hard breaks, and export-safe paragraphs"
-		href="/syntax/markdown-soft-breaks-vs-hard-breaks-across-renderers/"
-		description="A high-volume authoring page for line-break behavior that often breaks first when Markdown leaves one renderer and enters another."
-	/>
-	<LinkCard
-		title="Definition lists, superscript, and HTML boundary cases"
-		href="/syntax/markdown-definition-lists-and-where-they-render/"
-		description="A boundary cluster for glossary syntax, scientific notation, and other formatting cases where Markdown support is often overstated."
-	/>
-	<LinkCard
-		title="Rowspan and colspan in Markdown tables"
-		href="/syntax/markdown-table-rowspan-and-colspan-why-html-is-required/"
-		description="A high-frequency table-layout cluster for readers discovering that merged cells are a real HTML boundary, not a hidden Markdown trick."
-	/>
-	<LinkCard
-		title="Iframes, video, and embeds"
-		href="/syntax/markdown-iframe-video-and-embed-limitations/"
-		description="A high-intent boundary page for people who expect Markdown to handle embeds that really belong to HTML or the publishing layer."
-	/>
-	<LinkCard
-		title="Details, divs, spans, and custom classes"
-		href="/syntax/markdown-details-summary-and-collapsible-sections/"
-		description="A renderer-boundary cluster for collapsible blocks, wrappers, and custom classes that often break portability fastest."
-	/>
-	<LinkCard
-		title="Wiki links vs standard links"
-		href="/syntax/markdown-wiki-links-vs-standard-links/"
-		description="A portability cluster for note-taking users deciding whether local link convenience is worth the long-term migration cost."
+		description="Turn Markdown into shareable long images while preserving source quality, reuse, search value, and editorial control."
 	/>
 	<LinkCard
 		title="AI-ready Markdown systems"
-		href="/workflows/ai-markdown-workflows-for-research-notes-docs-and-content-reuse/"
-		description="A long-term cluster on using Markdown as the canonical content layer for AI-assisted research and reuse."
-	/>
-	<LinkCard
-		title="Badges and clickable images for READMEs and docs"
-		href="/guides/markdown-badges-and-clickable-images-for-readmes-docs-and-social-cards/"
-		description="A high-frequency workflow page for badge-heavy READMEs, linked images, and Markdown assets built to drive clicks without damaging source quality."
+		href="/guides/how-to-structure-markdown-for-llm-ingestion-rag-and-ai-search/"
+		description="Structure Markdown for LLM ingestion, RAG, AI search, citations, chunking, reuse, and source-of-truth workflows."
 	/>
 	<LinkCard
 		title="Export-safe Markdown authoring"
 		href="/guides/export-safe-markdown-authoring-for-pdf-email-and-social/"
-		description="A workflow cluster for teams that need Markdown source to survive HTML, PDF, email, screenshot, and image export without fragile formatting debt."
+		description="Write Markdown that survives HTML, PDF, email, CMS fields, screenshots, and social-image export."
 	/>
 	<LinkCard
-		title="GitHub README vs docs-site Markdown"
-		href="/guides/github-readme-markdown-vs-docs-site-markdown-what-breaks/"
-		description="A high-intent workflow page for teams trying to reuse Markdown across repository landing pages and structured documentation systems."
-	/>
-	<LinkCard
-		title="Copy-paste-safe Markdown"
-		href="/guides/copy-paste-safe-markdown-for-chat-docs-and-cms/"
-		description="A practical workflow cluster for content that needs to survive chat tools, docs systems, CMS fields, and AI-assisted reuse."
+		title="Editor and publishing decisions"
+		href="/comparisons/obsidian-vs-typora-vs-vs-code-for-markdown-publishing/"
+		description="Choose Markdown tools by portability, publishing target, preview accuracy, collaboration, and long-term content ownership."
 	/>
 </div>
 
-## High-frequency Markdown questions
+## High-frequency question paths
 
 <div class="portal-links">
 	<LinkCard
-		title="Can Markdown change font size?"
-		href="/faq/can-markdown-change-font-size/"
-		description="A high-frequency question page that captures the recurring Markdown-versus-HTML boundary around text styling."
-	/>
-	<LinkCard
-		title="Can Markdown center text or images?"
-		href="/faq/can-markdown-center-text-or-images/"
-		description="A question page for the alignment requests that Markdown does not solve natively but users keep searching for."
-	/>
-	<LinkCard
-		title="Can Markdown create columns or side-by-side layouts?"
-		href="/faq/can-markdown-create-columns-or-side-by-side-layouts/"
-		description="A practical question page on why layout belongs to the renderer, not to portable Markdown source."
-	/>
-	<LinkCard
-		title="Why are my Markdown footnotes not rendering?"
-		href="/faq/why-are-my-markdown-footnotes-not-rendering/"
-		description="A renderer-support troubleshooting page for one of the most repeated footnote syntax and portability failures."
-	/>
-	<LinkCard
-		title="Why does Markdown render differently on GitHub and VS Code?"
-		href="/faq/why-does-markdown-render-differently-on-github-and-vs-code/"
-		description="A renderer-drift question page for one of the most repeated Markdown debugging paths across editors and published platforms."
-	/>
-	<LinkCard
-		title="Why is my Markdown HTML not rendering?"
-		href="/faq/why-is-my-markdown-html-not-rendering/"
-		description="A renderer-boundary troubleshooting page for raw HTML that gets stripped, sanitized, or parsed differently than expected."
-	/>
-	<LinkCard
 		title="Why is my Markdown table not rendering?"
 		href="/faq/why-is-my-markdown-table-not-rendering/"
-		description="A high-intent troubleshooting page for one of the most common Markdown table failures across renderers and export paths."
+		description="Diagnose pipe-table spacing, blank lines, escaped pipes, renderer support, and export failures."
 	/>
 	<LinkCard
 		title="Why is my Markdown link not working?"
 		href="/faq/why-is-my-markdown-link-not-working/"
-		description="A high-frequency troubleshooting page for broken Markdown links, anchors, and relative-path failures."
-	/>
-	<LinkCard
-		title="Why is my Markdown anchor link not working?"
-		href="/faq/why-is-my-markdown-anchor-link-not-working/"
-		description="A more specific troubleshooting page for heading fragments, generated slugs, and anchor targets that drift after edits or publishing."
-	/>
-	<LinkCard
-		title="Why are my Markdown relative links not working?"
-		href="/faq/why-are-my-markdown-relative-links-not-working/"
-		description="A path-focused troubleshooting page for repository links that break once Markdown becomes docs or site content."
-	/>
-	<LinkCard
-		title="Should you use relative or absolute links in Markdown?"
-		href="/faq/should-you-use-relative-or-absolute-links-in-markdown/"
-		description="A compare-style page for choosing the right link strategy based on whether the repo or the published site owns the content."
-	/>
-	<LinkCard
-		title="Should you use root-relative paths in Markdown?"
-		href="/faq/should-you-use-root-relative-paths-in-markdown/"
-		description="A path-policy page for deciding when site-root links are healthy and when they quietly reduce portability."
-	/>
-	<LinkCard
-		title="Can Markdown link to a heading in another file?"
-		href="/faq/can-markdown-link-to-a-heading-in-another-file/"
-		description="A question page for cross-file fragment links, route rewrites, and renderer-specific anchor behavior."
-	/>
-	<LinkCard
-		title="Why is my Markdown table of contents not working?"
-		href="/faq/why-is-my-markdown-table-of-contents-not-working/"
-		description="A troubleshooting page for stale manual TOCs, missing generators, and anchor IDs that changed after editing or publishing."
-	/>
-	<LinkCard
-		title="Why is my Mermaid diagram not rendering in Markdown?"
-		href="/faq/why-is-my-mermaid-diagram-not-rendering-in-markdown/"
-		description="A diagram-rendering troubleshooting page for Mermaid fences, platform support, and preview plugin conflicts."
+		description="Fix broken Markdown links, heading anchors, relative paths, and route rewrites."
 	/>
 	<LinkCard
 		title="Why is my Markdown image not showing?"
 		href="/faq/why-is-my-markdown-image-not-showing/"
-		description="A question page for one of the most common Markdown image failures across local files, remote URLs, and publishing workflows."
+		description="Debug local files, remote URLs, repository paths, case sensitivity, and publishing asset pipelines."
 	/>
 	<LinkCard
-		title="Why are my Markdown badges not showing in my GitHub README?"
-		href="/faq/why-are-my-markdown-badges-not-showing-in-my-github-readme/"
-		description="A GitHub-specific troubleshooting page for broken badge URLs, caching confusion, and README image assumptions."
+		title="Why is my Markdown HTML not rendering?"
+		href="/faq/why-is-my-markdown-html-not-rendering/"
+		description="Understand raw HTML parsing, sanitization, blocked tags, and renderer-specific security rules."
 	/>
 	<LinkCard
-		title="Why are my Markdown images working locally but not on GitHub?"
-		href="/faq/why-are-my-markdown-images-working-locally-but-not-on-github/"
-		description="A GitHub-specific image troubleshooting page for repo paths, missing commits, and case-sensitive file mismatches."
-	/>
-	<LinkCard
-		title="Why does my Markdown work locally but break after publishing?"
-		href="/faq/why-does-my-markdown-work-locally-but-break-after-publishing/"
-		description="A broader portability troubleshooting page for route rewrites, asset handling, renderer drift, and publish-time surprises."
+		title="Why is my Mermaid diagram not rendering?"
+		href="/faq/why-is-my-mermaid-diagram-not-rendering-in-markdown/"
+		description="Check fence syntax, platform support, preview plugins, and publishing-stack diagram support."
 	/>
 	<LinkCard
 		title="Why are my Markdown line breaks not working?"
 		href="/faq/why-are-my-markdown-line-breaks-not-working/"
-		description="A high-frequency formatting page for the newline behavior that breaks constantly across Markdown renderers."
-	/>
-	<LinkCard
-		title="Why is my Markdown math not rendering?"
-		href="/faq/why-is-my-markdown-math-not-rendering/"
-		description="A math-rendering troubleshooting page for unsupported renderers, wrong delimiters, and preview differences."
-	/>
-	<LinkCard
-		title="Why is my Markdown checklist not rendering?"
-		href="/faq/why-is-my-markdown-checklist-not-rendering/"
-		description="A GitHub-era checklist question page for task-list syntax, renderer support, and export failures."
-	/>
-	<LinkCard
-		title="Can Markdown link to a local file?"
-		href="/faq/can-markdown-link-to-a-local-file/"
-		description="A portability question page for local file paths, machine-specific links, and the limits of publishable Markdown."
+		description="Separate soft breaks, hard breaks, paragraphs, trailing spaces, and renderer differences."
 	/>
 	<LinkCard
 		title="Can Markdown open links in a new tab?"
 		href="/faq/can-markdown-open-links-in-a-new-tab/"
-		description="A question page for the HTML-versus-Markdown boundary around link behavior and target attributes."
+		description="A practical Markdown-versus-HTML boundary page for link target behavior."
+	/>
+	<LinkCard
+		title="Can Markdown create columns or side-by-side layouts?"
+		href="/faq/can-markdown-create-columns-or-side-by-side-layouts/"
+		description="Explain why layout belongs to HTML, CSS, components, or the renderer rather than portable Markdown source."
 	/>
 </div>
 

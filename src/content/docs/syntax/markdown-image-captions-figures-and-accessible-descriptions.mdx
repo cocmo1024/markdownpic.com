@@ -1,0 +1,207 @@
+---
+title: Markdown Image Captions, Figures, and Accessible Descriptions
+description: How to add image captions in Markdown, when standard Markdown is not enough, and how to keep captions, alt text, and export behavior portable.
+referenceType: syntax
+adProfile: syntax
+commercialIntent: medium
+reviewCadence: Monthly review
+primaryKeyword: markdown image caption
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Technical writers
+  - Developers
+  - Documentation teams
+  - Content creators
+contentStatus: cornerstone
+datePublished: 2026-04-25
+lastReviewed: 2026-04-25
+problemSolved: How to add captions to images in Markdown without confusing alt text, HTML figure markup, renderer-specific syntax, and export-safe publishing.
+readerTakeaway: You should leave knowing the safest caption patterns for GitHub READMEs, docs sites, static-site generators, PDFs, and Markdown-to-image workflows.
+keyQuestions:
+  - How do you add a caption to an image in Markdown?
+  - Is image caption syntax part of standard Markdown?
+  - Should captions go in alt text, HTML figure tags, or plain paragraphs?
+notFor:
+  - WYSIWYG-only editors where captions are stored outside Markdown source
+  - Image layout systems that require custom React, MDX, or CMS components
+updateTriggers:
+  - Changes in GitHub, CommonMark, GFM, MDX, or static-site image rendering behavior
+  - New export behavior in popular Markdown editors and documentation platforms
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Markdown Image Captions, Figures, and Accessible Descriptions
+
+Markdown has standard image syntax, but it does not have a universal image-caption syntax. That is why the same question appears constantly: "How do I add a caption under an image in Markdown?" The frustrating answer is that it depends on where the Markdown will render.
+
+The safe way to think about captions is to separate three different jobs: the image source, the accessible alternative text, and the visible caption. They are related, but they are not the same thing.
+
+## Quick answer
+
+Standard Markdown supports image syntax, not captions. Use `![alt text](image.png)` for the image and accessibility description. For a portable visible caption, put a normal paragraph directly below the image. For semantic HTML, use `<figure>` and `<figcaption>` only where raw HTML is allowed. For MDX or docs sites, prefer the site's image or figure component if one exists.
+
+## Basic Markdown image syntax
+
+The standard image pattern is:
+
+```md
+![A technician checking a control cabinet](images/cabinet-check.jpg)
+```
+
+This creates an image. The text inside `[]` is alt text. It is not a caption.
+
+## The most portable caption pattern
+
+The simplest portable pattern is an image followed by an italic paragraph:
+
+```md
+![A technician checking a control cabinet](images/cabinet-check.jpg)
+
+*Figure 1. Cabinet inspection before commissioning.*
+```
+
+This works in many places because the caption is just normal Markdown text. It is not semantically perfect, but it survives GitHub, docs sites, static generators, chat tools, and many export workflows better than custom syntax.
+
+## Why alt text is not a caption
+
+Alt text and captions solve different problems:
+
+| Element | Job | Visible to readers? |
+| --- | --- | --- |
+| Alt text | Describe the image when it cannot be seen or loaded | Usually no |
+| Caption | Explain why the image matters in the document | Yes |
+| Title attribute | Optional hover text in some renderers | Sometimes |
+
+Do not put a full visible caption only in alt text. Many readers will never see it. Also do not leave alt text empty if the image carries information.
+
+## HTML figure and figcaption
+
+If raw HTML is allowed, this is the semantic pattern:
+
+```html
+<figure>
+  <img src="images/cabinet-check.jpg" alt="A technician checking a control cabinet">
+  <figcaption>Figure 1. Cabinet inspection before commissioning.</figcaption>
+</figure>
+```
+
+This is stronger for semantic HTML, but it is less portable. Some Markdown platforms sanitize raw HTML, remove attributes, block HTML entirely, or render it differently in previews and exports.
+
+## When to use plain Markdown captions
+
+Use the plain paragraph pattern when:
+
+- the file must work on GitHub;
+- the document is copied between tools;
+- the content may be exported to PDF or email;
+- the renderer is unknown;
+- the document is part of a README, knowledge base, or support article.
+
+It is not elegant, but it is stable.
+
+## When to use figure HTML
+
+Use `<figure>` and `<figcaption>` when:
+
+- the renderer allows raw HTML;
+- semantic markup matters;
+- the site CSS controls figure layout;
+- the content will stay inside that publishing system;
+- accessibility and structured HTML are more important than raw Markdown portability.
+
+Test the output. Raw HTML support is a renderer feature, not a Markdown guarantee.
+
+## When to use a component
+
+In MDX, Astro, Next.js, Docusaurus, or custom docs sites, the best answer may be a component:
+
+```mdx
+<Figure
+  src="/images/cabinet-check.jpg"
+  alt="A technician checking a control cabinet"
+  caption="Figure 1. Cabinet inspection before commissioning."
+/>
+```
+
+This is powerful, but not portable Markdown. It belongs in a controlled docs site, not in a file that must render everywhere.
+
+## Caption placement rules
+
+Use these habits:
+
+- Put the caption immediately after the image.
+- Keep the caption short and useful.
+- Explain what the reader should notice.
+- Do not repeat the alt text verbatim.
+- Number figures only if the document needs cross-references.
+- Avoid using tables just to align images and captions.
+
+A caption should add context, not only label the file.
+
+## What breaks across renderers
+
+| Pattern | Portability risk |
+| --- | --- |
+| Plain paragraph caption | Low risk, but not semantic figure markup |
+| HTML `<figure>` | May be blocked, sanitized, or styled poorly |
+| Markdown inside `<figcaption>` | Renderer-dependent |
+| MDX component | Works only in that MDX environment |
+| Image title attribute | Not reliable as a visible caption |
+| Table-based layout | Fragile on mobile, PDF, and narrow screens |
+
+The more layout you force into Markdown, the more likely the page will break somewhere else.
+
+## Accessible image plus caption example
+
+A good documentation example:
+
+```md
+![A browser screenshot showing the import settings panel with the source directory selected](images/import-settings.png)
+
+*Figure 2. Select the source directory before running the import preview.*
+```
+
+Why this works:
+
+- the alt text describes the image for people who cannot see it;
+- the caption explains why the image is included;
+- the syntax is portable;
+- the caption remains visible in most exports.
+
+## Common mistakes
+
+Avoid these:
+
+- using empty alt text for meaningful screenshots;
+- putting the whole caption inside `![...]`;
+- relying on hover titles for important information;
+- wrapping every image in custom HTML before testing exports;
+- using images without captions in long tutorials where screenshots need context;
+- numbering figures manually when sections are frequently reorganized.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Markdown image syntax: local vs remote paths"
+		href="/syntax/markdown-image-syntax-local-vs-remote-paths/"
+		description="Make sure the image path works before solving captions or layout."
+	/>
+	<LinkCard
+		title="Markdown image alt text and accessibility basics"
+		href="/syntax/markdown-image-alt-text-and-accessibility-basics/"
+		description="Separate accessibility descriptions from visible captions."
+	/>
+	<LinkCard
+		title="Markdown image size and resizing"
+		href="/syntax/markdown-image-size-and-resizing-when-markdown-is-not-enough/"
+		description="Learn when standard Markdown stops and renderer-specific sizing begins."
+	/>
+	<LinkCard
+		title="Raw HTML blocks vs inline HTML"
+		href="/fundamentals/raw-html-blocks-vs-inline-html-in-markdown/"
+		description="Understand the raw HTML boundary before relying on figure markup."
+	/>
+</div>

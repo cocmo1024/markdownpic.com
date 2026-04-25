@@ -60,6 +60,17 @@ Use collapsible sections only when the page still works without them.
 
 That keeps the source readable and makes the feature optional rather than foundational.
 
+## What to check before using details
+
+Before adding `<details>` blocks across a documentation set, test:
+
+- whether the renderer allows the tags without stripping them;
+- whether the collapsed content is still accessible to keyboard and screen-reader users;
+- whether important headings disappear from page outlines or table-of-contents systems;
+- whether exported PDF, email, or image versions preserve the content in a readable state.
+
+If the hidden content is required for comprehension, it is usually better to make it visible or use a supported documentation component. Collapsible sections are best for optional depth, not for information the reader must see.
+
 ## Compare next
 
 - [Raw HTML blocks vs inline HTML in Markdown](/fundamentals/raw-html-blocks-vs-inline-html-in-markdown/)

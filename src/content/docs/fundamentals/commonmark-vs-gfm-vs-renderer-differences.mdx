@@ -31,7 +31,7 @@ updateTriggers:
 
 **CommonMark** is the closest thing Markdown has to a formal baseline specification. **GitHub Flavored Markdown (GFM)** starts from that baseline and adds practical features such as tables and task lists. A **renderer** is the actual implementation that decides what the Markdown file turns into.
 
-That means two files can both be called â€œMarkdownâ€?while still behaving differently, because the renderer is not identical.
+That means two files can both be called "Markdown" while still behaving differently, because the renderer is not identical.
 
 ## Why this difference matters
 
@@ -43,6 +43,19 @@ People usually discover the distinction only after something breaks:
 - or a tool accepts raw HTML and another strips it.
 
 If the content is meant to travel, you need to know which layer you are relying on.
+
+## Examples of layer confusion
+
+Layer confusion usually shows up when a team copies a working page from one environment into another and assumes the syntax is portable. A task list may work because GitHub supports GFM. A custom callout may work because a docs framework transforms it. Raw HTML may survive because one renderer allows it and another sanitizes it.
+
+When reviewing a Markdown pattern, ask which layer provides the behavior:
+
+- CommonMark baseline behavior;
+- GFM extension behavior;
+- a static-site or documentation-framework extension;
+- local CSS, components, or sanitization rules.
+
+If the answer is not CommonMark or a known target renderer, document the dependency before treating the pattern as reusable.
 
 ## A practical model
 

@@ -67,6 +67,17 @@ If the same div or span pattern appears more than a few times, it probably belon
 
 not in raw Markdown source.
 
+## Cleaner alternatives
+
+Before adding another custom wrapper, consider whether the problem belongs somewhere else:
+
+- use a documented component for notes, warnings, tabs, or cards;
+- use frontmatter when the content needs metadata rather than inline decoration;
+- use a template when the same layout repeats across many pages;
+- use plain Markdown when the styling is not essential to understanding.
+
+This keeps the source readable and makes migrations less painful. A wrapper is defensible when it represents a stable content pattern. It is weak when it only patches a visual preference that should live in the theme.
+
 ## Compare next
 
 - [HTML in Markdown when to use it and when it becomes debt](/fundamentals/html-in-markdown-when-to-use-it-and-when-it-becomes-debt/)

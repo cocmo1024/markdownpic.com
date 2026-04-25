@@ -86,6 +86,19 @@ Use file-relative paths when the repository or docs tree is the source of truth.
 
 If the team cannot say which of those is primary, the content system still needs a linking policy.
 
+## What breaks during migration
+
+Root-relative paths often fail during migrations because they hide a site assumption inside ordinary-looking Markdown. A move from `/docs/` to `/help/`, a deployment under a subpath, or a copy into a package README can turn a clean link into a broken one.
+
+Before using root-relative paths heavily, confirm:
+
+- whether the site will always deploy from the domain root;
+- whether local preview tools resolve `/` the same way production does;
+- whether the same files are reused in README, package, or CMS contexts;
+- whether redirects or base-path settings will be controlled by the docs team.
+
+If those answers are uncertain, file-relative links are usually safer until the publishing contract is stable.
+
 ## Compare next
 
 <div class="portal-links">

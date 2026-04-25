@@ -1,6 +1,6 @@
 ---
 title: Editorial Policy
-description: How MarkdownPic chooses, writes, updates, and reviews content.
+description: How MarkdownPic chooses, writes, reviews, updates, and separates Markdown reference content from future commercial relationships.
 referenceType: policy
 adProfile: policy
 commercialIntent: low
@@ -21,6 +21,19 @@ targetRoles:
 
 MarkdownPic is being built as a long-term Markdown reference system. The editorial goal is not to publish high volumes of shallow content. The goal is to publish pages that keep solving real Markdown, editor, and publishing problems over time.
 
+## Search quality floor
+
+Every substantive page should serve a defined reader task. A page should not exist only because a phrase appears to have search volume.
+
+Before a new page is published or an existing page is substantially refreshed, it should pass these checks:
+
+- The reader problem is specific.
+- The title and description accurately summarize the page.
+- The page distinguishes standard Markdown, renderer-specific behavior, and tooling advice.
+- Internal links help the reader continue the workflow instead of repeating the same answer.
+- Structured data describes the actual page topic and visible content.
+- The page can be reviewed later when renderer behavior, tool behavior, or publishing assumptions change.
+
 ## What gets published
 
 A page should earn its place by doing at least one of the following:
@@ -30,6 +43,18 @@ A page should earn its place by doing at least one of the following:
 - helping readers compare tools or workflows,
 - or turning a vague topic into an implementable publishing decision.
 
+## Publication floor
+
+Before a page stays live as a durable reference, it should answer:
+
+1. What exact Markdown behavior, renderer difference, or publishing decision is being solved?
+2. Which syntax is portable, which is renderer-specific, and which belongs in HTML, CSS, components, or tooling instead of Markdown?
+3. What working example can the reader copy or adapt safely?
+4. What breaks when the file moves to GitHub, docs sites, CMS fields, PDF, email, image export, or AI ingestion?
+5. Which internal page should the reader use next when the problem becomes narrower?
+
+Pages that cannot answer those questions should be expanded, merged into a stronger syntax or guide page, or removed from priority paths.
+
 ## What gets avoided
 
 MarkdownPic should avoid:
@@ -38,6 +63,14 @@ MarkdownPic should avoid:
 - thin content written only to occupy keywords,
 - inflated listicles with no decision value,
 - and article structures that look useful but fail to answer the underlying problem.
+
+Pages should be revised, merged, or removed from promotion when they become thin, duplicative, stale, misleading, or primarily search-engine-first.
+
+AI assistance may support drafting and audits, but the published standard is still practical usefulness. A page should not exist only because a Markdown keyword has volume. It should teach the standard, show the edge case, explain the renderer boundary, and preserve source-quality thinking.
+
+## Metadata and search appearance
+
+Titles, descriptions, headings, and structured metadata should match the visible page. A page should not promise a standard, cheat sheet, example library, comparison, or tool guide unless the body provides that value. Internal links should help readers move from syntax to standards, troubleshooting, publishing, and tooling without creating shallow loops.
 
 ## Updates
 

@@ -47,7 +47,21 @@ Use `npm run build` before deploy.
 ```md
 \*not italic\*
 \# not a heading
+\[not a link label\]
+\`not inline code\`
 ```
+
+## What is portable and what is not
+
+Bold, italic, and inline code are part of the core Markdown experience across most serious renderers. Strikethrough is different. It is common in GitHub-style Markdown, but it should still be treated as an extension when content must move across unknown systems.
+
+| Syntax | Usually safe? | Notes |
+| --- | --- | --- |
+| `**bold**` | Yes | Good default for strong emphasis |
+| `*italic*` | Yes | Good default for ordinary emphasis |
+| `` `inline code` `` | Yes | Best for commands, filenames, variables, and literal syntax |
+| `~~strikethrough~~` | Renderer-dependent | Common in GFM, not a universal baseline |
+| Backslash escapes | Mostly safe | Escape only characters that would otherwise be interpreted |
 
 ## Why inline code deserves special treatment
 
@@ -61,6 +75,8 @@ That matters for:
 - syntax snippets,
 - and configuration keys.
 
+Inline code is especially important in AI-era Markdown because the same source may be used as prompt context, documentation, code examples, or image-export text. A command written as prose can be ambiguous. A command written as inline code stays visibly literal.
+
 ## Where people create accidental formatting
 
 Formatting mistakes usually happen when:
@@ -68,15 +84,54 @@ Formatting mistakes usually happen when:
 - asterisks appear in plain text,
 - hash symbols appear at line starts,
 - backticks are used inside already-formatted spans,
+- underscores appear inside identifiers,
+- brackets appear near URLs or file paths,
 - or the writer uses strikethrough assuming every renderer will support it.
 
 The fix is to treat literal content and presentational emphasis as different jobs.
+
+## Common mistakes
+
+### Using emphasis where code is clearer
+
+Weak:
+
+```md
+Run *npm install* before building.
+```
+
+Better:
+
+```md
+Run `npm install` before building.
+```
+
+### Escaping too much
+
+Escaping is useful when a character would be interpreted. It is noisy when every punctuation mark is escaped without reason.
+
+```md
+\*literal asterisks\* are useful.
+Do not escape ordinary commas, periods, and words.
+```
+
+### Assuming strikethrough will survive every export
+
+If the strikethrough carries critical meaning, verify the target renderer. For portable source, consider wording the change directly instead of relying on visual deletion.
 
 ## The portability rule
 
 Bold, italic, and inline code are broadly safe. Strikethrough is common, but it should still be treated more like a widely supported extension than a universal baseline.
 
 If the file must survive unknown renderers, use strong and emphasis confidently, use inline code where content is literal, and verify strikethrough only when it matters.
+
+## Practical checklist
+
+- Use `**bold**` for important labels or warnings, not whole paragraphs.
+- Use `*italic*` sparingly for emphasis, terms, or light contrast.
+- Use inline code for commands, paths, keys, packages, variables, and syntax.
+- Escape characters only when Markdown would otherwise treat them as formatting.
+- Treat strikethrough as renderer-dependent unless the target platform is known.
 
 ## Related pages
 

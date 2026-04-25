@@ -1,12 +1,12 @@
 ---
 title: Markdown to image workflows for docs, social, and AI content
-description: How to use Markdown as the source layer for screenshots, long images, social assets, and shareable visual documentation without breaking SEO or reuse.
+description: How to use Markdown as the source layer for screenshots, long images, social assets, and shareable visual documentation without breaking discoverability or reuse.
 referenceType: guide
 adProfile: guide
 commercialIntent: high
 reviewCadence: Quarterly review
 contentStatus: cornerstone
-problemSolved: Explains how to turn Markdown into image assets without sacrificing reuse, editorial control, or search value.
+problemSolved: Explains how to turn Markdown into image assets without sacrificing reuse, editorial control, or indexable text.
 readerTakeaway: You should leave with a concrete model for when Markdown should stay HTML-first, when image export adds value, and how the MarkdownPic tool fits into that workflow.
 primaryKeyword: markdown to image workflow
 searchIntent: design
@@ -18,7 +18,7 @@ targetRoles:
   - AI content operators
 keyQuestions:
   - When is Markdown-to-image actually the right format?
-  - How should a team preserve SEO while still creating shareable long images?
+  - How should a team preserve indexable text while still creating shareable long images?
   - Where does a dedicated Markdown-to-image tool belong in the workflow?
 notFor:
   - Teams trying to replace HTML docs entirely with images
@@ -27,6 +27,10 @@ updateTriggers:
   - Major changes in MarkdownPic tool behavior
   - Significant platform changes in image-heavy content distribution
 ---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Markdown to image workflows for docs, social, and AI content
 
 ## What matters first
 
@@ -48,7 +52,7 @@ Good use cases:
 - a social post that extracts the best section from a larger guide,
 - a documentation card or changelog image for distribution channels,
 - a long code or checklist screenshot that needs stronger visual control than a raw renderer,
-- a reusable visual asset for newsletters, communities, and AI-generated content summaries.
+- a reusable visual asset for newsletters, communities, and AI-assisted content summaries.
 
 Poor use cases:
 
@@ -63,14 +67,15 @@ If the Markdown source is weak, the export workflow will also be weak. Before sc
 - [Markdown image syntax: local vs. remote paths](/syntax/markdown-image-syntax-local-vs-remote-paths/)
 - [Markdown image alt text and accessibility basics](/syntax/markdown-image-alt-text-and-accessibility-basics/)
 - [Markdown tables that survive mobile, PDF, and image export](/syntax/markdown-tables-that-survive-mobile-pdf-and-image-export/)
+- [Markdown docs publishing checklist before going live](/publishing/markdown-docs-publishing-checklist-before-going-live/)
 
-## The SEO rule that matters
+## The discoverability rule that matters
 
-If search traffic matters, the HTML page must stay primary.
+If discoverability matters, the HTML page must stay primary.
 
 Search engines still need readable text, internal links, structured content, and normal HTML documents to understand a page properly. Image exports should support those pages, not replace them.
 
-That is why MarkdownPic should treat the tool as part of a **distribution workflow**, not the whole publishing system.
+That is why MarkdownPic treats the tool as part of a **distribution workflow**, not the whole publishing system.
 
 ## A practical operating model
 
@@ -87,7 +92,7 @@ That file should be the clean version you can:
 
 ### Layer 2: indexable HTML
 
-The site page remains the search-facing asset. This is where headings stay crawlable, code stays copyable, and related links can pass internal authority.
+The site page remains the discoverable asset. This is where headings stay crawlable, code stays copyable, and related links can pass context to readers.
 
 ### Layer 3: visual derivatives
 
@@ -95,13 +100,38 @@ This is where the tool at [tool.markdownpic.com](https://tool.markdownpic.com/) 
 
 ## Why teams get this wrong
 
-The common mistake is to treat â€œMarkdown-to-imageâ€?as a destination instead of a branch.
+The common mistake is to treat Markdown-to-image as a destination instead of a branch.
 
 That creates several problems:
 
 - the original text stops being easy to update,
-- SEO value collapses if images replace HTML,
+- discoverability collapses if images replace HTML,
 - asset management becomes manual,
 - and different channels drift out of sync.
 
 The fix is to keep the Markdown layer clean and reusable, then let the tool generate the visual layer only when the channel benefits from it.
+
+## Related pages
+
+<div class="portal-links">
+	<LinkCard
+		title="Markdown content audit checklist"
+		href="/guides/markdown-content-audit-checklist-for-docs-and-blogs/"
+		description="Use this page before scaling visual derivatives from a messy Markdown library."
+	/>
+	<LinkCard
+		title="How to test Markdown rendering before publishing"
+		href="/guides/how-to-test-markdown-rendering-before-publishing/"
+		description="Use this page when the source has to survive preview, build output, HTML, exports, and downstream reuse."
+	/>
+	<LinkCard
+		title="Export-safe Markdown authoring"
+		href="/guides/export-safe-markdown-authoring-for-pdf-email-and-social/"
+		description="Use this page when Markdown has to survive PDF, email, screenshot, and social-image workflows."
+	/>
+	<LinkCard
+		title="MarkdownPic Tool"
+		href="/tool/"
+		description="Use this page to understand where the companion tool belongs and what it does not replace."
+	/>
+</div>

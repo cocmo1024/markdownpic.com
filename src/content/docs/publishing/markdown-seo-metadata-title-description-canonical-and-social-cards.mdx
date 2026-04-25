@@ -1,0 +1,164 @@
+---
+title: Markdown SEO metadata for docs and blogs
+description: How to manage titles, descriptions, canonical URLs, social cards, and structured metadata when Markdown is the source for a docs site or blog.
+referenceType: publishing
+adProfile: publishing
+commercialIntent: high
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Helps Markdown publishers separate source content from search-facing metadata so pages can be useful to readers and understandable to search systems.
+readerTakeaway: You should leave with a practical metadata checklist for Markdown-based publishing systems that avoids over-promising, duplicate routes, and weak snippets.
+primaryKeyword: markdown SEO metadata
+searchIntent: design
+decisionStage: implementation
+targetRoles:
+  - Documentation teams
+  - Blog operators
+  - Developers
+  - Content strategists
+keyQuestions:
+  - What SEO metadata should Markdown pages include?
+  - Where should title, description, canonical URL, and social images live?
+  - How do Markdown frontmatter and visible content stay aligned?
+---
+
+# Markdown SEO metadata for docs and blogs
+
+Markdown is often the source layer, but search engines and social platforms do not rank or preview a raw `.md` file in isolation. They see the rendered HTML page, its title, description, canonical URL, headings, links, images, and structured data. That means Markdown publishing needs a metadata layer that is accurate, consistent, and tied to visible content.
+
+The goal is not to stuff frontmatter with keywords. The goal is to make each page understandable: what problem it solves, who it is for, what URL represents it, and what snippet should summarize it.
+
+## Quick answer
+
+A Markdown-based docs or blog page should usually define a clear title, a concise description, a stable route, a canonical URL, useful Open Graph or social-card fields, and any structured metadata the site can render honestly. The visible H1 and body content should match the promise made by the metadata. If the metadata says the page is a checklist, comparison, or guide, the page should actually provide that value.
+
+## The metadata roles
+
+| Field | Job | Common mistake |
+| --- | --- | --- |
+| Title | Describes the page in browser tabs and search title sources | Keyword-stuffed or different from the actual page topic |
+| Description | Summarizes the page for snippets and previews | Generic description reused across many pages |
+| Canonical URL | Tells systems which URL is the preferred version | Missing when multiple routes or legacy URLs exist |
+| Open Graph title | Controls social-card title where supported | Repeating a vague site slogan |
+| Open Graph image | Gives share previews a useful visual | Using an image unrelated to page content |
+| Last updated | Signals maintenance when visible and accurate | Showing freshness without actual review |
+| Structured data | Helps machines understand visible content | Marking up information that readers cannot see |
+
+## A practical frontmatter pattern
+
+The exact fields depend on the static site generator or docs framework, but a healthy Markdown source often looks like this:
+
+```yaml
+---
+title: Markdown tables that survive mobile, PDF, and image export
+description: How to write Markdown tables that remain readable across docs sites, PDFs, email, and long-image exports.
+canonical: https://example.com/syntax/markdown-tables/
+datePublished: 2026-04-25
+lastReviewed: 2026-04-25
+contentStatus: cornerstone
+primaryKeyword: markdown tables
+searchIntent: learn
+---
+```
+
+The important part is not the exact field names. The important part is that the metadata describes the real page.
+
+## Title and H1 should agree
+
+The page title and H1 do not have to be identical, but they should not promise different things.
+
+Weak:
+
+```yaml
+title: Ultimate Markdown SEO Guide
+```
+
+```md
+# Frontmatter examples
+```
+
+Better:
+
+```yaml
+title: Markdown SEO metadata for docs and blogs
+```
+
+```md
+# Markdown SEO metadata for docs and blogs
+```
+
+The second version sets a clearer expectation and is easier to maintain.
+
+## Description should answer search intent
+
+A good description should say what the reader will get, not just repeat the title.
+
+Weak:
+
+```yaml
+description: Learn about Markdown SEO metadata.
+```
+
+Better:
+
+```yaml
+description: How to manage titles, descriptions, canonical URLs, social cards, and structured metadata when Markdown is the source for a docs site or blog.
+```
+
+That description is longer, but it states the useful boundary.
+
+## Canonical URLs matter when Markdown moves
+
+Markdown often gets reused:
+
+- a README becomes a docs page;
+- a blog post becomes a knowledge-base article;
+- a legacy URL redirects to a new static-site route;
+- a tool exports the same content as HTML and image;
+- or a translated version shares the same source structure.
+
+If several URLs can show similar content, the publishing system should define the canonical URL for the primary page. The Markdown source may not render the canonical tag directly, but the frontmatter or route config should feed the HTML output.
+
+## Social cards should match page value
+
+A social image should not be random decoration. For Markdown content, good social cards usually show:
+
+- the page topic;
+- the site or section identity;
+- a short visual summary;
+- or a screenshot-like representation of the syntax or workflow.
+
+If the page is a syntax reference, the social image can show the syntax pattern. If the page is a tool guide, it can show the output or workflow boundary. If the image has nothing to do with the page, it weakens trust.
+
+## Structured metadata should stay honest
+
+Do not mark up invisible content. If a page includes structured signals such as author, review date, FAQ, guide type, or article status, the visible page should support those claims.
+
+Use structured fields to clarify:
+
+- what kind of page it is;
+- who it is for;
+- when it was reviewed;
+- what problem it solves;
+- and which related pages continue the path.
+
+Do not use structured metadata to claim freshness, authority, reviews, ratings, or product recommendations that are not visible and defensible.
+
+## Metadata checklist before publishing
+
+- The title is unique and specific.
+- The description summarizes the actual page, not the whole site.
+- The H1 and title are aligned.
+- The canonical URL is stable.
+- Internal links point to the next useful page.
+- Social-card metadata is not misleading.
+- Last-reviewed dates are accurate.
+- Structured metadata describes visible content.
+- The page body delivers the value promised by the title and description.
+
+## Related pages
+
+- [Markdown frontmatter portability and where metadata belongs](/fundamentals/markdown-frontmatter-portability-and-where-metadata-belongs/)
+- [Markdown docs publishing checklist before going live](/publishing/markdown-docs-publishing-checklist-before-going-live/)
+- [Markdown for docs, blogs, and AI-ready content systems](/publishing/markdown-for-docs-blogs-and-ai-ready-content-systems/)
+- [How to structure Markdown for LLM ingestion, RAG, and AI search](/guides/how-to-structure-markdown-for-llm-ingestion-rag-and-ai-search/)

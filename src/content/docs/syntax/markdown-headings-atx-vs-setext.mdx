@@ -1,13 +1,13 @@
 ---
 title: "Markdown headings: ATX vs. Setext"
-description: When to use hash-style headings, when setext headings still make sense, and which form is safest across Markdown renderers.
+description: When to use hash-style headings, when Setext headings still make sense, and how to build heading hierarchy that stays portable across docs, READMEs, exports, and AI workflows.
 referenceType: syntax
 adProfile: syntax
 commercialIntent: medium
 reviewCadence: Quarterly review
 contentStatus: cornerstone
-problemSolved: Explains how to choose between ATX and Setext headings without hurting portability or editing speed.
-readerTakeaway: You should leave knowing that ATX headings are usually the safest default, where Setext still fits, and what examples to copy for clean hierarchy.
+problemSolved: Explains how to choose between ATX and Setext headings, build stable heading hierarchy, and avoid anchor, accessibility, export, and AI-search problems.
+readerTakeaway: You should leave knowing why ATX headings are the safest default, where Setext still fits, and how to write headings that survive real publishing systems.
 primaryKeyword: markdown headings
 searchIntent: learn
 decisionStage: problem-aware
@@ -19,29 +19,77 @@ targetRoles:
 keyQuestions:
   - Should I use # headings or underline-style headings?
   - Which heading style is most portable?
-  - Where do heading styles break in real editing workflows?
+  - How many heading levels should Markdown pages use?
+  - How do Markdown headings affect anchor links, SEO, accessibility, and AI search?
 notFor:
   - Readers who only need a table of markdown symbols without explanation
 updateTriggers:
   - CommonMark heading-related spec changes
   - GitHub heading behavior changes
+  - Major docs-framework changes in heading anchors or table-of-contents generation
 ---
 
-## What matters first
+# Markdown headings: ATX vs. Setext
 
-Use **ATX headings** with `#` for almost all modern Markdown work. They are clearer in source, easier to scan, and safer in long documents. Use **Setext headings** only when you intentionally want the old underline style for level 1 and level 2 headings.
+Headings look like a simple Markdown feature, but they affect almost every downstream use of a document: page outline, table of contents, anchor links, accessibility, search snippets, exported PDFs, docs-site navigation, and AI retrieval chunks. A heading is not just larger text. It is a structural label.
 
-## Standard examples
+The safest default for modern Markdown is **ATX headings** with `#`. Setext headings still exist and are valid for level 1 and level 2 headings, but they are less flexible in long documents and less convenient when content is edited, moved, reviewed, or reused.
 
-### ATX headings
+## Quick answer
+
+Use ATX headings for almost all Markdown:
+
+```md
+# Page title
+## Main section
+### Subsection
+#### Detail section
+```
+
+Use Setext headings only when you intentionally want a short, old-style document with level 1 and level 2 headings:
+
+```md
+Page title
+==========
+
+Main section
+------------
+```
+
+If your Markdown will live in a repository, docs site, blog, static site generator, knowledge base, PDF export, or AI ingestion workflow, choose ATX unless there is a deliberate reason not to.
+
+## ATX headings
+
+ATX headings use one to six `#` characters.
 
 ```md
 # Heading level 1
 ## Heading level 2
 ### Heading level 3
+#### Heading level 4
+##### Heading level 5
+###### Heading level 6
 ```
 
-### Setext headings
+The number of `#` characters sets the heading level. The space after the hashes is important for readability and compatibility.
+
+Preferred:
+
+```md
+## Installation
+```
+
+Avoid:
+
+```md
+##Installation
+```
+
+Some renderers may tolerate the second form, but portable Markdown should not depend on tolerance.
+
+## Setext headings
+
+Setext headings use underline characters and only support level 1 and level 2.
 
 ```md
 Heading level 1
@@ -51,45 +99,215 @@ Heading level 2
 ---------------
 ```
 
+Setext can be readable in very short files, especially older plain-text documents. It becomes less useful once a page needs nested sections, frequent edits, generated tables of contents, or consistent style across many files.
+
 ## Why ATX is the better default
 
-ATX headings win in most real workflows because:
+ATX headings win in most real workflows because they:
 
-- they scale beyond level 2,
-- they are easier to edit during restructuring,
-- they are easier to read in plain text,
-- and they reduce ambiguity when content is copied, diffed, or rearranged.
+- support all six heading levels;
+- make hierarchy visible at the start of each line;
+- are easier to scan in source view;
+- are easier to move during editing;
+- work better in diffs and code review;
+- reduce ambiguity when paragraphs are rearranged;
+- and are easier for automated tooling to parse consistently.
 
-If your file will live in Git, docs tooling, AI-assisted workflows, or repeated revisions, ATX is usually the better operational choice.
+This matters when Markdown is not just a personal note. A docs page may be processed by a linter, static site generator, search indexer, table-of-contents builder, PDF exporter, or AI retrieval system. ATX headings make that pipeline more predictable.
 
 ## When Setext still makes sense
 
-Setext headings still work when:
+Setext headings are acceptable when:
 
-- the document is short,
-- you only need a top-level heading and maybe one second-level heading,
-- or the source is intentionally styled for older editorial conventions.
+- the document is short;
+- the style is intentionally plain-text editorial;
+- only a title and a few second-level sections are needed;
+- the file is not expected to become a large docs page;
+- and the team has a consistent style rule.
 
-But the benefits are aesthetic more than operational.
+Setext is usually a style choice, not a capability advantage. If the document will grow, ATX is the safer long-term format.
+
+## Do not skip heading levels casually
+
+A common mistake is using heading levels for visual size instead of structure.
+
+Weak structure:
+
+```md
+# API Reference
+### Authentication
+##### Tokens
+```
+
+Better structure:
+
+```md
+# API Reference
+## Authentication
+### Tokens
+```
+
+Skipping levels can confuse table-of-contents generation, accessibility tools, exports, and chunking systems. The page may still render, but the outline becomes harder to understand.
+
+## One H1 is usually enough
+
+Most docs sites and blogs should have one main H1 for the page title. The rest of the page should normally start at H2.
+
+Good page structure:
+
+```md
+# Markdown image syntax
+
+## Basic syntax
+
+## Local images vs remote images
+
+## Alt text
+
+## Common failures
+```
+
+Multiple H1 headings are not always invalid, but they often create a weaker page outline. In practical publishing, one clear H1 makes the page easier to preview, navigate, index, and reuse.
+
+## Headings and anchor links
+
+Many platforms generate anchor IDs from heading text. For example, a heading such as:
+
+```md
+## Markdown image syntax
+```
+
+may become a fragment link like:
+
+```md
+#markdown-image-syntax
+```
+
+The exact slugging rules differ across renderers. Some lower-case text, some remove punctuation, some add suffixes for duplicate headings, and some handle non-English characters differently.
+
+For stable anchors:
+
+- keep headings specific;
+- avoid duplicate headings such as `## Overview` repeated many times;
+- do not rename headings casually after external links exist;
+- avoid putting volatile dates, version numbers, or marketing language in heading text unless necessary;
+- and test links in the rendered environment, not only in the editor preview.
+
+If anchor stability matters, read [Markdown anchors and heading links that stay stable](/syntax/markdown-anchors-and-heading-links-that-stay-stable/).
+
+## Headings and table of contents behavior
+
+Markdown itself does not define a universal table-of-contents syntax. TOCs are usually generated by the renderer, docs framework, editor plugin, or static site generator.
+
+Good headings make TOCs useful:
+
+```md
+## Why ATX is the better default
+## When Setext still makes sense
+## Do not skip heading levels casually
+```
+
+Weak headings produce weak TOCs:
+
+```md
+## Overview
+## More details
+## Notes
+```
+
+The second version forces the reader to click before understanding the page. It also weakens search snippets and AI retrieval because the section labels are too vague.
+
+## Headings and SEO
+
+Search engines do not reward headings because they contain keywords alone. Headings help when they make the page easier to understand. A good heading tells the reader what problem the section solves.
+
+Weak:
+
+```md
+## More
+```
+
+Better:
+
+```md
+## Why Markdown headings affect anchor links
+```
+
+Do not stuff headings with repeated keywords. Use natural, descriptive labels that match the actual section.
+
+## Headings and accessibility
+
+Screen reader users often navigate by headings. If heading levels are skipped, vague, duplicated, or used only for visual styling, the page becomes harder to use.
+
+Accessibility-friendly heading habits:
+
+- one clear page title;
+- sequential levels where possible;
+- descriptive section labels;
+- no headings used only to make text big;
+- no empty headings;
+- no hidden heading text that misrepresents the visible page.
+
+Good Markdown structure is usually good accessibility structure.
+
+## Headings and AI-ready Markdown
+
+Markdown is increasingly used as source material for AI search, RAG systems, documentation assistants, and internal knowledge bases. Those systems often split documents by headings.
+
+If headings are vague, retrieval chunks become vague. A chunk labeled `Notes` or `Details` carries less useful meaning than a chunk labeled `When Setext headings still make sense`.
+
+For AI-ready Markdown, headings should:
+
+- label the actual topic;
+- avoid clever but unclear phrasing;
+- stay stable over time;
+- separate concepts cleanly;
+- and keep examples close to the section they explain.
+
+This does not mean writing for machines instead of readers. It means writing clear structure that helps both.
+
+## Migration rule for existing documents
+
+If an existing document mixes ATX and Setext, do not rewrite it blindly. Use this rule:
+
+| Situation | Recommendation |
+| --- | --- |
+| Short README with one title and a few sections | Setext can stay if style is consistent |
+| Long docs page | Convert to ATX |
+| Page has generated TOC or anchor links | Prefer ATX and test anchors |
+| Page is feeding a static site generator | Prefer ATX |
+| Page is being used for AI ingestion or RAG | Prefer clear ATX hierarchy |
+| Team has a style guide | Follow the style guide, but document exceptions |
+
+If conversion changes heading text, check anchor links before publishing.
+
+## Practical heading checklist
+
+Before publishing Markdown, check:
+
+- Does the page have one clear H1?
+- Do major sections use H2?
+- Do subsections use H3 instead of jumping to H4 or H5?
+- Are heading labels specific enough to scan?
+- Are repeated headings intentional?
+- Will anchor links survive if the page is moved?
+- Will the generated table of contents make sense?
+- Do headings describe the visible content below them?
+- Would the page still make sense in a PDF export or AI retrieval chunk?
 
 ## Recommended rule
 
-For MarkdownPic readers, the safest rule is:
+For MarkdownPic readers, the operating rule is:
 
-- default to ATX,
-- allow Setext only for deliberate style reasons,
-- and never mix both casually in the same document unless the team has a documented reason.
-
-## What heading decisions affect later
-
-Heading style is not just cosmetic. It also influences:
-
-- how easy the source is to restructure,
-- how clearly anchor links are derived,
-- and how safely the document can be reused in docs systems and exports.
+- default to ATX;
+- use Setext only for deliberate short-form style;
+- keep heading levels structural, not decorative;
+- avoid vague repeated headings;
+- and treat heading text as part of the page's long-term information architecture.
 
 ## Related pages
 
-- [CommonMark vs. GFM vs. renderer differences](/fundamentals/commonmark-vs-gfm-vs-renderer-differences/)
-- [Markdown links: inline, reference, and autolinks](/syntax/markdown-links-inline-vs-reference-and-autolinks/)
 - [Markdown anchors and heading links that stay stable](/syntax/markdown-anchors-and-heading-links-that-stay-stable/)
+- [Markdown table of contents options and anchor stability](/syntax/markdown-table-of-contents-options-and-anchor-stability/)
+- [CommonMark vs. GFM vs. renderer differences](/fundamentals/commonmark-vs-gfm-vs-renderer-differences/)
+- [How to structure Markdown for LLM ingestion, RAG, and AI search](/guides/how-to-structure-markdown-for-llm-ingestion-rag-and-ai-search/)

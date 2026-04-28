@@ -1,6 +1,6 @@
 ---
 title: Markdown wiki links vs standard links
-description: A practical guide to wiki links, standard Markdown links, and why link convenience inside note apps often creates portability problems later.
+description: A practical guide to wiki links, standard Markdown links, portability tradeoffs, export workflows, and safe rules for note apps, docs sites, and long-lived Markdown.
 referenceType: syntax
 adProfile: syntax
 commercialIntent: medium
@@ -18,49 +18,252 @@ targetRoles:
   - Documentation teams
 ---
 
-## What matters first
+## Quick answer
 
-Standard Markdown links travel better. Wiki links are convenient in note-first tools but often reduce portability outside those tools.
+Standard Markdown links are the safer default for content that must travel across GitHub, static sites, docs platforms, exports, search engines, and AI workflows.
 
-If your Markdown must survive across repositories, docs sites, exports, and publishing stacks, standard links are the safer default.
+Wiki links are useful inside note-first systems because they make local linking fast:
 
-## Why this matters
+```md
+[[Markdown links]]
+[[Markdown links|link syntax guide]]
+```
 
-Wiki links are attractive because they are fast and pleasant in local knowledge systems. The portability cost appears later:
+The problem is that wiki links are not part of baseline Markdown. They depend on tool-specific behavior. A note app may understand them, but a static site generator, GitHub README, PDF exporter, CMS importer, or Markdown-to-image workflow may render them as plain text.
 
-- another renderer does not understand them,
-- link text and destination rules differ,
-- or a publishing export step has to rewrite links before the site works.
+The long-term rule is: use wiki links as an authoring convenience only when the publishing pipeline can convert them reliably. Use standard Markdown links for canonical content.
 
-That is a syntax convenience with system-level consequences.
+## Standard Markdown links
 
-## The practical tradeoff
+The portable Markdown form is:
 
-### Wiki links
+```md
+[link text](destination)
+```
 
-Best when:
+Example:
 
-- the content lives mainly inside one notes environment,
-- the tool natively understands wiki links,
-- and local knowledge management matters more than external portability.
+```md
+[Markdown link syntax](/syntax/markdown-links-inline-vs-reference-and-autolinks/)
+```
 
-### Standard Markdown links
+This works because the visible label and destination are explicit. A renderer does not need to infer the target from a note title, file database, vault index, alias rule, or editor plugin.
 
-Best when:
+Standard links are best when:
 
-- files need to move between tools,
-- content will be published,
-- links need to survive GitHub and static site workflows,
-- or the source should remain broadly understandable.
+- the Markdown file will be published on the web,
+- the file must render on GitHub or GitLab,
+- the content may be exported to PDF, Word, HTML, or image,
+- links need to be checked by automated tools,
+- or another person must understand the source without using your exact notes app.
 
-## The healthiest long-term rule
+## Wiki links
 
-Use standard Markdown links for canonical content.
+Wiki links usually use double brackets:
 
-If a local notes workflow benefits from wiki links, treat that as a local authoring convenience or a transform step, not as the only durable source representation.
+```md
+[[Page name]]
+```
+
+Many tools also support aliases:
+
+```md
+[[Page name|visible link text]]
+```
+
+The appeal is real. Wiki links are fast to type, easy to autocomplete, and natural for personal knowledge bases. In a note system, `[[Page name]]` can create a relationship before the file exists. That makes wiki links useful for brainstorming, research maps, Zettelkasten workflows, and internal knowledge graphs.
+
+The cost appears when the Markdown leaves that environment.
+
+## Why wiki links become a portability problem
+
+A wiki link hides several assumptions:
+
+| Hidden assumption | Why it matters |
+| --- | --- |
+| The tool can resolve page titles | A normal Markdown parser may not know where `[[Page name]]` points. |
+| File names and titles match | Some tools resolve by title, some by file path, and some by internal ID. |
+| Spaces are handled consistently | `[[Machine Learning Notes]]` may need a slug or encoded URL after export. |
+| Aliases use the same syntax | `[[Page|Label]]` is common, but not universal. |
+| Attachments follow the same rules | Image and file links may break after export. |
+| The publishing pipeline rewrites links | Without conversion, wiki links often remain plain text. |
+
+This is why a vault can look healthy inside one editor but produce broken links after moving to a website.
+
+## Decision table
+
+| Situation | Recommended link form | Reason |
+| --- | --- | --- |
+| Personal notes that stay inside one app | Wiki links are acceptable | Speed and backlinking may matter more than portability. |
+| Public website or documentation | Standard Markdown links | Rendering, crawling, and link checking are predictable. |
+| GitHub README or open-source docs | Standard Markdown links | Readers should not need a specific notes app. |
+| Research vault with later publishing | Wiki links only with a conversion step | Draft fast, then export to portable links. |
+| Team documentation | Standard Markdown links | Teams need reviewable, testable source. |
+| AI-ready Markdown corpus | Standard Markdown links | Agents and retrieval systems benefit from explicit destinations. |
+
+## The safest publishing model
+
+If you like wiki links for writing, keep two layers:
+
+1. **Authoring layer**: use wiki links inside the notes tool if they speed up capture and connection.
+2. **Publishing layer**: transform wiki links into standard Markdown links before the content becomes a website, documentation page, PDF, or public archive.
+
+That keeps the local workflow pleasant without making the public source fragile.
+
+Example source note:
+
+```md
+Review [[Markdown links|the Markdown link syntax guide]] before publishing.
+```
+
+Portable output:
+
+```md
+Review [the Markdown link syntax guide](/syntax/markdown-links-inline-vs-reference-and-autolinks/) before publishing.
+```
+
+The second version is better for web pages, search indexing, accessibility, and future migration.
+
+## When wiki links are genuinely useful
+
+Wiki links are not bad. They solve a real authoring problem.
+
+They are useful when:
+
+- you are building a private knowledge base,
+- pages are renamed often,
+- backlink discovery is central to the workflow,
+- the tool maintains a link graph,
+- creating missing pages quickly matters,
+- and the content is not yet ready for publication.
+
+For early research, the speed can be worth it. The mistake is treating the same syntax as a durable publishing format without testing the export path.
+
+## When standard links should win
+
+Use standard links when the page is intended to be durable:
+
+```md
+[Markdown portability guide](/fundamentals/markdown-portability-between-github-notion-obsidian-and-static-sites/)
+```
+
+This is the better source form for:
+
+- published documentation,
+- static site pages,
+- educational guides,
+- SEO content,
+- legal or policy content,
+- API documentation,
+- product manuals,
+- and any Markdown that may be reused by another system.
+
+Standard links are also easier to audit. A link checker can crawl them. A reviewer can see the destination. A search engine can interpret the anchor text. An AI tool can parse the relationship without knowing your editor's private link rules.
+
+## Slugs, filenames, and title drift
+
+Wiki links often begin as titles:
+
+```md
+[[Markdown Links]]
+```
+
+Public sites usually need stable slugs:
+
+```md
+/syntax/markdown-links-inline-vs-reference-and-autolinks/
+```
+
+That difference matters. Titles change for clarity. Slugs should change rarely. If the link target is based only on a title, a rename can create drift between the note title, file name, route, and published URL.
+
+For durable Markdown systems, use a predictable slug policy:
+
+- lowercase paths,
+- hyphenated words,
+- no spaces,
+- no punctuation unless necessary,
+- one canonical URL per page,
+- redirects when a published URL changes.
+
+Wiki links do not remove the need for URL discipline. They only postpone it.
+
+## Alias links and anchor text
+
+Wiki aliases can look like this:
+
+```md
+[[Markdown Links|portable Markdown link syntax]]
+```
+
+The standard Markdown equivalent is:
+
+```md
+[portable Markdown link syntax](/syntax/markdown-links-inline-vs-reference-and-autolinks/)
+```
+
+For public content, the standard form is clearer because the destination is visible. It also encourages better anchor text. Good anchor text should tell the reader what the linked page covers:
+
+```md
+Good:
+[Markdown link syntax](/syntax/markdown-links-inline-vs-reference-and-autolinks/)
+
+Weak:
+[this note](/syntax/markdown-links-inline-vs-reference-and-autolinks/)
+```
+
+## Image and attachment links
+
+Wiki-style attachment links are even more fragile than page links. A local note app may understand:
+
+```md
+![[diagram.png]]
+```
+
+A portable Markdown page usually needs:
+
+```md
+![System diagram](./diagram.png)
+```
+
+or:
+
+```md
+![System diagram](/images/system-diagram.png)
+```
+
+If the page will be exported, published, or converted to an image, standard image syntax is safer. It also forces useful alt text, which is important for accessibility and search context.
+
+## Migration checklist
+
+Before publishing wiki-linked Markdown, check:
+
+1. Every `[[Page]]` link has a real target.
+2. Every alias has intentional public anchor text.
+3. Every target has a stable slug or file path.
+4. Attachments have portable paths and alt text.
+5. Heading links are tested after export.
+6. The final output contains standard Markdown or HTML links.
+7. A link checker runs on the published build.
+
+Do not rely on visual inspection inside the note app. The only test that matters is the output environment.
+
+## Practical recommendation
+
+For personal knowledge management, wiki links are acceptable and often productive. For public Markdown, documentation, and SEO pages, standard links should be the canonical form.
+
+If you want both, design the workflow intentionally:
+
+- write quickly with wiki links,
+- convert before publishing,
+- keep canonical URLs stable,
+- and check the built site, not only the source vault.
+
+That gives you the speed of note tools without giving up the reliability of portable Markdown.
 
 ## Compare next
 
 - [Markdown links inline reference and autolinks](/syntax/markdown-links-inline-vs-reference-and-autolinks/)
 - [Markdown portability between GitHub Notion Obsidian and static sites](/fundamentals/markdown-portability-between-github-notion-obsidian-and-static-sites/)
 - [Markdown anchors and heading links that stay stable](/syntax/markdown-anchors-and-heading-links-that-stay-stable/)
+- [Markdown image syntax: local vs remote paths](/syntax/markdown-image-syntax-local-vs-remote-paths/)
+- [Markdown links vs HTML links: when to switch](/syntax/markdown-links-vs-html-links-when-to-switch/)

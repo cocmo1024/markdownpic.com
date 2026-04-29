@@ -1,0 +1,240 @@
+---
+title: "Best Markdown editor for Android: Markor, Obsidian Mobile, and plain-text workflows"
+description: A practical Android Markdown editor guide comparing Markor, Obsidian Mobile, synced folders, image paths, preview fidelity, and mobile publishing limits.
+referenceType: editor
+adProfile: editor
+commercialIntent: high
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Helps Android users choose between Markor, Obsidian Mobile, and synced plain-text workflows without damaging Markdown portability.
+readerTakeaway: You should leave knowing whether Android should be your primary Markdown editor, a capture surface, or a review tool.
+primaryKeyword: best markdown editor android
+searchIntent: compare
+decisionStage: shortlist
+targetRoles:
+  - Android users
+  - Writers
+  - Developers
+  - Knowledge workers
+keyQuestions:
+  - What is the best Markdown editor for Android?
+  - Should Android Markdown be managed in Markor, Obsidian, or a synced folder?
+  - How do image paths and attachments stay portable on Android?
+notFor:
+  - Readers looking for a full desktop publishing replacement on a phone
+  - Teams that have not decided where their canonical Markdown files live
+updateTriggers:
+  - Major Android editor releases
+  - Obsidian Mobile workflow changes
+  - Android storage and sync behavior changes
+authorKey: editorial-desk
+editorKey: review-desk
+datePublished: 2026-04-29
+lastReviewed: 2026-04-29
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Best Markdown editor for Android: Markor, Obsidian Mobile, and plain-text workflows
+
+The best Markdown editor for Android is usually not the app with the longest feature list. It is the app that respects where your Markdown source really lives.
+
+For most serious workflows, Android should be treated as one of three things:
+
+1. a **capture surface** for notes, outlines, and field edits;
+2. a **review surface** for reading and correcting Markdown that will be published elsewhere;
+3. a **primary local-file editor** only when your workflow has been designed around mobile file ownership.
+
+That distinction matters because Android storage, sync providers, attachment paths, and preview engines can quietly create Markdown that looks fine on the phone and breaks later in GitHub, a static site, a documentation system, or a Markdown-to-image workflow.
+
+## Quick answer
+
+| Android Markdown need | Best starting point | Why |
+| --- | --- | --- |
+| Local plain-text Markdown editing | Markor | Lightweight Android-first editor for Markdown and adjacent plain-text formats |
+| Existing Obsidian vault workflow | Obsidian Mobile | Best when the phone is part of a larger Obsidian knowledge system |
+| Repo-backed docs | Edit lightly on Android, finalize in VS Code or a desktop repo workflow | Android is rarely the best place to manage Git review, builds, and publishing |
+| Fast note capture | Markor or Obsidian Mobile | Choose based on whether the note belongs in plain files or a knowledge vault |
+| Image-heavy publishing | Avoid making Android the canonical editing layer | Mobile image paths and attachment handling are common portability traps |
+
+If you only remember one rule: **choose Markor for plain files, Obsidian Mobile for vault continuity, and desktop VS Code for final publishing control**.
+
+## Source snapshot checked April 29, 2026
+
+This page uses public product signals rather than generic app-store rankings:
+
+| Tool | Public signal | Selection meaning |
+| --- | --- | --- |
+| [Markor GitHub](https://github.com/gsantner/markor) | Markor is positioned as an Android text editor for Markdown, todo.txt, plaintext, math, and related formats | Strong Android-first plain-text fit |
+| [Obsidian pricing](https://obsidian.md/pricing.html) | Obsidian has mobile apps and optional paid services around sync and publishing | Strong if your Android workflow is part of an Obsidian vault |
+| [VS Code Markdown extension docs](https://code.visualstudio.com/api/extension-guides/markdown-extension) | VS Code preview behavior can be customized through markdown-it plugins, CSS, and extension APIs | Strong final validation environment for repo-backed Markdown |
+
+## The Android Markdown decision tree
+
+Start with file ownership, not app preference.
+
+| Question | If yes | If no |
+| --- | --- | --- |
+| Do these files already live in an Obsidian vault? | Use Obsidian Mobile and manage portability rules | Consider Markor or a synced folder |
+| Do you need Android to edit local `.md` files directly? | Start with Markor | Use Android mainly for capture and review |
+| Will the Markdown later go to GitHub, a docs site, or a static site? | Validate on the publishing renderer before final use | Android preview fidelity is less risky |
+| Are images central to the page? | Keep Android image edits limited and structured | Text-only notes are safer on mobile |
+| Does the team need review, branches, and CI? | Do not make Android the canonical editor | Mobile-only editing may be acceptable |
+
+The wrong Android editor usually fails in one of four places: file location, attachment paths, preview mismatch, or sync conflicts.
+
+## Markor: best for local Android Markdown files
+
+Markor is the clearest answer when the job is plain Android Markdown editing.
+
+Choose Markor when:
+
+- you want files you can inspect directly;
+- Markdown, todo.txt, and plaintext all matter;
+- the editor should stay lightweight;
+- the phone is used for capture, field notes, checklists, and quick edits;
+- you can manage sync separately.
+
+Markor is not trying to be a full desktop documentation system. That is a strength when your Android job is narrow and file-based.
+
+The practical risk is workflow design. Markor can keep files simple, but it cannot magically solve publishing. If those files later need Git review, docs builds, image exports, or team publishing, you still need a downstream validation step.
+
+## Obsidian Mobile: best for existing vaults
+
+Obsidian Mobile is the better Android choice when the phone belongs to an existing Obsidian system.
+
+Choose Obsidian Mobile when:
+
+- your notes already live in an Obsidian vault;
+- backlinks, daily notes, tags, templates, and vault structure matter;
+- mobile capture should become part of a broader knowledge graph;
+- you are comfortable defining what counts as portable Markdown in the vault.
+
+The key warning is not that Obsidian is bad for Markdown. The warning is that Obsidian workflows can become **Obsidian-shaped**. Wiki links, embeds, plugin syntax, attachment folders, and frontmatter conventions may require cleanup before GitHub, documentation sites, newsletters, or AI pipelines can use the files cleanly.
+
+If the final destination is a public page, keep a publishing checklist.
+
+## Plain-text sync: powerful but easy to damage
+
+A synced-folder workflow can be excellent if it is simple:
+
+1. one folder owns the source Markdown;
+2. images go into a predictable `assets/` or `images/` folder;
+3. filenames avoid spaces and mobile-only characters;
+4. Android edits stay small enough to review later;
+5. desktop publishing remains the final authority.
+
+The sync provider is not the editor. Treat sync as transport, not validation.
+
+Common sync problems include:
+
+- conflicts created by editing the same file on phone and desktop;
+- image links pointing to phone-specific locations;
+- case-sensitive filename issues that show up later on Linux hosts;
+- smart punctuation or pasted formatting that changes code examples;
+- preview behavior that differs from GitHub or the final site.
+
+## Image paths are the biggest Android trap
+
+Android Markdown becomes fragile when images are inserted casually.
+
+Bad pattern:
+
+```md
+![photo](/storage/emulated/0/DCIM/Camera/IMG_2049.jpg)
+```
+
+Better portable pattern:
+
+```md
+![control cabinet wiring example](./images/control-cabinet-wiring-example.jpg)
+```
+
+The first path may work locally on the phone and fail everywhere else. The second path can travel with the Markdown file when the folder is copied, committed, or published.
+
+For image-heavy pages, Android should usually capture the image and perhaps add rough notes. The final image naming, compression, alt text, and path validation should happen in the publishing workflow.
+
+## Android is rarely the best final publishing environment
+
+Android can edit Markdown. That does not mean it should own the final publishing step.
+
+Use Android for:
+
+- capturing drafts;
+- recording field notes;
+- reviewing outlines;
+- correcting small text issues;
+- writing low-risk notes in plain files.
+
+Use desktop or repo tooling for:
+
+- final link checks;
+- image path cleanup;
+- Git diffs and review;
+- docs builds;
+- Markdown linting;
+- screenshot or long-image export;
+- search metadata and frontmatter validation.
+
+This division keeps Android useful without pretending a phone is the best place to run a publishing system.
+
+## Best choices by use case
+
+| Use case | Recommendation |
+| --- | --- |
+| Personal notes with backlinks | Obsidian Mobile |
+| Plain local Markdown files | Markor |
+| Android blog drafting | Markor for draft capture, desktop for final publishing |
+| Developer docs | Android only for quick edits, VS Code for final repo work |
+| Markdown checklists | Markor |
+| Image-heavy tutorials | Capture on Android, normalize images and Markdown elsewhere |
+| AI research notes | Obsidian Mobile if notes belong in a vault, Markor if notes should stay plain |
+
+## Checklist before choosing an Android Markdown editor
+
+Use this checklist before standardizing:
+
+- Can I find the `.md` files directly?
+- Can I move the folder to another device and still open the notes?
+- Are images stored near the Markdown source?
+- Does preview match the renderer I care about?
+- Can I recover from sync conflicts?
+- Can I export or copy the files without proprietary lock-in?
+- Can a desktop publishing workflow validate the final files?
+
+If the answer is no to several of these, the editor may feel convenient now and create migration debt later.
+
+## Final recommendation
+
+Choose **Markor** when Android is a plain-text editing surface.
+
+Choose **Obsidian Mobile** when Android is part of an Obsidian vault.
+
+Choose **desktop VS Code or a site preview** when Markdown is about publishing, docs, Git, or renderer fidelity.
+
+The best Android Markdown workflow is usually hybrid: capture and light edit on Android, publish and validate elsewhere.
+
+## Related pages
+
+<div class="portal-links">
+	<LinkCard
+		title="Best Markdown editors for 2025 and 2026"
+		href="/posts/markdown-editors-2025/"
+		description="The broader editor shortlist covering Typora, Obsidian, VS Code, MarkText, Zettlr, and Markor."
+	/>
+	<LinkCard
+		title="Best Markdown viewer"
+		href="/editors/best-markdown-viewer-for-windows-macos-linux-and-publishing-previews/"
+		description="Use this when preview fidelity matters more than authoring features."
+	/>
+	<LinkCard
+		title="Markdown image syntax"
+		href="/syntax/markdown-image-syntax-local-vs-remote-paths/"
+		description="Avoid local path mistakes when images move from Android to publishing systems."
+	/>
+	<LinkCard
+		title="Markdown portability"
+		href="/fundamentals/markdown-portability-between-github-notion-obsidian-and-static-sites/"
+		description="Use this before choosing app-specific links, embeds, or attachment conventions."
+	/>
+</div>

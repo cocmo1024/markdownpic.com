@@ -18,14 +18,15 @@ targetRoles:
   - Docs teams
 ---
 
+import { LinkCard } from '@astrojs/starlight/components';
+
 The right Markdown editor is rarely the one with the most features. It is the one that best matches portability, image handling, publishing workflow, collaboration needs, and tolerance for lock-in.
 
 This section exists for readers who already know Markdown itself and now need to decide where the work should happen.
 
 ## The real editor decision
 
-The editor question is not “which app is most popular?”
-
+The editor question is not "which app is most popular?"
 It is usually one of these:
 
 - Should Markdown live in a repo-first workflow or an app-first workflow?
@@ -33,15 +34,36 @@ It is usually one of these:
 - How much lock-in am I accepting around attachments, links, and metadata?
 - Will this content later move into docs, static sites, blogs, or image export workflows?
 
+## Start with these paths
+
+<div class="portal-links">
+	<LinkCard
+		title="Best Markdown editors for 2025 and 2026"
+		href="/posts/markdown-editors-2025/"
+		description="Start here for the broad shortlist across VS Code, Typora, Obsidian, MarkText, Zettlr, Markor, and viewer workflows."
+	/>
+	<LinkCard
+		title="Obsidian vs Typora vs VS Code vs MarkText"
+		href="/comparisons/obsidian-vs-typora-vs-vs-code-for-markdown-publishing/"
+		description="Use this for publishing, image handling, Git, portability, and AI-era content reuse decisions."
+	/>
+	<LinkCard
+		title="Best Android Markdown editor"
+		href="/editors/best-markdown-editor-android-markor-obsidian-and-plain-text-workflows/"
+		description="Use this for Markor, Obsidian Mobile, synced folders, image paths, and Android editing limits."
+	/>
+	<LinkCard
+		title="Best Markdown viewer"
+		href="/editors/best-markdown-viewer-for-windows-macos-linux-and-publishing-previews/"
+		description="Use this when the real issue is preview fidelity across GitHub, VS Code, static sites, and Markdown-to-image output."
+	/>
+</div>
+
 ## How to use this section
 
-Use Editors when:
+Use Editors when syntax is not the blocker anymore and the real decision is workflow ownership.
 
-- syntax is not the blocker anymore,
-- the team is comparing workflows rather than raw Markdown grammar,
-- or migration cost matters more than short-term convenience.
-
-Start with [Obsidian vs. Typora vs. VS Code](/comparisons/obsidian-vs-typora-vs-vs-code-for-markdown-publishing/) if the current choice is between a note-centric, writing-centric, and repo-centric workflow.
+If the current choice is between a note-centric, writing-centric, repo-centric, or free visual editor workflow, start with the comparison page. If the question is mobile editing or viewing, use the dedicated pages instead of forcing those intents into a generic editor roundup.
 
 ## What good editor coverage should do
 

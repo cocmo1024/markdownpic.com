@@ -33,7 +33,7 @@ updateTriggers:
 authorKey: editorial-desk
 editorKey: review-desk
 datePublished: 2026-04-21
-lastReviewed: 2026-04-29
+lastReviewed: 2026-05-01
 ---
 
 import { LinkCard } from '@astrojs/starlight/components';
@@ -65,6 +65,21 @@ The most defensible shortlist in 2026 is usually:
 5. **Markor** for Android local Markdown editing.
 6. **MarkText** only when free desktop WYSIWYG editing matters more than release cadence risk.
 
+## Best Markdown editor by search intent
+
+If you are comparing results from Google, use the intent behind the query rather than the broad phrase "best Markdown editor."
+
+| Query style | What the searcher probably needs | Best starting answer |
+| --- | --- | --- |
+| best Markdown editor 2025 / 2026 | Broad shortlist across writing, docs, notes, and platforms | Start with VS Code, Typora, Obsidian, Zettlr, Markor, MarkText |
+| best Markdown editor for Mac | Calm writing or technical publishing on macOS | Typora for writing, VS Code for docs, Obsidian for notes |
+| best Markdown editor for Windows | Repo-backed docs, writing, or free visual editing | VS Code, Typora, Obsidian, MarkText with maintenance check |
+| best Markdown editor Android | Local file editing or mobile vault work | Markor for plain files, Obsidian Mobile for vault workflows |
+| best Markdown viewer | Preview and review, not authoring | Match GitHub, VS Code, static-site, or publishing renderer |
+| Typora vs Obsidian vs VS Code | Workflow ownership decision | Choose writing-first, knowledge-first, or repo-first |
+
+The biggest mistake is choosing an editor by interface feel alone. Interface comfort matters, but Markdown becomes valuable because it travels. The editor should preserve that travel path.
+
 ## Official source snapshot checked April 29, 2026
 
 This page uses public product signals, not affiliate rankings:
@@ -93,6 +108,22 @@ Most Markdown editor roundups overvalue feature checklists. The criteria that ma
 
 The best editor is the one that creates the least downstream cleanup.
 
+## Editor scoring model for serious Markdown workflows
+
+For a personal writer, the scoring can be simple. For a documentation team or content system, use a stricter scorecard:
+
+| Criterion | Weight | Why it matters |
+| --- | --- | --- |
+| Source portability | High | Markdown loses value if files cannot move cleanly |
+| Renderer alignment | High | Preview mismatch creates broken docs and screenshots |
+| Image path control | High | Image debt is one of the fastest ways Markdown systems become messy |
+| Git or history support | Medium to high | Review, rollback, and collaboration need change visibility |
+| Export reliability | Medium | PDF, HTML, Word, and image export all expose hidden syntax assumptions |
+| Mobile capture | Contextual | Useful for notes, less important for repo-native documentation |
+| Plugin dependence | Contextual | Plugins can add power, but also create migration and security review work |
+
+If two editors feel similar, choose the one with cleaner source ownership and fewer renderer surprises.
+
 ## Best for developers and docs teams: VS Code
 
 VS Code is rarely the calmest Markdown writing surface, but it is often the best operational editor.
@@ -108,6 +139,10 @@ Choose VS Code when:
 The strength is not only Markdown preview. It is the surrounding environment. A docs team can keep Markdown close to code, lint links, test examples, run build commands, and review changes like software.
 
 The weakness is writing comfort. Many writers dislike the code-editor feel. If the biggest risk is that writing feels unpleasant, VS Code may be too operational. If the biggest risk is broken publishing, VS Code is usually the stronger answer.
+
+### When VS Code is the wrong answer
+
+VS Code is a poor fit when the writer will avoid writing because the environment feels too technical, when the content is mostly personal prose, or when the team has no Git-based review process. A powerful workflow that nobody uses is not a good Markdown workflow.
 
 ## Best for focused writing: Typora
 
@@ -141,6 +176,10 @@ Choose Obsidian when:
 The main risk is that Obsidian workflows can drift away from portable Markdown. Wiki links, plugin syntax, frontmatter conventions, embedded attachments, and theme-dependent layouts may look good inside the vault but need cleanup before publishing.
 
 Obsidian is excellent upstream. For public sites, documentation, or image workflows, you still need a publishing normalization step.
+
+### Obsidian portability warning
+
+Obsidian is local-first and Markdown-based, but an Obsidian vault can still become less portable over time. Watch wiki links, embedded attachment paths, Dataview-style plugin syntax, canvas dependencies, and vault-specific frontmatter. These are not fatal problems; they just need a cleanup step before publishing outside Obsidian.
 
 ## Best for research writing: Zettlr
 
@@ -266,6 +305,19 @@ Choose by downstream system:
 - **view-only**: match the renderer, not the editor brand.
 
 If the downstream system is ignored, the editor decision will look fine early and create pain later.
+
+## Practical recommendation for most readers
+
+If you do not know where to start, use this default:
+
+- choose **Typora** when writing comfort is the main job;
+- choose **VS Code** when Markdown belongs to a repo, docs site, or technical publishing pipeline;
+- choose **Obsidian** when the content begins as a knowledge base or research vault;
+- choose **Markor** when Android local-file editing is the real problem;
+- choose **Zettlr** when citations, projects, and long-form research are central;
+- choose **MarkText** only after checking whether its maintenance posture fits your risk tolerance.
+
+That recommendation is intentionally conservative. Conservative editor choices preserve Markdown's main advantage: content that can move.
 
 ## Related pages
 

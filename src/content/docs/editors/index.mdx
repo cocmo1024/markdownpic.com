@@ -16,6 +16,7 @@ targetRoles:
   - Developers
   - Knowledge workers
   - Docs teams
+lastReviewed: 2026-05-01
 ---
 
 import { LinkCard } from '@astrojs/starlight/components';
@@ -23,6 +24,21 @@ import { LinkCard } from '@astrojs/starlight/components';
 The right Markdown editor is rarely the one with the most features. It is the one that best matches portability, image handling, publishing workflow, collaboration needs, and tolerance for lock-in.
 
 This section exists for readers who already know Markdown itself and now need to decide where the work should happen.
+
+## Editor categories that actually matter
+
+Most Markdown editor lists are too flat. For long-term ownership, split the market into categories:
+
+| Category | Typical tools | Best fit | Hidden cost |
+| --- | --- | --- | --- |
+| Writing-first desktop editors | Typora | Articles, essays, drafts, focused prose | Publishing and collaboration happen somewhere else |
+| Repo-first editors | VS Code | Documentation, README files, static sites, technical writing | Less calm for nontechnical writers |
+| Knowledge-base editors | Obsidian | Research notes, personal knowledge, linked ideas | Vault-specific habits may need cleanup before publishing |
+| Research-writing editors | Zettlr | Citations, long-form academic or analytical writing | Less natural for repo operations |
+| Free visual editors | MarkText | Desktop users who want WYSIWYG-like Markdown without paid software | Maintenance and long-term support should be checked |
+| Mobile plain-text editors | Markor | Android local files, quick capture, plain-text workflows | Mobile is usually not the whole publishing system |
+
+This categorization is more useful than a feature checklist because it maps the editor to the content's future.
 
 ## The real editor decision
 
@@ -64,6 +80,18 @@ It is usually one of these:
 Use Editors when syntax is not the blocker anymore and the real decision is workflow ownership.
 
 If the current choice is between a note-centric, writing-centric, repo-centric, or free visual editor workflow, start with the comparison page. If the question is mobile editing or viewing, use the dedicated pages instead of forcing those intents into a generic editor roundup.
+
+## Editorial rule for future editor pages
+
+New editor pages should not be added because a tool name exists. They should be added only when there is a distinct search intent or durable workflow decision:
+
+- platform-specific selection, such as Android or macOS;
+- comparison intent, such as Typora versus Obsidian versus VS Code;
+- viewer intent, where the reader does not need full authoring;
+- publishing workflow intent, where export, images, or static-site behavior dominates;
+- portability risk, where the editor changes source format or attachment behavior.
+
+This keeps the section from becoming a navigation dump.
 
 ## What good editor coverage should do
 

@@ -1,0 +1,415 @@
+---
+title: "GitHub README Markdown Template for Projects, Docs, and AI Tools"
+description: "A practical GitHub README Markdown template with structure, badges, links, tables, images, install steps, examples, contribution notes, and portability guidance."
+referenceType: guide
+adProfile: guide
+commercialIntent: high
+reviewCadence: Monthly review
+contentStatus: cornerstone
+problemSolved: Helps developers and documentation teams write README files that explain the project, survive GitHub rendering, support onboarding, and remain useful when copied into docs, AI tools, or static sites.
+readerTakeaway: You should leave with a reusable README structure, copyable Markdown sections, and a clear sense of which GitHub-specific patterns should not be treated as portable Markdown.
+primaryKeyword: GitHub README Markdown template
+searchIntent: learn
+decisionStage: solution-aware
+targetRoles:
+  - Developers
+  - Open-source maintainers
+  - Technical writers
+  - AI tool builders
+  - Documentation teams
+keyQuestions:
+  - What should a GitHub README include?
+  - How do you write a README in Markdown that is useful and portable?
+  - Which README Markdown patterns break outside GitHub?
+notFor:
+  - Teams looking for a decorative landing page instead of a maintainable README
+  - Private repos where project context, setup, and ownership are already documented elsewhere
+  - Authors who only need the most basic Markdown syntax
+updateTriggers:
+  - GitHub rendering changes affecting README features
+  - New common README conventions for AI tools, APIs, or documentation sites
+  - Repeated issues around broken badges, links, images, or install instructions
+---
+
+# GitHub README Markdown Template for Projects, Docs, and AI Tools
+
+A README is often the first serious document a project has. It is also the document most likely to become outdated, overloaded, or quietly misleading.
+
+Good README Markdown does more than look polished on GitHub. It should answer the questions a real reader has:
+
+- What is this?
+- Who is it for?
+- What problem does it solve?
+- How do I install or use it?
+- What is the fastest working example?
+- What are the limits?
+- Where are the docs?
+- How do I contribute or report issues?
+- Is this project maintained?
+- Can I trust the examples?
+
+This guide gives a practical README template and explains which Markdown patterns are safe, which are GitHub-specific, and which should move into a docs site when the README becomes too large.
+
+## Quick answer
+
+A strong GitHub README usually needs these sections:
+
+1. project name and one-sentence value proposition;
+2. status badges only if they are accurate and maintained;
+3. short problem statement;
+4. install or setup instructions;
+5. minimal working example;
+6. feature list tied to real use cases;
+7. configuration or environment variables;
+8. screenshots or diagrams when they reduce confusion;
+9. docs and examples links;
+10. limitations and compatibility;
+11. contribution and issue guidance;
+12. license and maintenance status.
+
+Do not turn the README into the whole documentation system. Use it as the front door.
+
+## A copyable README template
+
+Start with this structure and remove sections that do not apply.
+
+````md
+# Project Name
+
+One sentence explaining what the project does and who it is for.
+
+## Why this exists
+
+Explain the problem in plain language.
+
+## Features
+
+- Feature one tied to a user job.
+- Feature two tied to a user job.
+- Feature three tied to a user job.
+
+## Quick start
+
+```sh
+npm install
+npm run dev
+```
+
+## Minimal example
+
+```js
+import { example } from "project-name";
+
+const result = example("input");
+console.log(result);
+```
+
+## Configuration
+
+| Variable | Required | Description |
+| --- | --- | --- |
+| `API_KEY` | Yes | Used to authenticate requests. |
+| `OUTPUT_DIR` | No | Directory for generated files. |
+
+## Documentation
+
+- [Getting started](docs/getting-started.md)
+- [Configuration](docs/configuration.md)
+- [Examples](examples/)
+
+## Limitations
+
+- State known limits.
+- State unsupported environments.
+- State what users should not expect.
+
+## Contributing
+
+Open an issue before large changes. Include reproduction steps for bugs.
+
+## License
+
+MIT
+````
+
+The template is intentionally plain. A README should optimize for comprehension, not decoration.
+
+## The first paragraph matters
+
+The opening should not be vague.
+
+Weak:
+
+````md
+# DataKit
+
+DataKit is a powerful tool for modern teams.
+````
+
+Better:
+
+````md
+# DataKit
+
+DataKit converts CSV exports into validated JSON files for internal data pipelines.
+````
+
+The better version answers:
+
+- what it does;
+- what input it expects;
+- what output it creates;
+- who might care.
+
+If the first paragraph cannot explain the project without buzzwords, the rest of the README will work too hard.
+
+## Badges: use them only when they help
+
+Badges can be useful:
+
+- build status;
+- package version;
+- license;
+- documentation status;
+- coverage if it is real and maintained;
+- release status.
+
+But badges become noise when they are outdated, decorative, or broken.
+
+Typical badge pattern:
+
+```md
+[![CI](https://github.com/owner/repo/actions/workflows/ci.yml/badge.svg)](https://github.com/owner/repo/actions/workflows/ci.yml)
+[![npm version](https://img.shields.io/npm/v/package-name.svg)](https://www.npmjs.com/package/package-name)
+```
+
+Before adding badges, ask:
+
+- Does this badge answer a real trust question?
+- Will someone maintain it after workflows change?
+- Does it still work on forks, branches, and private mirrors?
+- Does the badge distract from the project explanation?
+
+If a badge does not help a reader decide whether the project is usable, remove it.
+
+## Installation should be testable
+
+Install instructions should be short, current, and executable.
+
+Good install sections specify:
+
+- runtime version;
+- package manager;
+- required system dependency;
+- environment variables;
+- setup command;
+- verification command.
+
+Example:
+
+````md
+## Quick start
+
+Requirements:
+
+- Node.js 20 or newer
+- npm 10 or newer
+
+```sh
+npm install
+npm run build
+npm test
+```
+````
+
+Avoid:
+
+- "install dependencies" without commands;
+- outdated version assumptions;
+- multiple package managers unless the project supports them;
+- screenshots of terminal commands instead of copyable text.
+
+## Minimal examples beat feature tours
+
+A README should include the smallest example that proves the project works.
+
+For a library:
+
+```js
+import { parseMarkdown } from "example-parser";
+
+const tokens = parseMarkdown("# Hello");
+console.log(tokens[0].type);
+```
+
+For a CLI:
+
+```sh
+example-cli input.md --out dist/
+```
+
+For an API:
+
+```sh
+curl -X POST https://api.example.com/v1/jobs \
+  -H "Authorization: Bearer $API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"input":"example"}'
+```
+
+The example should be realistic enough to copy and small enough to understand.
+
+## Tables are good for configuration, not layout
+
+Markdown tables work well for compact reference data:
+
+```md
+| Option | Default | Description |
+| --- | --- | --- |
+| `timeout` | `30s` | Maximum request duration. |
+| `retries` | `2` | Number of retry attempts. |
+```
+
+They work poorly for page layout.
+
+Do not use pipe tables for:
+
+- side-by-side screenshots;
+- large feature matrices;
+- long paragraphs;
+- responsive design;
+- nested lists;
+- multiline code examples.
+
+If the content is too wide on mobile, move it to docs or use a simpler list.
+
+## Images and screenshots
+
+README images should answer a question:
+
+- What does the UI look like?
+- What does the output look like?
+- What is the architecture?
+- What flow should the user understand?
+
+Use meaningful alt text:
+
+```md
+![Screenshot of the dashboard showing build status, deploy history, and environment filters](docs/images/dashboard.png)
+```
+
+Avoid:
+
+```md
+![image](image.png)
+```
+
+For repository portability, prefer committed relative paths:
+
+```md
+![CLI output after a successful run](docs/images/cli-output.png)
+```
+
+Remote image URLs can work, but they introduce dependency on the remote host.
+
+## Links that survive GitHub and docs sites
+
+README links often break when content moves from GitHub to a docs site.
+
+Use repository-relative links when the content stays in the repo:
+
+```md
+[Configuration guide](docs/configuration.md)
+[Examples](examples/)
+```
+
+Use site links when the canonical documentation lives on a published site:
+
+```md
+[Full documentation](https://example.com/docs/)
+```
+
+Avoid hardcoded GitHub blob URLs unless you intentionally want to point to a specific repository view or version.
+
+## AI tools and README quality
+
+AI tools increasingly read README files to understand projects. That makes structure more important.
+
+A README is more useful to AI coding agents, search tools, and documentation assistants when it includes:
+
+- project purpose;
+- architecture overview;
+- setup commands;
+- test commands;
+- folder map;
+- constraints;
+- contribution rules;
+- examples;
+- known limitations;
+- links to deeper docs.
+
+Avoid hiding critical instructions only in screenshots, diagrams, or vague prose. AI tools and humans both benefit from explicit Markdown.
+
+## README versus docs site
+
+Move content out of the README when:
+
+- setup instructions become platform-specific;
+- API reference grows long;
+- examples need many files;
+- troubleshooting becomes detailed;
+- architecture needs several diagrams;
+- version-specific docs matter;
+- the README scrolls too far before users can find Quick start.
+
+Use the README as the index:
+
+```md
+## Documentation
+
+- [Getting started](docs/getting-started.md)
+- [API reference](docs/api.md)
+- [Deployment](docs/deployment.md)
+- [Troubleshooting](docs/troubleshooting.md)
+```
+
+The README should help readers choose where to go next.
+
+## Common README mistakes
+
+| Mistake | Why it hurts |
+| --- | --- |
+| No clear one-sentence summary | Readers cannot tell if the project is relevant |
+| Broken badges | Trust signal becomes distrust signal |
+| Install instructions not tested | New users fail before seeing value |
+| Examples depend on hidden context | Copy-paste fails |
+| Too many screenshots | Search, accessibility, and maintenance suffer |
+| Huge feature table | Users cannot find the first useful action |
+| No limitations section | Users discover boundaries by failure |
+| No maintenance status | Users cannot judge adoption risk |
+| README tries to be all docs | Navigation and update discipline collapse |
+
+## A stronger README review checklist
+
+Before publishing or updating a README, check:
+
+1. Can a new reader explain the project after 30 seconds?
+2. Can they install or run the minimal example?
+3. Are all commands copyable?
+4. Are badges current?
+5. Do links work from GitHub?
+6. Do images have useful alt text?
+7. Are limitations honest?
+8. Is the license visible?
+9. Are contribution expectations clear?
+10. Is the README still the front door rather than the whole building?
+
+If the README passes those checks, it is already better than many public project pages.
+
+## Related references
+
+- [GitHub README Markdown vs docs-site Markdown: what breaks](/guides/github-readme-markdown-vs-docs-site-markdown-what-breaks/)
+- [Markdown badges and clickable images](/guides/markdown-badges-and-clickable-images-for-readmes-docs-and-social-cards/)
+- [Markdown image syntax: local vs remote paths](/syntax/markdown-image-syntax-local-vs-remote-paths/)
+- [Markdown links: inline, reference, and autolinks](/syntax/markdown-links-inline-vs-reference-and-autolinks/)
+- [How to structure Markdown for LLM ingestion, RAG, and AI search](/guides/how-to-structure-markdown-for-llm-ingestion-rag-and-ai-search/)

@@ -1,0 +1,262 @@
+---
+title: Markdown Source of Truth for AI Search, Docs, and Reuse
+description: How to keep Markdown as a source of truth for docs, AI search, exports, snippets, and reused content without creating duplicate or broken versions.
+referenceType: publishing
+adProfile: publishing
+commercialIntent: high
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Helps documentation and content teams keep Markdown useful across web pages, AI ingestion, long-image exports, PDFs, and internal reuse without fragmenting the source.
+readerTakeaway: You should leave with a practical source-of-truth model for Markdown that separates canonical content, publishing metadata, generated outputs, and AI-ready structure.
+primaryKeyword: Markdown source of truth
+searchIntent: design
+decisionStage: implementation
+targetRoles:
+  - Documentation teams
+  - Developers
+  - Technical writers
+  - Content strategists
+  - AI knowledge-base owners
+keyQuestions:
+  - How do you use Markdown as a source of truth?
+  - How should Markdown be structured for docs, AI search, and reuse?
+  - How do teams avoid duplicate Markdown content across sites, exports, and AI systems?
+notFor:
+  - Teams using Markdown only for private notes with no publishing or reuse requirements
+  - Sites where the rendered page is manually edited after publishing and Markdown is no longer authoritative
+  - Content programs that do not need stable links, metadata, exports, or AI ingestion
+updateTriggers:
+  - New publishing workflows that use Markdown as input for AI search, RAG, exports, or content automation
+  - New renderer differences that affect portable Markdown structure
+  - Changes in common docs-site, GitHub, CMS, and AI ingestion practices
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Markdown Source of Truth for AI Search, Docs, and Reuse
+
+Markdown becomes much more valuable when it is treated as a source of truth, not just a convenient writing format. A good Markdown source can render into a docs page, feed AI search, export into PDF, become a long image, populate snippets, and support internal reuse. A weak Markdown source becomes a pile of copied pages, broken links, stale exports, and AI answers based on outdated fragments.
+
+The goal is not to make Markdown do everything. The goal is to define which file is authoritative, which metadata belongs beside it, which outputs are generated from it, and which transformations are allowed.
+
+## Quick answer
+
+Use Markdown as a source of truth by keeping one canonical file per topic, giving each file stable metadata, writing headings that survive extraction, keeping links and images portable, separating reusable snippets from rendered-only decorations, and regenerating outputs instead of editing exported copies. AI search, docs pages, PDFs, and images should point back to the same canonical source whenever possible.
+
+## What source of truth means
+
+A Markdown source of truth means the `.md` or `.mdx` file is the place where the real content lives. Other versions should be derived from it.
+
+| Layer | Role | Should it be edited directly? |
+| --- | --- | --- |
+| Canonical Markdown | Main content, headings, examples, links, metadata | Yes |
+| Rendered docs page | HTML output for readers and search engines | No, regenerate |
+| AI ingestion chunk | Extracted text or structured chunks for search/RAG | No, regenerate |
+| PDF or long image | Exported version for sharing | No, regenerate |
+| Social snippet | Title, description, preview image | Usually generated from metadata |
+| Internal excerpt | Short reused block or summary | Prefer generated or referenced |
+
+This distinction prevents drift. If an exported image, PDF, help-center copy, and AI answer all diverge from the Markdown source, nobody knows which version is correct.
+
+## Why this matters more in the AI era
+
+AI systems reward clean source structure. They need stable headings, clear definitions, consistent terminology, examples that are near the explanation, and links that identify related context. Markdown is good at this when the source is disciplined.
+
+AI systems struggle when Markdown contains:
+
+- repeated boilerplate across many pages;
+- vague headings like "Overview" without context;
+- examples separated from the rule they explain;
+- images with no alt text or surrounding explanation;
+- generated output copied back into source files;
+- duplicate pages with slightly different answers;
+- renderer-specific syntax that disappears after export.
+
+Markdown can be AI-friendly without being written for machines first. The best source still reads well for humans.
+
+Related page: <LinkCard title="How to Structure Markdown for LLM Ingestion, RAG, and AI Search" href="/guides/how-to-structure-markdown-for-llm-ingestion-rag-and-ai-search/" />
+
+## The canonical file pattern
+
+Each topic should have one canonical source file. That file should answer:
+
+- What is this page about?
+- Who is it for?
+- What problem does it solve?
+- What route or URL represents it?
+- What related pages should readers visit next?
+- What update triggers should cause review?
+
+A practical frontmatter pattern:
+
+```yaml
+---
+title: Markdown source of truth for AI search, docs, and reuse
+description: How to keep Markdown canonical across rendered docs, AI ingestion, exports, snippets, and reused content.
+primaryKeyword: Markdown source of truth
+contentStatus: cornerstone
+reviewCadence: Quarterly review
+canonicalOutput:
+  - docs page
+  - AI search index
+  - long image
+  - PDF
+---
+```
+
+The exact fields depend on the site generator. The important point is that metadata describes the real page and supports later automation.
+
+Related page: <LinkCard title="Markdown SEO Metadata for Docs and Blogs" href="/publishing/markdown-seo-metadata-title-description-canonical-and-social-cards/" />
+
+## Heading structure for reuse
+
+Good headings help readers scan and help machines split content safely.
+
+Use headings that carry context:
+
+Weak:
+
+```md
+## Examples
+```
+
+Better:
+
+```md
+## Examples of Markdown links that survive GitHub and docs-site rendering
+```
+
+Weak:
+
+```md
+## Problems
+```
+
+Better:
+
+```md
+## Common source-of-truth problems in Markdown publishing
+```
+
+This matters because AI search, site search, and excerpt systems often use headings as chunk boundaries. A heading should make sense even when the section is viewed outside the full page.
+
+## Keep examples near the rule
+
+Markdown references become weaker when rules and examples are far apart. Keep the explanation, the code block, and the rendered implication together.
+
+Good pattern:
+
+1. State the rule.
+2. Show the Markdown source.
+3. Explain renderer differences.
+4. Link to the deeper page.
+
+Example:
+
+```md
+[Download the guide](./guide.pdf)
+```
+
+This relative link may work inside one docs site but break when copied into email, CMS content, or an AI answer. If the file is not shipped with the rendered output, use a stable absolute URL or a publishing pipeline that rewrites asset paths.
+
+Related page: <LinkCard title="Markdown Relative Links for READMEs, Docs, and Static Sites" href="/guides/markdown-relative-links-for-readmes-docs-and-static-sites/" />
+
+## Image and asset rules
+
+Assets are where many Markdown source systems break.
+
+Set rules for:
+
+- where images live relative to Markdown files;
+- whether source files use relative, root-relative, or absolute URLs;
+- which image sizes are canonical;
+- whether alt text is required;
+- whether captions live in Markdown, HTML, or component syntax;
+- how long-image exports handle images;
+- how AI ingestion represents images that cannot be read as text.
+
+If an image is essential to the meaning of the page, explain it in surrounding text. AI search and text exports may not preserve the image itself.
+
+Related page: <LinkCard title="Markdown Image Syntax: Local vs Remote Paths" href="/syntax/markdown-image-syntax-local-vs-remote-paths/" />
+
+## Avoid duplicate source versions
+
+Duplicate Markdown usually starts innocently:
+
+- a README is copied into docs;
+- a blog post is copied into a help center;
+- a prompt guide is copied into a product page;
+- an export is edited after generation;
+- AI-generated summaries are pasted into separate files.
+
+The problem is maintenance. When the original changes, every copy becomes a risk.
+
+Use one of these strategies:
+
+| Need | Better approach |
+| --- | --- |
+| Same page in multiple places | Use canonical URL and redirects, not copied content |
+| Shared warning or note | Use reusable snippets or components |
+| Short summary elsewhere | Generate or manually maintain an excerpt that links back |
+| PDF or image output | Regenerate from source |
+| AI answer source | Store source reference and updated timestamp |
+
+If a duplicate must exist, mark which version is canonical.
+
+## Markdown that remains portable
+
+A source-of-truth file should avoid renderer-specific syntax unless the site owns the full rendering pipeline.
+
+Portable by default:
+
+- headings;
+- paragraphs;
+- ordered and unordered lists;
+- fenced code blocks;
+- inline code;
+- standard links;
+- standard images;
+- blockquotes;
+- simple tables where supported.
+
+Use with caution:
+
+- raw HTML;
+- MDX components;
+- admonitions;
+- Mermaid diagrams;
+- math syntax;
+- task lists;
+- footnotes;
+- wiki links;
+- custom classes.
+
+These features can be valuable, but they should be chosen intentionally. If the same Markdown will feed GitHub, docs, AI search, PDF, and long-image output, portability matters.
+
+Related page: <LinkCard title="Markdown Portability Between GitHub, Notion, Obsidian, and Static Sites" href="/fundamentals/markdown-portability-between-github-notion-obsidian-and-static-sites/" />
+
+## Review checklist
+
+Before treating a Markdown page as a source of truth, check:
+
+- one canonical route exists;
+- title and H1 agree;
+- description matches the visible content;
+- headings are specific enough for search and AI chunks;
+- examples are close to explanations;
+- links are stable in the target output;
+- images have alt text and useful surrounding text;
+- renderer-specific syntax is intentional;
+- exports are generated, not hand-edited;
+- related pages are linked;
+- update triggers are known.
+
+This checklist is small enough to run during normal publishing and strict enough to prevent most source drift.
+
+## Next-step references
+
+<LinkCard title="Export-Safe Markdown Authoring for PDF, Email, and Social" href="/guides/export-safe-markdown-authoring-for-pdf-email-and-social/" />
+
+<LinkCard title="Markdown Content Audit Checklist for Docs and Blogs" href="/guides/markdown-content-audit-checklist-for-docs-and-blogs/" />
+
+<LinkCard title="Markdown to Image Workflows for Docs, Social, and AI Content" href="/guides/markdown-to-image-workflows-for-docs-social-and-ai-content/" />

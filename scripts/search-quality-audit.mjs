@@ -59,6 +59,27 @@ function wordCount(text) {
 
 const blockers = [];
 const warnings = [];
+const requiredMetadata = [
+	'referenceType',
+	'adProfile',
+	'commercialIntent',
+	'reviewCadence',
+	'primaryKeyword',
+	'searchIntent',
+	'decisionStage',
+	'targetRoles',
+	'contentStatus',
+	'contentCluster',
+	'canonicalCluster',
+	'pageType',
+	'lifecycle',
+	'refreshPriority',
+	'authorKey',
+	'editorKey',
+	'lastReviewed',
+	'problemSolved',
+	'readerTakeaway',
+];
 
 for (const file of walk(docsDir)) {
 	const rel = path.relative(root, file).replaceAll(path.sep, '/');
@@ -68,6 +89,10 @@ for (const file of walk(docsDir)) {
 	const description = field(frontmatter, 'description');
 	const problemSolved = field(frontmatter, 'problemSolved');
 	const readerTakeaway = field(frontmatter, 'readerTakeaway');
+	const pageType = field(frontmatter, 'pageType');
+	const contentCluster = field(frontmatter, 'contentCluster');
+	const canonicalCluster = field(frontmatter, 'canonicalCluster');
+	const lifecycle = field(frontmatter, 'lifecycle');
 	const isIndex = rel.endsWith('/index.mdx');
 	const isSitePage = sitePages.has(path.basename(file));
 	const isReferencePage = !isIndex && !isSitePage;
@@ -75,6 +100,11 @@ for (const file of walk(docsDir)) {
 
 	if (!title) blockers.push(`${rel}: missing title`);
 	if (!description) blockers.push(`${rel}: missing description`);
+	for (const name of requiredMetadata) {
+		if (!field(frontmatter, name) && !new RegExp(`^${name}:`, 'm').test(frontmatter)) {
+			blockers.push(`${rel}: missing required metadata field ${name}`);
+		}
+	}
 	if (title && title.length > 90) warnings.push(`${rel}: title is long (${title.length} chars)`);
 	if (description && (description.length < 70 || description.length > 220)) {
 		warnings.push(`${rel}: description length is ${description.length} chars`);
@@ -82,6 +112,11 @@ for (const file of walk(docsDir)) {
 	if (isReferencePage && words < 300) warnings.push(`${rel}: thin reference body (${words} words)`);
 	if (isReferencePage && !problemSolved) warnings.push(`${rel}: missing problemSolved`);
 	if (isReferencePage && !readerTakeaway) warnings.push(`${rel}: missing readerTakeaway`);
+	if (pageType === 'hub' && lifecycle !== 'hub') warnings.push(`${rel}: hub page should set lifecycle: hub`);
+	if (pageType !== 'hub' && lifecycle === 'hub' && !isIndex) warnings.push(`${rel}: non-hub page uses lifecycle: hub`);
+	if (contentCluster && canonicalCluster && contentCluster !== canonicalCluster && pageType === 'hub') {
+		warnings.push(`${rel}: hub has different contentCluster and canonicalCluster`);
+	}
 
 	for (const pattern of searchFirstPatterns) {
 		if (pattern.test(text)) blockers.push(`${rel}: search-first phrasing matched ${pattern}`);

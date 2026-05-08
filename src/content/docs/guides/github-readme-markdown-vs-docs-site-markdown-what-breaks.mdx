@@ -75,3 +75,69 @@ If one source must serve both:
 Sometimes two sources are cleaner than one. That becomes justified when the README is a repository landing page with marketing-like behavior, the docs site needs structured navigation and components, or the team keeps compromising readability in both places to preserve one file.
 
 Shared source is valuable, but only if it reduces complexity overall.
+
+## Breakage checklist before reuse
+
+Before moving README Markdown into a docs site, inspect these areas:
+
+| Area | README behavior | Docs-site risk |
+| --- | --- | --- |
+| Heading hierarchy | Often optimized for repository scanning | May conflict with sidebar, page title, and generated TOC |
+| Relative links | Usually repo-relative | May need root-relative or route-relative links |
+| Images | Often point to repository assets | Build output may move or fingerprint assets |
+| Badges | Common at the top of READMEs | Can look noisy or fail in print/PDF exports |
+| HTML | GitHub may sanitize but still allow useful fragments | Docs sites may strip, transform, or style HTML differently |
+| Alerts/callouts | GitHub-specific alert syntax may work in README | Other renderers may treat it as plain blockquote text |
+| Frontmatter | Usually absent or ignored | Docs sites often require title, description, layout, or nav metadata |
+
+This checklist prevents the common mistake of treating "renders on GitHub" as proof that the source is portable.
+
+## Safer shared-source pattern
+
+If the README and docs site must share source, keep the reusable body plain and move platform-specific behavior to wrapper layers:
+
+```md
+# Project or feature name
+
+Short overview written in normal Markdown.
+
+## Install
+
+Use portable fenced code blocks and normal links.
+
+## Usage
+
+Keep examples independent of site-only components.
+```
+
+Then let the docs site add navigation, callouts, tabs, framework components, or generated metadata around that content. The Markdown file remains reusable because it does not depend on one renderer's custom features.
+
+## When GitHub-specific Markdown is acceptable
+
+GitHub-specific patterns are acceptable when the file is clearly a GitHub README and not intended to be canonical source for a docs site. Examples include:
+
+- status badges for repository health;
+- issue and pull-request references;
+- GitHub alert syntax;
+- repository-relative links;
+- contributor instructions tied to GitHub workflows.
+
+Those patterns are useful in a README. They become risky only when the same file is expected to behave like cross-platform documentation.
+
+## Practical migration workflow
+
+For a migration, use this order:
+
+1. copy the README into the docs site as a draft page;
+2. run the docs build and inspect broken links, assets, callouts, and headings;
+3. replace GitHub-specific behavior with renderer-supported patterns;
+4. decide which content belongs in the README versus the docs page;
+5. add canonical links between the two so readers do not land in a dead end.
+
+This keeps the docs site useful without stripping the README of the repository context that makes it valuable.
+
+## Related pages
+
+- [CommonMark vs. GFM vs. renderer differences](/fundamentals/commonmark-vs-gfm-vs-renderer-differences/)
+- [GFM-only features you should not assume everywhere](/fundamentals/gfm-only-features-you-should-not-assume-everywhere/)
+- [Copy-paste-safe Markdown for chat, docs, and CMS workflows](/guides/copy-paste-safe-markdown-for-chat-docs-and-cms/)

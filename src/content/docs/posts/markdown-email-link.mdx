@@ -85,6 +85,49 @@ Use `mailto:` when the Markdown is staying interactive. Use visible text when th
 
 If the file needs to move across several renderers, do not rely on automatic email linking.
 
+## Useful `mailto:` variants
+
+Markdown links can include common `mailto:` options:
+
+```md
+[Email support](mailto:support@example.com)
+[Email support with subject](mailto:support@example.com?subject=Support%20request)
+```
+
+Use these carefully. Query parameters must be URL-encoded, and long prefilled messages become hard to read and maintain in Markdown source.
+
+For most public docs, the safest version is still the simple one:
+
+```md
+[Contact support](mailto:support@example.com)
+```
+
+It is readable in source, clear in rendered HTML, and less likely to break during copy-paste.
+
+## When not to prefill email fields
+
+Avoid complex prefilled email links when:
+
+- the Markdown will be reused in a CMS or email platform;
+- the link may be flattened into an image or PDF;
+- localization or translation will edit the text;
+- the address may change often;
+- privacy or spam exposure matters.
+
+In those cases, use a plain contact line or a contact page link instead. A contact page is often easier to update than many scattered `mailto:` links.
+
+## Troubleshooting checklist
+
+If the email link does not work:
+
+1. confirm the URL starts with `mailto:`;
+2. check that spaces in subject text are encoded as `%20` or `+`;
+3. test the rendered HTML, not only the Markdown preview;
+4. remember that PNG, screenshot, and long-image exports cannot preserve clickable links;
+5. check whether the publishing platform rewrites or sanitizes link protocols.
+
+This checklist catches the common failures without turning a simple email link into an overengineered tracking system.
+
 ## Related pages
 
 - [Markdown links: inline, reference, and autolinks](/syntax/markdown-links-inline-vs-reference-and-autolinks/)

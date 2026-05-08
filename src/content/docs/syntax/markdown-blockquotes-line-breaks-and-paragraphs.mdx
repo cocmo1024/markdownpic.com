@@ -57,6 +57,23 @@ Line one.
 Line two.
 ```
 
+### Blockquote with multiple paragraphs
+
+```md
+> First quoted paragraph.
+>
+> Second quoted paragraph in the same quote.
+```
+
+### Blockquote with a list
+
+```md
+> Important notes:
+>
+> - Keep the `>` marker on list lines.
+> - Keep blank quote lines as `>`.
+```
+
 ## Paragraphs: the safe rule
 
 If you want a new paragraph, insert a blank line. Do not depend on how a specific renderer handles single newlines inside a paragraph.
@@ -78,6 +95,59 @@ The most common Markdown line-break mistakes are:
 - or using HTML breaks in a context meant to stay portable.
 
 If the visual line break is essential, confirm the exact renderer behavior instead of assuming every platform matches GitHub.
+
+## Soft break vs hard break
+
+A soft break is a newline in the source that the renderer may treat as a space. A hard break is an intentional visible line break in the rendered output.
+
+```md
+This is one line in the source.
+This may still render as one paragraph.
+```
+
+Many people expect that source newline to become a visual break. Portable Markdown should not depend on that. If the line must visibly break, use a renderer-supported hard-break pattern and test it in the target platform.
+
+The safest rewrite is often to avoid needing the hard break:
+
+```md
+Name: Alex Rivera
+Role: Documentation lead
+Location: Remote
+```
+
+For data-like text, a list or table is usually clearer than relying on invisible trailing spaces.
+
+## Blockquote pitfalls
+
+Blockquotes break in subtle ways when blank lines lose the `>` marker:
+
+```md
+> This is quoted.
+
+This is no longer quoted.
+```
+
+If the second paragraph should remain inside the quote, write:
+
+```md
+> This is quoted.
+>
+> This is still quoted.
+```
+
+That pattern is more verbose, but it is easier to debug after copy-paste, CMS import, or AI-generated editing.
+
+## Copy-paste and AI workflow note
+
+AI tools, chat apps, and WYSIWYG editors may remove trailing spaces, normalize line endings, or rewrap text. That makes trailing-space hard breaks fragile in AI-assisted Markdown workflows.
+
+When source will be copied through multiple tools, prefer:
+
+- blank lines for paragraphs;
+- lists for short repeated lines;
+- tables for field/value data;
+- fenced code blocks for text where line position matters;
+- tested HTML `<br>` only when the render path is known and portability is not required.
 
 ## Recommended operating rule
 

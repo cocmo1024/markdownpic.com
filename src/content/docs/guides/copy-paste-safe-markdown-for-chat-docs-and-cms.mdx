@@ -84,3 +84,49 @@ If a team expects Markdown to move through chat, docs, CMS, and AI systems, use 
 - and formatting choices tested in at least two downstream destinations.
 
 That policy reduces hidden breakage more than any single syntax trick.
+
+## Copy-safe patterns
+
+Prefer patterns that remain readable when styling disappears:
+
+| Content need | Safer pattern | Avoid when portability matters |
+| --- | --- | --- |
+| Code examples | fenced code blocks with language labels | screenshots of code or indented blocks copied from rich editors |
+| Links | explicit `[label](url)` links | raw URLs that depend on autolinking |
+| Notes | normal paragraphs or `Notes` sections | renderer-specific callouts copied into unknown tools |
+| Short structured data | lists or small tables | wide tables with many columns |
+| Images | clear alt text and stable paths | local absolute paths that only work on one machine |
+| Reusable snippets | self-contained headings and examples | fragments that require missing surrounding context |
+
+This is the editorial version of graceful degradation. Even if the target strips styling, the reader should still understand the structure.
+
+## AI prompt and RAG boundary
+
+When Markdown becomes AI context, the source should make hierarchy and intent obvious:
+
+- use descriptive headings instead of clever headings;
+- keep one idea per section;
+- put definitions near the examples they explain;
+- avoid footnotes for critical instructions;
+- keep tables small enough that row meaning is not lost;
+- avoid relying on colors, callout styling, or icons.
+
+This improves human readability and also makes the file easier to chunk, retrieve, summarize, and reuse in AI workflows.
+
+## Pre-publish test
+
+Before publishing reusable Markdown, run a basic portability test:
+
+1. paste the content into a plain-text editor;
+2. paste it into the target CMS or docs editor;
+3. preview it in the final renderer;
+4. check links, lists, code blocks, and tables;
+5. export or screenshot it if image reuse matters.
+
+If the content still makes sense in plain text and the final renderer, it is usually durable enough for copy-heavy workflows.
+
+## Related pages
+
+- [Markdown autolink literals and URL rendering across platforms](/syntax/markdown-autolink-literals-and-url-rendering-across-platforms/)
+- [Markdown footnotes: where they work and where they fail](/syntax/markdown-footnotes-where-they-work-and-where-they-fail/)
+- [Markdown HTML sanitization and unsupported tags across platforms](/fundamentals/markdown-html-sanitization-and-unsupported-tags-across-platforms/)

@@ -56,6 +56,21 @@ The highest-risk HTML patterns are usually:
 
 These patterns often look fine in one publishing stack and collapse elsewhere.
 
+## Platform behavior examples
+
+The exact rules differ, but the pattern is consistent:
+
+| HTML pattern | What often happens | Safer Markdown-first alternative |
+| --- | --- | --- |
+| `<script>` or inline event handlers | Removed, escaped, or blocked for security | Do not put scripts in Markdown; use the site layer |
+| `<iframe>` embeds | Blocked or allowed only by specific platforms | Link to the asset or use an approved embed component |
+| `<style>` or inline layout CSS | Stripped, ignored, or inconsistent | Move styling into the theme or renderer |
+| `<div class="...">` layout wrappers | Renders only where the CSS exists | Use standard Markdown or documented components |
+| `<br>` for line breaks | Often works, but may be undesirable in portable source | Prefer lists, paragraphs, or tested hard-break syntax |
+| Custom attributes | Removed by sanitizers | Avoid unless the renderer documents support |
+
+This table is not a universal compatibility chart. It is a risk map. The more a tag depends on browser behavior, custom CSS, or JavaScript, the less portable it is as Markdown source.
+
 ## Sanitization is not random
 
 Sanitization usually follows one of these motives:
@@ -80,6 +95,49 @@ If Markdown is the canonical source, a safer policy is:
 
 This keeps HTML as an exception layer instead of turning the source into fragile pseudo-HTML.
 
+## Decision tree for raw HTML
+
+Before adding raw HTML, ask:
+
+1. Can standard Markdown express the content clearly?
+2. Is the desired behavior content, layout, or interactivity?
+3. Does the target renderer explicitly support the tag?
+4. Will the same file be reused in GitHub, docs sites, CMSs, PDF, email, or image export?
+5. Will a future editor understand why the HTML is there?
+
+If the behavior is layout or interactivity, the answer usually belongs outside the Markdown file. If the behavior is content and the renderer documents support, the HTML may be acceptable with a comment or editorial convention.
+
+## Example: acceptable vs risky HTML
+
+Acceptable in a controlled docs site:
+
+```md
+This line uses an approved inline HTML break only because the renderer and export path are known.<br>
+Second line.
+```
+
+Risky as portable Markdown:
+
+```md
+<div class="two-column special-callout" onclick="trackClick()">
+  <iframe src="https://example.com/embed"></iframe>
+</div>
+```
+
+The second example depends on CSS, JavaScript, iframe policy, sanitizer rules, and export behavior. It is no longer just Markdown content.
+
+## How teams should document exceptions
+
+If a team allows raw HTML, keep an exception list:
+
+| Exception | Allowed where | Why |
+| --- | --- | --- |
+| `<br>` | Known docs renderer only | Addresses or poems where line breaks are content |
+| `<kbd>` | Developer docs where supported | Keyboard shortcuts are semantic enough to justify the tag |
+| Approved embed component | Site docs only | The site owns the security and rendering behavior |
+
+This prevents every author from rediscovering the same renderer limits through broken pages.
+
 ## What portable teams should avoid
 
 Avoid treating raw HTML as the default solution for alignment, layout, responsive embeds, custom classes, font sizing, or design embellishment. Those usually belong in the renderer, the site theme, or the export layer, not the Markdown source.
@@ -94,3 +152,9 @@ Use raw HTML in Markdown only when:
 - and the HTML solves a real publishing need, not cosmetic preference alone.
 
 If those conditions are missing, the safer choice is usually simpler Markdown plus a better rendering layer.
+
+## Related pages
+
+- [Markdown links vs HTML links: when to switch](/syntax/markdown-links-vs-html-links-when-to-switch/)
+- [Markdown iframe, video, and embed limitations](/syntax/markdown-iframe-video-and-embed-limitations/)
+- [Copy-paste-safe Markdown for chat, docs, and CMS workflows](/guides/copy-paste-safe-markdown-for-chat-docs-and-cms/)

@@ -86,6 +86,84 @@ Check in this order:
 
 That sequence catches most TOC failures quickly.
 
+## Manual TOC example
+
+A manual TOC is just a list of links to heading fragments:
+
+```md
+## Contents
+
+- [Install](#install)
+- [Configuration](#configuration)
+- [Troubleshooting](#troubleshooting)
+
+## Install
+
+...
+
+## Configuration
+
+...
+
+## Troubleshooting
+
+...
+```
+
+This works only if the rendered heading IDs match those fragments. If the platform generates `#configuration-1` because another heading already used the same text, the manual TOC will break.
+
+## Duplicate headings are a common cause
+
+Duplicate headings create unstable anchors:
+
+```md
+## Setup
+
+...
+
+## Setup
+
+...
+```
+
+Many renderers will turn the second heading into something like `#setup-1`, but the exact rule can differ. A safer authoring habit is to make headings unique:
+
+```md
+## Local setup
+
+...
+
+## Production setup
+
+...
+```
+
+Unique headings make both manual TOCs and generated navigation more reliable.
+
+## Generated TOC checks
+
+If a tool generates the TOC, verify:
+
+- whether the generator runs before publishing;
+- whether it reads the same file that gets published;
+- whether it includes only `h2` headings or deeper levels;
+- whether the final site rewrites heading IDs after generation;
+- whether the generated block is overwritten by a formatter or CMS import.
+
+The broken link may not be in Markdown at all. It may be in the build order.
+
+## Portable TOC policy
+
+For documents that move between GitHub, docs sites, CMSs, PDF exporters, and AI workflows:
+
+- keep headings unique and stable;
+- avoid punctuation-heavy headings if you need manual anchors;
+- prefer generated navigation when the publishing system owns the final render;
+- use manual TOCs only for stable files that humans maintain deliberately;
+- test the published page, not only the editor preview.
+
+This policy is more important than memorizing one slug algorithm, because the slug algorithm can change across platforms.
+
 ## The healthiest long-term habit
 
 Use manual TOCs only when the document is stable enough to maintain them.

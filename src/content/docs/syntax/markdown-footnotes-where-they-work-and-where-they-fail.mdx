@@ -71,7 +71,7 @@ Footnotes are a poor choice when:
 - screenshots or image exports are important,
 - or the note must remain easy to read in raw plain text.
 
-In those cases, a short in-line note or a clearly labeled â€œNotesâ€?section is often safer.
+In those cases, a short in-line note or a clearly labeled `Notes` section is often safer.
 
 ## The fallback pattern
 
@@ -79,9 +79,57 @@ If footnotes are not safe enough for the workflow, use:
 
 - a short parenthetical note,
 - an end-of-section note block,
-- or a â€œNotesâ€?subsection with normal links and references.
+- or a `Notes` subsection with normal links and references.
 
 That is less elegant, but usually more stable.
+
+
+## Notes-section fallback example
+
+Instead of a footnote:
+
+```md
+The renderer changed its heading IDs after publishing.[^1]
+
+[^1]: This is common when duplicate headings or punctuation-heavy headings are involved.
+```
+
+Use an explicit notes section:
+
+```md
+The renderer changed its heading IDs after publishing.
+
+## Notes
+
+- Duplicate headings and punctuation-heavy headings can change generated anchor IDs.
+```
+
+The notes section is less compact, but it survives more renderers, exports, and copy-paste workflows.
+
+## Footnotes in exports
+
+Footnotes become risky when Markdown is exported to:
+
+- PDF generators that restyle or move notes;
+- CMS fields that strip the footnote extension;
+- email systems that flatten links and backreferences;
+- image exports where the backreference behavior is meaningless;
+- AI prompt contexts where note references may be separated from their definitions.
+
+If the note is essential to understanding, keep it near the claim or use a normal section. Footnotes are best for supporting context, not critical instructions.
+
+## Authoring rule for teams
+
+Teams should document whether footnotes are allowed in each publishing path:
+
+| Path | Footnote policy |
+| --- | --- |
+| GitHub README only | Usually acceptable if preview confirms rendering |
+| Docs site with known MDX/Markdown support | Acceptable when the build supports the syntax |
+| CMS reuse or multi-channel publishing | Prefer notes sections or inline notes |
+| Markdown-to-image workflows | Avoid footnotes unless they render visibly in the final image |
+
+That policy prevents one author from adding elegant footnotes that break downstream workflows.
 
 ## Recommended operating rule
 

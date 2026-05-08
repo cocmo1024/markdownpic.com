@@ -93,6 +93,54 @@ Explicit links are usually better when:
 
 That is why explicit syntax is usually the right default for long-lived docs.
 
+## Punctuation and boundary problems
+
+Raw URLs are fragile around punctuation:
+
+```md
+Read this: https://example.com/docs).
+```
+
+Some renderers may exclude the closing parenthesis. Others may include it or create awkward output depending on the surrounding text. Explicit syntax avoids that ambiguity:
+
+```md
+Read the [example docs](https://example.com/docs).
+```
+
+This matters in migration guides, support docs, and copied chat answers where links often sit next to commas, periods, parentheses, and brackets.
+
+## Email addresses and bare domains
+
+Autolink behavior for email addresses and bare domains varies:
+
+```md
+support@example.com
+example.com
+www.example.com
+```
+
+Some platforms turn these into links. Others leave them as text. If the link must work, use explicit syntax:
+
+```md
+[Email support](mailto:support@example.com)
+[Open Example](https://example.com/)
+```
+
+This is the safer pattern for documentation and CMS publishing because the source states the intent.
+
+## Portable policy
+
+Use this policy for long-lived Markdown:
+
+| Situation | Better syntax |
+| --- | --- |
+| Reader should see friendly text | `[label](https://example.com/)` |
+| Reader should see the exact URL | `<https://example.com/>` |
+| Quick note in a known GitHub-like renderer | raw URL may be acceptable |
+| CMS, PDF, email, or AI reuse | explicit link syntax |
+
+That policy keeps link behavior stable when content moves between GitHub, docs sites, Markdown-to-image tools, and AI workflows.
+
 ## Compare next
 
 - [Markdown links: inline, reference, and autolinks](/syntax/markdown-links-inline-vs-reference-and-autolinks/)

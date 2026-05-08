@@ -1,0 +1,342 @@
+---
+title: Markdown API Documentation Patterns for Search, AI, and Developer Docs
+description: Practical Markdown patterns for API docs, REST endpoints, request examples, response schemas, errors, changelogs, and AI-search-friendly developer documentation.
+referenceType: guide
+adProfile: guide
+commercialIntent: high
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Helps teams write API documentation in Markdown that is readable for developers, portable across docs tools, and structured enough for search and AI reuse.
+readerTakeaway: You should leave with a practical API documentation page pattern covering endpoint summaries, parameters, examples, responses, errors, versioning, and internal linking.
+primaryKeyword: Markdown API documentation
+searchIntent: learn
+decisionStage: implementation
+targetRoles:
+  - Developers
+  - Technical writers
+  - API product teams
+  - DevRel teams
+  - AI knowledge-base owners
+keyQuestions:
+  - How should API documentation be written in Markdown?
+  - What Markdown structure works best for REST endpoint docs?
+  - How can API docs be readable for developers and useful for AI search?
+notFor:
+  - Teams that generate all API docs directly from OpenAPI with no hand-written guidance
+  - Private notes that do not need stable links, examples, or search visibility
+  - Product marketing pages that mention APIs but do not document developer usage
+updateTriggers:
+  - New renderer differences that affect code blocks, tables, anchors, or schema examples
+  - New AI search or documentation workflows that depend on Markdown source quality
+  - Changes in common API documentation authoring patterns
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Markdown API Documentation Patterns for Search, AI, and Developer Docs
+
+API documentation is one of the best uses of Markdown because the format is readable in source control, easy to review, good for examples, and portable across documentation sites. It is also one of the easiest places to create messy Markdown: scattered endpoint notes, inconsistent parameter tables, stale examples, unclear error handling, unstable heading anchors, and code blocks that copy poorly.
+
+Good API Markdown should help three readers at once:
+
+- the developer trying to call the endpoint;
+- the maintainer reviewing changes in Git;
+- the search or AI system trying to retrieve the right answer later.
+
+## Quick answer
+
+Write API documentation in Markdown with one canonical page per endpoint or task, stable headings, a short purpose statement, authentication requirements, parameter tables, copy-safe request examples, response examples, error cases, rate limits, version notes, and links to related endpoints. Use fenced code blocks for examples, simple tables for parameters, and consistent heading names so developers, search engines, and AI retrieval systems can identify the same sections reliably.
+
+## Why API Markdown needs a pattern
+
+Developers rarely read API docs from top to bottom. They scan for:
+
+- endpoint path;
+- authentication;
+- required parameters;
+- example request;
+- example response;
+- error behavior;
+- limits;
+- version differences;
+- related endpoints.
+
+If every page uses a different structure, the docs become slower to use and harder to maintain. AI search also becomes weaker because the system cannot reliably identify where the answer lives.
+
+Related page: <LinkCard title="How to Structure Markdown for LLM Ingestion, RAG, and AI Search" href="/guides/how-to-structure-markdown-for-llm-ingestion-rag-and-ai-search/" />
+
+## Recommended endpoint page structure
+
+Use a predictable structure:
+
+````markdown
+# Create an invoice
+
+Use this endpoint to create a draft invoice for an existing customer.
+
+## Endpoint
+
+`POST /v1/invoices`
+
+## Authentication
+
+Requires a server-side API key with `invoices:write`.
+
+## Request body
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `customer_id` | string | Yes | Existing customer identifier. |
+| `currency` | string | Yes | ISO currency code. |
+| `line_items` | array | Yes | Invoice line items. |
+
+## Example request
+
+```json
+{
+  "customer_id": "cus_123",
+  "currency": "USD",
+  "line_items": [
+    {
+      "name": "Monthly plan",
+      "amount": 4900
+    }
+  ]
+}
+```
+
+## Example response
+
+```json
+{
+  "id": "inv_456",
+  "status": "draft"
+}
+```
+
+## Errors
+
+| Code | Meaning | How to fix |
+| --- | --- | --- |
+| `customer_not_found` | The customer does not exist. | Check `customer_id`. |
+````
+
+The pattern is simple, but that is the point. Developers should not have to learn the document before they learn the API.
+
+## Endpoint summary
+
+Start every page with a plain-language summary.
+
+Weak:
+
+> Creates invoice object.
+
+Stronger:
+
+> Use this endpoint to create a draft invoice for an existing customer before finalizing or sending it.
+
+The stronger version explains when the endpoint should be used. This helps humans, search snippets, and AI systems decide whether the page answers the question.
+
+## Endpoint and method formatting
+
+Use inline code for the method and path:
+
+```markdown
+`POST /v1/invoices`
+```
+
+Avoid burying the path inside a paragraph. Make it easy to copy and easy to scan.
+
+For multiple endpoints on one concept page, use stable subheadings:
+
+```markdown
+## Create an invoice
+
+`POST /v1/invoices`
+
+## Retrieve an invoice
+
+`GET /v1/invoices/{invoice_id}`
+```
+
+Do not use vague headings like "Endpoint 1" or "API call."
+
+## Parameter tables
+
+Markdown tables work well for API parameters when the data is simple.
+
+Recommended columns:
+
+| Column | Purpose |
+| --- | --- |
+| Field | Exact parameter name in code formatting |
+| Type | String, number, boolean, object, array, enum |
+| Required | Yes, No, Conditional |
+| Description | What it does and any constraints |
+
+Example:
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `email` | string | Yes | Customer email address. Must be unique. |
+| `metadata` | object | No | Optional key-value data for internal tracking. |
+| `mode` | enum | No | `test` or `live`. Defaults to `live`. |
+
+Keep descriptions short in the table. If a field needs long explanation, add a section below the table.
+
+Related page: <LinkCard title="Markdown Tables That Survive Mobile, PDF, and Image Export" href="/syntax/markdown-tables-that-survive-mobile-pdf-and-image-export/" />
+
+## Request examples
+
+Use fenced code blocks with language labels:
+
+````markdown
+```bash
+curl https://api.example.com/v1/invoices \
+  -H "Authorization: Bearer $API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"customer_id":"cus_123","currency":"USD"}'
+```
+````
+
+Good examples should be:
+
+- complete enough to copy;
+- small enough to understand;
+- safe enough to publish;
+- consistent across pages;
+- updated when the API changes.
+
+Avoid examples that depend on hidden setup unless the setup is linked nearby.
+
+Related page: <LinkCard title="Markdown Code Blocks: Fenced vs Indented" href="/syntax/markdown-code-blocks-fenced-vs-indented/" />
+
+## Response examples
+
+Show realistic but minimal responses.
+
+Weak:
+
+```json
+{
+  "success": true
+}
+```
+
+Stronger:
+
+```json
+{
+  "id": "inv_456",
+  "status": "draft",
+  "currency": "USD",
+  "total": 4900,
+  "created_at": "2026-05-08T00:00:00Z"
+}
+```
+
+The stronger example teaches shape, field names, and important states. Do not show every possible field unless the page is a schema reference.
+
+## Error documentation
+
+Error sections often determine whether developers succeed.
+
+Use a table:
+
+| Error code | HTTP status | Cause | How to fix |
+| --- | --- | --- | --- |
+| `invalid_api_key` | 401 | Missing or invalid key | Check server-side credentials |
+| `customer_not_found` | 404 | The customer ID does not exist | Retrieve or create the customer first |
+| `rate_limited` | 429 | Too many requests | Retry after the returned window |
+
+Then add guidance for the errors that require judgment:
+
+```markdown
+### `rate_limited`
+
+Retry with exponential backoff. Do not retry immediately in a tight loop.
+```
+
+This is useful for developers and for AI assistants answering troubleshooting questions.
+
+## Versioning and changelog notes
+
+API docs should make version behavior visible.
+
+Include:
+
+- when the endpoint was added;
+- which fields are deprecated;
+- which behavior changed;
+- whether old examples still work;
+- whether SDK examples match the current API;
+- how long old versions are supported.
+
+Do not hide breaking changes in a general changelog only. Link the endpoint page to the relevant changelog entry.
+
+## AI-search-friendly API docs
+
+API docs work better in AI retrieval when:
+
+- each page has one clear purpose;
+- headings are specific;
+- request and response examples are near the explanation;
+- parameters use exact names in code formatting;
+- related endpoints are linked;
+- errors have fix guidance;
+- deprecated behavior is marked clearly;
+- generated examples are not copied into multiple inconsistent pages.
+
+AI search does not replace good documentation structure. It amplifies the structure that already exists.
+
+Related page: <LinkCard title="Markdown Source of Truth for AI Search, Docs, and Reuse" href="/publishing/markdown-source-of-truth-for-ai-search-docs-and-reuse/" />
+
+## Internal linking pattern
+
+Every endpoint page should link to:
+
+- the authentication guide;
+- the relevant object or schema page;
+- the previous or next workflow step;
+- common error troubleshooting;
+- SDK or quickstart examples;
+- changelog entries for behavior changes.
+
+For example, a "Create invoice" page should link to "Customers," "Finalize invoice," "Invoice webhooks," and "Billing errors." These links help developers and help search engines understand topic relationships.
+
+## Common mistakes
+
+Avoid:
+
+- documenting only the happy path;
+- using screenshots instead of copyable code;
+- placing examples far away from the fields they explain;
+- using HTML tables unless Markdown tables cannot express the shape;
+- mixing endpoint reference and conceptual tutorial without headings;
+- creating multiple pages for the same endpoint with small differences;
+- changing headings in ways that break anchor links;
+- publishing SDK examples that do not match the REST examples;
+- letting AI-generated summaries replace exact API behavior.
+
+## A practical checklist
+
+Before publishing an API Markdown page, confirm:
+
+1. The endpoint and method are visible near the top.
+2. Authentication and permissions are stated.
+3. Required and optional fields are separated or clearly marked.
+4. Request examples are copy-safe.
+5. Response examples show realistic states.
+6. Errors include how to fix them.
+7. Rate limits and retries are documented if relevant.
+8. Version notes are visible.
+9. Related pages are linked.
+10. The page has one canonical source file.
+
+Markdown is not a substitute for accurate API design. It is the layer that makes the design understandable, reviewable, searchable, and reusable.
+
+Next-step references:
+
+- <LinkCard title="GitHub README Markdown Template for Projects, Docs, and AI Tools" href="/guides/github-readme-markdown-template-for-projects-docs-and-ai-tools/" />
+- <LinkCard title="Markdown Anchors and Heading Links That Stay Stable" href="/syntax/markdown-anchors-and-heading-links-that-stay-stable/" />
+- <LinkCard title="Markdown Docs Publishing Checklist Before Going Live" href="/publishing/markdown-docs-publishing-checklist-before-going-live/" />

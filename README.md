@@ -6,7 +6,7 @@ A local-first Markdown-to-image workbench, primarily for English-speaking users.
 
 Implementation and validation are local. **Core Chrome workflows, real image files and mobile-width editing/import/export/backup restoration have been verified. Physical-phone and remaining failure-path acceptance are still required.** See [QA_CHECKLIST.md](QA_CHECKLIST.md). A desktop viewport test is not proof that native sharing, soft keyboards or Safari behave correctly.
 
-No repository push, deployment, analytics integration or ad request is performed by this project’s build commands.
+Build commands never push or deploy. Pushing to main deploys through Cloudflare Workers Builds.
 
 ## Core workflow
 
@@ -67,13 +67,11 @@ The application uses React/TypeScript and vinext on Vite. The UI is split into f
 - lib/capture-engine.tsx: immutable snapshot, sequential capture, asset readiness, dimensions, cancellation, format conversion and ZIP.
 - lib/capture-checks.ts: common two-axis and resource-size preflight.
 
-## SEO and sponsorship
+## SEO and advertising
 
-Public identity is https://markdownpic.com, configured in lib/site-config.ts. The tool replaced the former Astro content site and the tool.markdownpic.com subdomain in October 2026. The tool route has a canonical and truthful WebApplication structured data; help, privacy and terms are server-rendered and included in the sitemap.
+Public identity is https://markdownpic.com, configured in lib/site-config.ts. The tool replaced the former Astro content site and the tool.markdownpic.com subdomain (now a 301 to the root) in October 2026. The homepage has a canonical, truthful WebApplication structured data, and a server-rendered guide below the workbench (template gallery, steps, features, FAQ). Help, privacy and terms are server-rendered and in the sitemap. No hidden keyword stuffing, crawler-only content or fake ratings.
 
-There is no hidden keyword stuffing, crawler-only content, fake rating or draft indexing. The default workbench remains focused on the tool.
-
-Sponsorship is **off** in lib/site-config.ts. The reserved help-bottom component renders nothing while disabled: no whitespace, request or tracking. It supports a clearly labeled first-party sponsor link with rel=sponsored. To activate it later, confirm the actual sponsor/copy/URL and then test the layout. Do not place scripts inside the editor or capture component. An ad network, personalized advertising, analytics or payments require a separate consent/privacy/security review and explicit authorization.
+Google AdSense (`adsense` in lib/site-config.ts) runs in reserved, labelled slots only: a 300px rail beside the workbench at ≥1360px, and in-content units in the homepage guide and help page. `app/components/ad-slot.tsx` injects the loader after hydration, requests a unit only when its media query matches, and shows a tips card when AdSense reports no fill. Ads never enter the editor or the capture card. On localhost the slots render dashed placeholders without any request. public/ads.txt authorizes the publisher; EEA/UK/CH consent is served by Google's CMP configured in AdSense. AdSense Auto ads are configured per site in the AdSense dashboard, not in code.
 
 ## Deployment
 

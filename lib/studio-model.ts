@@ -1,4 +1,4 @@
-export type ThemeId = "editorial" | "midnight" | "linen" | "mono";
+export type ThemeId = "editorial" | "mono" | "linen" | "mist" | "harbor" | "rose" | "midnight" | "ink";
 export type OutputMode = "single" | "carousel";
 export type ImageFormat = "png" | "jpeg" | "webp";
 export type FontFamily = "sans" | "serif" | "mono";
@@ -62,13 +62,19 @@ export const canvasPresets: CanvasPreset[] = [
   { id: "social", label: "Landscape", width: 600, height: 315 },
 ];
 
-export const themes = [
-  { id: "editorial" as const, label: "Editorial", background: "#faf7ed", color: "#19201c" },
-  { id: "mono" as const, label: "Clean", background: "#ffffff", color: "#18202d" },
-  { id: "midnight" as const, label: "Midnight", background: "#131b2a", color: "#f3f5fa" },
-  { id: "linen" as const, label: "Paper", background: "#f0e6d0", color: "#203126" },
+export interface Theme { id: ThemeId; label: string; background: string; color: string; dark: boolean }
+export const themes: Theme[] = [
+  { id: "editorial", label: "Cream", background: "#f7f2e7", color: "#1c1b17", dark: false },
+  { id: "mono", label: "Clean", background: "#ffffff", color: "#15171c", dark: false },
+  { id: "linen", label: "Paper", background: "#efe5cf", color: "#23291f", dark: false },
+  { id: "mist", label: "Sage", background: "#e6ece3", color: "#1b261f", dark: false },
+  { id: "harbor", label: "Harbor", background: "#e5ecf5", color: "#132038", dark: false },
+  { id: "rose", label: "Rose", background: "#f7e9e3", color: "#2c1c18", dark: false },
+  { id: "midnight", label: "Midnight", background: "#0f1522", color: "#edf0f7", dark: true },
+  { id: "ink", label: "Ink", background: "#171613", color: "#ece6d6", dark: true },
 ];
-export const accents = ["#4e66ff", "#ff5f3d", "#17785b", "#8d4dff", "#efb500"];
+export const themeFor = (id: ThemeId) => themes.find(theme => theme.id === id) ?? themes[0];
+export const accents = ["#4e66ff", "#ff5f3d", "#17785b", "#8d4dff", "#efb500", "#1c1b17"];
 export const defaultDesign: Design = {
   presetId: "long", theme: "editorial", accent: accents[0], fontScale: 100,
   fontFamily: "sans", padding: 44, showBrand: false, showHeader: false,
@@ -76,17 +82,17 @@ export const defaultDesign: Design = {
   watermarkPosition: "bottom-right", imageMaxHeight: 480,
 };
 
-export const exampleMarkdown = `# Good ideas deserve\na clear picture.
+export const exampleMarkdown = `# Good ideas deserve a clear picture.
 
-Turn your notes, explanations, and **useful discoveries** into something worth sharing.
+Turn notes, explanations, and **useful discoveries** into an image worth sharing.
 
-> Start with your words. We'll take care of the canvas.
+> Start with your words. The canvas takes care of the rest.
 
 ## Make it yours
 
 1. Paste Markdown or open a file.
-2. Pick a size and a style.
-3. Export your image — ready to share.
+2. Choose a size, a theme, and a typeface.
+3. Export a crisp PNG — ready to post.
 
 Your work stays in this browser. No account needed.`;
 
@@ -169,13 +175,15 @@ export function contrastRatio(a: string, b: string) {
 export function foregroundOn(background: string) {
   return contrastRatio(background, "#ffffff") >= contrastRatio(background, "#111827") ? "#ffffff" : "#111827";
 }
+// Accent text must read on the canvas, and table-header text must read on the accent.
+const accentReadable = (accent: string, background: string) => contrastRatio(accent, background) >= 4.5 && contrastRatio(accent, foregroundOn(accent)) >= 4.5;
 export function readableAccent(accent: string, background: string) {
-  if (contrastRatio(accent, background) >= 4.5) return accent;
+  if (accentReadable(accent, background)) return accent;
   const target = luminance(background) > .35 ? 0 : 255;
   const channels = accent.slice(1).match(/../g)!.map(v => parseInt(v, 16));
   for (let step = 1; step <= 20; step++) {
     const next = "#" + channels.map(c => Math.round(c + (target - c) * step / 20).toString(16).padStart(2, "0")).join("");
-    if (contrastRatio(next, background) >= 4.5) return next;
+    if (accentReadable(next, background)) return next;
   }
   return target ? "#ffffff" : "#000000";
 }

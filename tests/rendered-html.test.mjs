@@ -44,9 +44,21 @@ test("unused image proxy is absent and security headers protect the document",as
   assert.equal(response.headers.get("x-content-type-options"),"nosniff");
   assert.equal(response.headers.get("x-frame-options"),"DENY");
 });
-test("sponsorship is default off without an empty placement in rendered HTML",async()=>{
-  const html=await (await request("/help")).text();
-  assert.doesNotMatch(html,/<aside[^>]*sponsor-slot|Sponsored placement/);
+test("ads load only on the client and ads.txt authorizes the publisher",async()=>{
+  for(const path of ["/","/help"]) {
+    const html=await (await request(path)).text();
+    // The AdSense loader is injected after hydration, never in server HTML or inside the capture card.
+    assert.doesNotMatch(html,/pagead2\.googlesyndication|class="adsbygoogle"/,path);
+  }
+  const adsTxt=await readFile(new URL("../public/ads.txt",import.meta.url),"utf8");
+  assert.match(adsTxt,/^google\.com, pub-6017297149672924, DIRECT, f08c47fec0942fa0$/m);
+});
+test("homepage guide renders real template cards, steps and questions",async()=>{
+  const html=await (await request()).text();
+  for(const id of ["quote","steps","math","release"]) assert.ok(html.includes('href="#use-'+id+'"'),id);
+  assert.match(html,/class="capture-card/);
+  assert.match(html,/Markdown to image in three steps/);
+  assert.match(html,/Is MarkdownPic free\?/);
 });
 test("packaged build retains local-only resources and no deployed project credential",async()=>{
   const config=JSON.parse(await readFile(new URL("../dist/.openai/hosting.json",import.meta.url),"utf8"));

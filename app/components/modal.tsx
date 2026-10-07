@@ -17,7 +17,7 @@ function keepFocusInDialog(event: KeyboardEvent<HTMLDialogElement>) {
   }
 }
 
-export function Modal({ title, onClose, children, wide = false, returnFocusRef }: { title: string; onClose: () => void; children: ReactNode; wide?: boolean; returnFocusRef?: RefObject<HTMLElement | null> }) {
+export function Modal({ title, onClose, children, wide = false, drawer = false, returnFocusRef }: { title: string; onClose: () => void; children: ReactNode; wide?: boolean; drawer?: boolean; returnFocusRef?: RefObject<HTMLElement | null> }) {
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
   useEffect(() => {
@@ -32,7 +32,7 @@ export function Modal({ title, onClose, children, wide = false, returnFocusRef }
       requestAnimationFrame(() => { if (target?.isConnected) target.focus(); });
     };
   }, [returnFocusRef]);
-  return <dialog ref={ref} aria-labelledby={titleId} className={`modal ${wide ? "modal-wide" : ""}`} onKeyDown={keepFocusInDialog} onCancel={event => { event.preventDefault(); onClose(); }} onClick={event => { if (event.target === ref.current) onClose(); }}>
+  return <dialog ref={ref} aria-labelledby={titleId} className={`modal${wide ? " modal-wide" : ""}${drawer ? " modal-drawer" : ""}`} onKeyDown={keepFocusInDialog} onCancel={event => { event.preventDefault(); onClose(); }} onClick={event => { if (event.target === ref.current) onClose(); }}>
     <div className="modal-inner">
       <header className="modal-header"><h2 id={titleId}>{title}</h2><button type="button" className="icon-button" aria-label="Close dialog" onClick={onClose}>×</button></header>
       {children}

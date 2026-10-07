@@ -6,6 +6,7 @@ import { Modal } from "./modal";
 import type { ExportResult } from "@/lib/capture-engine";
 import { downloadBlob } from "@/lib/download";
 import { withDeadline } from "@/lib/async-deadline";
+import { Icon } from "./icons";
 
 export function ResultPanel({ result, onClose, returnFocusRef }: { result: ExportResult; onClose: () => void; returnFocusRef?: RefObject<HTMLElement | null> }) {
   const [urls, setUrls] = useState<string[]>([]);
@@ -30,13 +31,13 @@ export function ResultPanel({ result, onClose, returnFocusRef }: { result: Expor
     setMessage("Copying image… Allow clipboard access if your browser asks.");
     void withDeadline(navigator.clipboard.write([new ClipboardItem({ "image/png": image.blob })]), { timeoutMs: 10_000, message: "Clipboard access did not finish. Use Download or Open image instead." }).then(() => setMessage("Image copied.")).catch(error => setMessage(error instanceof Error ? error.message + " You can download the image instead." : "Clipboard access was blocked. Use Download or Share instead."));
   };
-  return <Modal title="Your export is ready" wide onClose={onClose} returnFocusRef={returnFocusRef}>
+  return <Modal title="Your image is ready" wide onClose={onClose} returnFocusRef={returnFocusRef}>
     <p className="modal-intro">This is the actual exported file. If the download did not start, use Download again or open the image to save it.</p>
     <div className="export-result-preview">{urls[index] && <img src={urls[index]} alt={"Actual exported image, page " + image.page} />}</div>
     <div className="result-meta">{image.width} × {image.height} px · {image.blob.size >= 1_000_000 ? (image.blob.size / 1_000_000).toFixed(1) + " MB" : Math.ceil(image.blob.size / 1000) + " KB"} · {image.name}</div>
     {result.images.length > 1 && <label className="result-page-label">Inspect exported page<select value={index} onChange={event => setIndex(Number(event.target.value))}>{result.images.map((item, i) => <option key={item.name} value={i}>Page {item.page}</option>)}</select></label>}
     {message && <p role="status" className="result-message">{message}</p>}
-    <div className="modal-footer wrap"><button className="primary-button" onClick={() => downloadBlob(result.download, result.name)}>Download again</button><a className="button-link" href={urls[index]} target="_blank" rel="noopener noreferrer">Open image</a><button onClick={share}>Share image</button><button onClick={copy}>Copy PNG</button><button onClick={() => {
+    <div className="modal-footer wrap"><button className="primary-button" onClick={() => downloadBlob(result.download, result.name)}><Icon name="download" />Download again</button><a className="button-link" href={urls[index]} target="_blank" rel="noopener noreferrer"><Icon name="arrow" />Open image</a><button onClick={share}><Icon name="share" />Share image</button><button onClick={copy}><Icon name="copy" />Copy PNG</button><button onClick={() => {
       if (!navigator.clipboard?.writeText) { setMessage("Text copy is unavailable. Use Save Markdown below to download the source."); return; }
       setMessage("Copying source… Allow clipboard access if your browser asks.");
       void withDeadline(navigator.clipboard.writeText(result.markdown), { timeoutMs: 10_000, message: "Clipboard access did not finish." }).then(() => setMessage("Source text copied.")).catch(() => setMessage("Text copy was not completed. Use Save Markdown below to download the source."));

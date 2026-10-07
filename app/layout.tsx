@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Geist, Geist_Mono, Newsreader } from "next/font/google";
 import "katex/dist/katex.min.css";
 import "./globals.css";
 import { SITE_URL, siteDescription } from "@/lib/site-config";
@@ -13,6 +13,15 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
+// Editorial serif for exported cards and display type.
+const newsreader = Newsreader({
+  variable: "--font-newsreader",
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+});
+
+export const viewport: Viewport = { themeColor: "#f4f2ec", colorScheme: "light" };
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -30,9 +39,11 @@ export const metadata: Metadata = {
     description: siteDescription,
     type: "website",
     siteName: "MarkdownPic",
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Markdown in. A picture worth sharing out." }],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
+    images: ["/og.png"],
     title: "Markdown to Image | MarkdownPic",
     description: siteDescription,
   },
@@ -44,7 +55,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${newsreader.variable}`}>
       <body>{children}</body>
     </html>
   );

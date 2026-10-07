@@ -1,19 +1,29 @@
 "use client";
 
-import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useDeferredValue, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import Link from "next/link";
 import { CaptureCard } from "./capture-card";
 import { Modal } from "./modal";
 import { useProject } from "./use-project";
-import { defaultDesign, effectiveDesign, MAX_IMAGE_BYTES, MAX_IMAGE_PIXELS, MAX_PAGES, MAX_TEXT_LENGTH, newPage, newProject, presetFor, slugify, type ImageFormat, type Project } from "@/lib/studio-model";
+import { defaultDesign, effectiveDesign, MAX_IMAGE_BYTES, MAX_IMAGE_PIXELS, MAX_PAGES, MAX_TEXT_LENGTH, newPage, newProject, presetFor, slugify, themes, type ImageFormat, type Project } from "@/lib/studio-model";
 import { displayMarkdown, documentTitle, localAssetIds, pagesFromMarkdown, serializePages, splitMarkdownPages } from "@/lib/markdown-document";
 import { loadLocalImage, saveLocalImage } from "@/lib/local-image-store";
 import { deleteProject, listProjects, loadProject } from "@/lib/project-store";
-import { templates } from "@/lib/templates";
+import { templateDesign, templates } from "@/lib/templates";
 import { inspectCard, type CaptureIssue } from "@/lib/capture-checks";
 import type { ExportResult } from "@/lib/capture-engine";
 import { StylePanel } from "./style-panel";
+import { AdSlot } from "./ad-slot";
+import { BrandMark, Icon } from "./icons";
+import { MarkdownEditor } from "./markdown-editor";
 import { ResultPanel } from "./result-panel";
+
+const FORMATTING = [
+  ["bold", "Bold", "bold text", "**", "**"], ["italic", "Italic", "italic text", "*", "*"],
+  ["heading", "Insert heading", "Heading", "\n## ", "\n"], ["list", "Insert list", "List item", "\n- ", "\n"],
+  ["quote", "Insert quote", "A line worth remembering", "\n> ", "\n"], ["code", "Insert code", "code", "`", "`"],
+  ["link", "Insert link", "link text", "[", "](https://)"],
+] as const;
 
 type Panel = "styles" | "templates" | "projects" | "export" | "result" | null;
 type Task = { type: "export" | "layout" | "file"; message: string; cancellable?: boolean };
@@ -32,6 +42,20 @@ async function cleanInlineImages(source: string, signal?: AbortSignal) {
     result = result.replace(match[0], "asset:" + id);
   }
   return result;
+}
+
+/** Scales a fixed-width card to fill its fluid container. */
+function FitPreview({ width, children }: { width: number; children: ReactNode }) {
+  const frame = useRef<HTMLSpanElement>(null);
+  const [scale, setScale] = useState(.45);
+  useLayoutEffect(() => {
+    const element = frame.current;
+    if (!element) return;
+    const observer = new ResizeObserver(() => setScale(element.clientWidth / width));
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [width]);
+  return <span ref={frame} className="template-sample" aria-hidden="true"><span style={{ transform: "scale(" + scale + ")" }}>{children}</span></span>;
 }
 
 export default function Workbench() {
@@ -78,7 +102,8 @@ export default function Workbench() {
   const design = useMemo(() => ({ ...project.design, ...(project.mode === "carousel" ? page.design : {}) }), [project.design, project.mode, page.design]);
   const preset = presetFor(design);
   const oversize = source.length > MAX_TEXT_LENGTH;
-  const fitZoom = Math.min(1, Math.max(.15, (stageSize.width - 48) / metrics.width), preset.height ? Math.max(.15, (stageSize.height - 48) / metrics.height) : 1);
+  // stageSize is the stage's content box (padding excluded), so the card fits without scrollbars.
+  const fitZoom = Math.min(1, Math.max(.15, (stageSize.width - 2) / metrics.width), preset.height ? Math.max(.15, (stageSize.height - 2) / metrics.height) : 1);
   const scale = zoom === "fit" ? fitZoom : zoom;
   const disabled = !doc.ready || Boolean(task);
   // A mobile editor hides the preview with display:none, so its measured box is 0.
@@ -153,7 +178,9 @@ export default function Workbench() {
         const issue = inspectCard(article);
         const height = Math.ceil(parseFloat(getComputedStyle(article).height) || article.offsetHeight);
         setMetrics(previous => previous.width === article.offsetWidth && previous.height === height && previous.issue?.code === issue?.code && previous.issue?.message === issue?.message ? previous : { width: article.offsetWidth, height, issue });
-        setStageSize(previous => previous.width === viewport.clientWidth && previous.height === viewport.clientHeight ? previous : { width: viewport.clientWidth, height: viewport.clientHeight });
+        const box = getComputedStyle(viewport);
+        const innerWidth = viewport.clientWidth - parseFloat(box.paddingLeft) - parseFloat(box.paddingRight), innerHeight = viewport.clientHeight - parseFloat(box.paddingTop) - parseFloat(box.paddingBottom);
+        setStageSize(previous => previous.width === innerWidth && previous.height === innerHeight ? previous : { width: innerWidth, height: innerHeight });
       });
     };
     const resize = new ResizeObserver(measure);
@@ -275,6 +302,33 @@ export default function Workbench() {
     } finally { surface.dispose(); }
   });
 
+  const openTemplate = useCallback((id: string) => {
+    const template = templates.find(item => item.id === id);
+    if (!template) return;
+    void run("file", "Opening template…", async () => {
+      const next = newProject("", template.name, templateDesign(defaultDesign, template));
+      next.pages = pagesFromMarkdown(template.markdown); next.mode = next.pages.length > 1 ? "carousel" : "single";
+      await openProject(next);
+    });
+  // openProject reads the latest project through doc; it is recreated every render.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [run, doc]);
+
+  // Gallery links on the page (#use-<template>) open that template here.
+  useEffect(() => {
+    if (!doc.ready) return;
+    const handle = () => {
+      const id = /^#use-([\w-]+)$/.exec(location.hash)?.[1];
+      if (!id) return;
+      history.replaceState(null, "", location.pathname + location.search);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      openTemplate(id);
+    };
+    handle();
+    window.addEventListener("hashchange", handle);
+    return () => window.removeEventListener("hashchange", handle);
+  }, [doc.ready, openTemplate]);
+
   const startExport = useCallback(() => void run("export", "Preparing your image…", async signal => {
     const { exportProject, downloadBlob } = await import("@/lib/capture-engine");
     const output = await exportProject(structuredClone(project), { ...assetUrls }, { format, pageIds: exportScope === "page" && project.mode === "carousel" ? [project.pages[index].id] : undefined, signal, onProgress: message => setTask({ type: "export", message }) });
@@ -316,9 +370,11 @@ export default function Workbench() {
 
   return <main className="studio" aria-label="Markdown to image studio">
     <header className="app-header">
-      <Link className="wordmark" href="/" aria-label="MarkdownPic home"><span className="brand-icon" aria-hidden="true">M↗P</span><span>MarkdownPic</span></Link>
+      <Link className="wordmark" href="/" aria-label="MarkdownPic home"><BrandMark size={30} /><span>Markdown<em>Pic</em></span></Link>
+      <span className="header-divider" aria-hidden="true" />
       <input className="project-name" aria-label="Project name" value={project.name} maxLength={120} disabled={disabled} onChange={event => apply(current => ({ ...current, name: event.target.value }))} />
-      <nav className="header-actions" aria-label="Projects and help"><button disabled={disabled} onClick={() => void run("file", "Creating a project…", () => openProject(newProject()))}>New</button><button ref={projectsButton} disabled={disabled} onClick={showProjects}>My projects</button><a href="/help">Help</a></nav>
+      <span className={"save-pill " + doc.saveState} role="status" title={doc.saveState === "saved" ? "Saved in this browser" : undefined}><i aria-hidden="true" />{doc.saveState === "saved" ? "Saved" : doc.saveState === "saving" ? "Saving…" : doc.saveState === "loading" ? "Restoring…" : "Not saved"}</span>
+      <nav className="header-actions" aria-label="Projects and help"><button className="ghost-button" disabled={disabled} onClick={() => void run("file", "Creating a project…", () => openProject(newProject()))}><Icon name="plus" /><span>New</span></button><button className="ghost-button" ref={projectsButton} disabled={disabled} onClick={showProjects}><Icon name="folder" /><span>My projects</span></button><a className="ghost-button" href="/help"><Icon name="help" /><span>Help</span></a></nav>
     </header>
     <div className="mobile-tabs" role="tablist" aria-label="Workspace view" onKeyDown={event => {
       if (["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) {
@@ -329,23 +385,27 @@ export default function Workbench() {
     }}><button role="tab" tabIndex={mobileView === "edit" ? 0 : -1} aria-selected={mobileView === "edit"} aria-controls="editor-pane" onClick={() => setMobileView("edit")}>Edit</button><button role="tab" tabIndex={mobileView === "preview" ? 0 : -1} aria-selected={mobileView === "preview"} aria-controls="preview-pane" onClick={() => setMobileView("preview")}>Preview</button></div>
     {notice && <div className="notice" role="status"><span>{notice}</span><button aria-label="Dismiss message" onClick={() => setNotice("")}>×</button></div>}
     {doc.saveError && <div className="notice notice-error" role="alert"><span>{doc.saveError}</span><button onClick={() => void doc.saveCopy().catch(error => setNotice(errorText(error)))}>Save a copy</button><button onClick={backup}>Back up</button>{doc.saveState === "error" && <button onClick={() => void doc.flush().catch(() => {})}>Retry save</button>}</div>}
+    <div className="studio-body">
     <div ref={grid} className={"workbench mobile-" + mobileView} style={{ "--editor-share": split + "%" } as CSSProperties}>
       <section id="editor-pane" className="editor-pane" aria-label="Markdown editor">
-        <div className="pane-heading"><h1>Markdown</h1><div className="inline-actions"><button disabled={disabled} onClick={() => fileInput.current?.click()}>Open file</button><button disabled={disabled} onClick={() => setPanel("templates")}>Templates</button></div></div>
+        <div className="pane-heading"><h1><span className="pane-index" aria-hidden="true">01</span>Markdown</h1><div className="inline-actions"><button className="ghost-button" disabled={disabled} onClick={() => fileInput.current?.click()}><Icon name="file" /><span>Open file</span></button><button className="ghost-button" disabled={disabled} onClick={() => setPanel("templates")}><Icon name="grid" /><span>Templates</span></button></div></div>
         <div className="editor-toolbar" aria-label="Formatting">
-          <button disabled={disabled} title="Bold" aria-label="Bold" onClick={() => insertText("bold text", "**", "**")}><b>B</b></button><button disabled={disabled} title="Italic" aria-label="Italic" onClick={() => insertText("italic text", "*", "*")}><i>I</i></button><button disabled={disabled} title="Heading" aria-label="Insert heading" onClick={() => insertText("Heading", "\n## ", "\n")}>H₂</button><button disabled={disabled} title="List" aria-label="Insert list" onClick={() => insertText("List item", "\n- ", "\n")}>☷</button><span className="toolbar-divider" /><button disabled={disabled || !doc.canUndo} aria-label="Undo" title="Undo" onClick={doc.undo}>↶</button><button disabled={disabled || !doc.canRedo} aria-label="Redo" title="Redo" onClick={doc.redo}>↷</button>
-          <label className="editor-font-label">Text size<select aria-label="Editor text size" value={editorSize} onChange={event => setEditorSize(Number(event.target.value))}>{[16,17,18,20,22].map(size => <option key={size} value={size}>{size}px</option>)}</select></label>
+          {FORMATTING.map(([icon, label, text, prefix, suffix]) => <button key={icon} className="tool-button" disabled={disabled} title={label} aria-label={label} onClick={() => insertText(text, prefix, suffix)}><Icon name={icon} /></button>)}
+          <button className="tool-button" disabled={disabled} title="Add image" aria-label="Add image" onClick={() => imageInput.current?.click()}><Icon name="image" /></button>
+          <span className="toolbar-divider" />
+          <button className="tool-button" disabled={disabled || !doc.canUndo} aria-label="Undo" title="Undo (Ctrl/⌘ Z)" onClick={doc.undo}><Icon name="undo" /></button><button className="tool-button" disabled={disabled || !doc.canRedo} aria-label="Redo" title="Redo (Ctrl/⌘ Shift Z)" onClick={doc.redo}><Icon name="redo" /></button>
+          <label className="editor-font-label"><span>Text</span><select aria-label="Editor text size" value={editorSize} onChange={event => setEditorSize(Number(event.target.value))}>{[14,15,16,17,18,20,22].map(size => <option key={size} value={size}>{size}px</option>)}</select></label>
         </div>
         <div className={"editor-body " + (dragging ? "is-dragging" : "")} onDragOver={event => { if (event.dataTransfer.types.includes("Files")) { event.preventDefault(); setDragging(true); } }} onDragLeave={() => setDragging(false)} onDrop={event => { if (event.dataTransfer.files.length) { event.preventDefault(); setDragging(false); handleFiles(Array.from(event.dataTransfer.files)); } }}>
-          <textarea ref={editor} aria-label={project.mode === "carousel" ? "Markdown for page " + (index + 1) : "Markdown source"} spellCheck={false} value={editorSource} disabled={disabled} style={{ fontSize: editorSize + "px" }} placeholder={"# Start with your words\n\nPaste Markdown, open a file, or try a template."} onChange={event => changeSource(event.target.value)} onPaste={event => { const files = Array.from(event.clipboardData.files); if (files.length) { event.preventDefault(); handleFiles(files); } }} />
-          {dragging && <div className="drop-hint">Drop Markdown, a project, or images here</div>}
+          <MarkdownEditor textareaRef={editor} label={project.mode === "carousel" ? "Markdown for page " + (index + 1) : "Markdown source"} value={editorSource} disabled={disabled} fontSize={editorSize} placeholder={"# Start with your words\n\nPaste Markdown, open a file, or try a template."} onChange={value => changeSource(value)} onPaste={event => { const files = Array.from(event.clipboardData.files); if (files.length) { event.preventDefault(); handleFiles(files); } }} />
+          {dragging && <div className="drop-hint"><Icon name="download" size={28} /><span>Drop Markdown, a project, or images</span></div>}
         </div>
-        <div className="editor-bottom"><button disabled={disabled} onClick={() => imageInput.current?.click()}>＋ Add image</button><span className={"save-state " + doc.saveState}>{doc.saveState === "saved" ? "Saved in this browser" : doc.saveState === "saving" ? "Saving…" : doc.saveState === "loading" ? "Restoring draft…" : "Backup recommended"}</span><span className="character-count">{editorSource.length.toLocaleString()} characters</span></div>
+        <div className="editor-bottom"><span className="editor-hint">Drop or paste images · <kbd>{"<!-- page -->"}</kbd> starts a new page</span><span className="character-count">{editorSource.length.toLocaleString()} characters</span></div>
       </section>
       <div className="pane-resizer" role="separator" tabIndex={0} aria-label="Resize editor and preview" aria-orientation="vertical" aria-valuemin={30} aria-valuemax={70} aria-valuenow={Math.round(split)} onDoubleClick={() => setSplit(50)} onKeyDown={event => { if (event.key === "ArrowLeft" || event.key === "ArrowRight") { event.preventDefault(); setSplit(value => Math.max(30, Math.min(70, value + (event.key === "ArrowRight" ? 2 : -2)))); } }} onPointerDown={event => event.currentTarget.setPointerCapture(event.pointerId)} onPointerMove={event => { if (event.currentTarget.hasPointerCapture(event.pointerId) && grid.current) { const rect = grid.current.getBoundingClientRect(); setSplit(Math.max(30, Math.min(70, (event.clientX - rect.left) / rect.width * 100))); } }} onPointerUp={event => event.currentTarget.releasePointerCapture(event.pointerId)} />
       <section id="preview-pane" className="preview-pane" aria-label="Image preview">
-        <div className="pane-heading"><h2>Preview</h2><span className="output-dimensions">{outputWidth} × {outputHeight ?? "auto"} px</span><button className="style-button" disabled={disabled} onClick={() => setPanel("styles")}>Customize</button></div>
-        <div className="preview-toolbar"><div className="segmented" aria-label="Output mode"><button disabled={disabled} aria-pressed={project.mode === "single"} onClick={() => apply(current => ({ ...current, mode: "single" }))}>Single image</button><button disabled={disabled} aria-pressed={project.mode === "carousel"} onClick={() => apply(current => ({ ...current, mode: "carousel" }))}>Pages{project.pages.length > 1 ? " · " + project.pages.length : ""}</button></div><button disabled={disabled || oversize} onClick={autoSplit}>Auto split</button></div>
+        <div className="pane-heading"><h2><span className="pane-index" aria-hidden="true">02</span>Preview</h2><span className="output-dimensions">{outputWidth} × {outputHeight ?? "auto"}</span><button className="style-button" disabled={disabled} onClick={() => setPanel("styles")}><Icon name="sliders" /><span>Customize</span></button></div>
+        <div className="preview-toolbar"><div className="segmented" aria-label="Output mode"><button disabled={disabled} aria-pressed={project.mode === "single"} onClick={() => apply(current => ({ ...current, mode: "single" }))}>Single image</button><button disabled={disabled} aria-pressed={project.mode === "carousel"} onClick={() => apply(current => ({ ...current, mode: "carousel" }))}>Pages{project.pages.length > 1 ? " · " + project.pages.length : ""}</button></div><div className="quick-themes" role="group" aria-label="Quick theme">{themes.map(theme => <button key={theme.id} className="theme-dot" title={theme.label} aria-label={"Theme: " + theme.label} aria-pressed={design.theme === theme.id} disabled={disabled} style={{ background: theme.background, color: theme.color }} onClick={() => apply(current => current.mode === "carousel" && current.pages[index] && Object.keys(current.pages[index].design).includes("theme") ? { ...current, pages: current.pages.map((item, i) => i === index ? { ...item, design: { ...item.design, theme: theme.id } } : item) } : { ...current, design: { ...current.design, theme: theme.id } })} />)}</div><button className="text-button" disabled={disabled || oversize} onClick={autoSplit}><Icon name="split" /><span>Auto split</span></button></div>
         <div className="preview-stage" ref={stage} aria-busy={previewSource !== deferredPreview}>
           {oversize ? <div className="empty-message">This draft exceeds 120,000 characters. Its source has been preserved. Remove some content or save the Markdown and split it into smaller projects.</div> :
             <div className="canvas-placement" style={{ width: metrics.width * scale, height: metrics.height * scale }}><div style={{ transform: "scale(" + scale + ")", transformOrigin: "top left" }}>
@@ -355,21 +415,23 @@ export default function Workbench() {
         <div className="preview-bottom"><span>{project.mode === "carousel" ? "Page " + (index + 1) + " of " + project.pages.length : preset.label}{project.mode === "carousel" && Object.keys(page.design).length ? " · Custom style" : ""}</span><div className="zoom-control"><button aria-pressed={zoom === "fit"} onClick={() => setZoom("fit")}>Fit</button><button aria-pressed={zoom === 1} onClick={() => setZoom(1)}>100%</button><span>{Math.round(scale * 100)}%</span></div></div>
       </section>
     </div>
+    <AdSlot slot="rail" media="(min-width: 1360px)" className="ad-rail" fallback={<div className="rail-tips"><strong>Shortcuts</strong><p><kbd>Ctrl/⌘</kbd> <kbd>Enter</kbd> export</p><p><kbd>Ctrl/⌘</kbd> <kbd>Z</kbd> undo</p><p>Paste an image straight into the editor.</p></div>} />
+    </div>
     {project.mode === "carousel" && <div className="page-strip"><div className="page-thumbnails" aria-label="Pages">{project.pages.map((item, i) => {
       const itemDesign = effectiveDesign(project, item), itemPreset = presetFor(itemDesign);
       return <button className="page-thumbnail" key={item.id} aria-label={"Page " + (i + 1) + ": " + (documentTitle(item.markdown) || "Empty page")} aria-current={i === index ? "page" : undefined} disabled={disabled} onClick={() => setActiveIndex(i)}><div className="miniature" aria-hidden="true"><div style={{ transform: "scale(" + 54 / itemPreset.width + ")", transformOrigin: "top left" }}><CaptureCard markdown={item.markdown.slice(0, 5000)} design={itemDesign} assetUrls={assetUrls} /></div></div><span>{i + 1}</span></button>;
-    })}<button className="add-page" disabled={disabled || project.pages.length >= MAX_PAGES} onClick={addPage}>＋<span>Add page</span></button></div><div className="page-actions"><button disabled={disabled || index === 0} aria-label="Move page earlier" onClick={() => movePage(-1)}>←</button><button disabled={disabled || index === project.pages.length - 1} aria-label="Move page later" onClick={() => movePage(1)}>→</button><button disabled={disabled || project.pages.length === 1} onClick={() => { apply(current => ({ ...current, pages: current.pages.filter((_, i) => i !== index) })); setActiveIndex(Math.max(0, index - 1)); setNotice("Page removed. Undo can restore it."); }}>Remove page</button></div></div>}
+    })}<button className="add-page" disabled={disabled || project.pages.length >= MAX_PAGES} onClick={addPage}><Icon name="plus" /><span>Add page</span></button></div><div className="page-actions"><button disabled={disabled || index === 0} aria-label="Move page earlier" title="Move earlier" onClick={() => movePage(-1)}><Icon name="left" /></button><button disabled={disabled || index === project.pages.length - 1} aria-label="Move page later" title="Move later" onClick={() => movePage(1)}><Icon name="right" /></button><button disabled={disabled || project.pages.length === 1} onClick={() => { apply(current => ({ ...current, pages: current.pages.filter((_, i) => i !== index) })); setActiveIndex(Math.max(0, index - 1)); setNotice("Page removed. Undo can restore it."); }}><Icon name="trash" /><span>Remove page</span></button></div></div>}
     <footer className="export-bar">
-      <div className={"export-status " + (metrics.issue ? "has-issue" : "")} role="status"><span className="status-dot" /><span>{task?.message ?? (oversize ? "Shorten this draft to preview and export" : metrics.issue?.message ?? (metrics.width === 0 ? "Checked before export" : project.mode === "carousel" ? "Current page fits" : "Ready to export"))}</span>{metrics.issue?.code === "height" && !task && <button onClick={() => apply(current => ({ ...current, design: { ...current.design, presetId: "long" }, pages: current.pages.map((item, i) => i === index ? { ...item, design: { ...item.design, presetId: "long" } } : item) }))}>Auto height</button>}</div>
+      <div className={"export-status " + (metrics.issue ? "has-issue" : "") + (task ? " is-busy" : "")} role="status"><span className="status-dot" /><span>{task?.message ?? (oversize ? "Shorten this draft to preview and export" : metrics.issue?.message ?? (metrics.width === 0 ? "Checked before export" : project.mode === "carousel" ? "Current page fits" : "Ready to export"))}</span>{metrics.issue?.code === "height" && !task && <button onClick={() => apply(current => ({ ...current, design: { ...current.design, presetId: "long" }, pages: current.pages.map((item, i) => i === index ? { ...item, design: { ...item.design, presetId: "long" } } : item) }))}>Auto height</button>}</div>
       <div className="export-actions">
-        {task ? <button disabled={!canCancel} onClick={() => controller.current?.abort()}>{canCancel ? "Cancel" : "Working…"}</button> : <button disabled={!doc.ready} onClick={() => setPanel("export")}>Options</button>}
-        <button ref={exportButton} className="primary-button" disabled={disabled || oversize} onClick={startExport}>{task?.type === "export" ? "Exporting…" : project.mode === "carousel" && exportScope === "all" && project.pages.length > 1 ? "Export " + project.pages.length + " images" : "Export " + format.toUpperCase()}<span aria-hidden="true">↗</span></button>
+        {task ? <button disabled={!canCancel} onClick={() => controller.current?.abort()}>{canCancel ? "Cancel" : "Working…"}</button> : <button disabled={!doc.ready} onClick={() => setPanel("export")}><Icon name="sliders" /><span>Options</span></button>}
+        <button ref={exportButton} className="primary-button" disabled={disabled || oversize} onClick={startExport}>{task?.type === "export" ? "Exporting…" : project.mode === "carousel" && exportScope === "all" && project.pages.length > 1 ? "Export " + project.pages.length + " images" : "Export " + format.toUpperCase()}<Icon name="arrow" className="export-arrow" /></button>
       </div>
     </footer>
     <input ref={fileInput} type="file" aria-label="Open a Markdown or project file" className="sr-only" tabIndex={-1} accept=".md,.markdown,.mdown,.txt,.mdpic,.zip,image/png,image/jpeg,image/webp" onChange={event => { handleFiles(Array.from(event.target.files ?? [])); event.target.value = ""; }} />
     <input ref={imageInput} type="file" aria-label="Choose local images" className="sr-only" tabIndex={-1} multiple accept="image/png,image/jpeg,image/webp" onChange={event => { handleFiles(Array.from(event.target.files ?? [])); event.target.value = ""; }} />
     {panel === "styles" && <StylePanel project={project} index={index} apply={apply} onClose={() => setPanel(null)} onDone={() => { setPanel(null); setMobileView("preview"); }} />}
-    {panel === "templates" && <Modal title="Start from a template" wide onClose={() => setPanel(null)}><p className="modal-intro">Each template opens as a new project. Your current work is saved.</p><div className="template-grid">{templates.map(template => <button className="template-option" disabled={disabled} key={template.id} onClick={() => void run("file", "Opening template…", async () => { const next = newProject("", template.name, { ...defaultDesign, theme: template.theme, presetId: template.size }); next.pages = pagesFromMarkdown(template.markdown); next.mode = next.pages.length > 1 ? "carousel" : "single"; await openProject(next); })}><span className={"template-sample sample-" + template.theme} aria-hidden="true">{template.id === "code" ? "</>" : template.id === "math" ? "∑" : template.id === "diagram" ? "A → B" : "Aa"}</span><strong>{template.name}</strong><span>{template.description}</span></button>)}</div></Modal>}
+    {panel === "templates" && <Modal title="Start from a template" wide onClose={() => setPanel(null)}><p className="modal-intro">Each template opens as a new project. Your current work is saved.</p><div className="template-grid">{templates.map(template => { const sampleDesign = templateDesign(defaultDesign, template); const width = presetFor(sampleDesign).width; return <button className="template-option" disabled={disabled} key={template.id} onClick={() => openTemplate(template.id)}><FitPreview width={width}><CaptureCard markdown={splitMarkdownPages(template.markdown)[0].markdown} design={sampleDesign} assetUrls={{}} /></FitPreview><strong>{template.name}</strong><span>{template.description}</span></button>; })}</div></Modal>}
     {panel === "projects" && <Modal title="My projects" onClose={() => setPanel(null)} returnFocusRef={projectsButton}><p className="modal-intro">Saved only in this browser. Back up important work before clearing browser data or switching devices.</p><div className="project-list">{projects.map(item => <div className="project-row" key={item.id}><button disabled={disabled} onClick={() => void run("file", "Opening project…", async () => { const latest = await loadProject(item.id); if (!latest) throw new Error("This project was removed in another tab."); await openProject(latest, doc.saveState !== "conflict"); })}><strong>{item.name || "Untitled"}{item.id === project.id ? " · Current" : ""}</strong><span>{item.pages.length} {item.pages.length === 1 ? "page" : "pages"} · {new Date(item.updatedAt).toLocaleDateString("en")}</span></button><button className="icon-button" aria-label={"Delete " + (item.name || "Untitled")} onClick={() => setDeleteTarget(item)}>×</button></div>)}</div><div className="modal-footer wrap"><button disabled={disabled} onClick={backup}>Back up current project</button><button disabled={disabled} onClick={() => fileInput.current?.click()}>Restore .mdpic</button><button disabled={disabled} onClick={() => void saveMarkdown().catch(error => setNotice(errorText(error)))}>Save Markdown</button></div></Modal>}
     {deleteTarget && <Modal title="Delete this local project?" onClose={() => setDeleteTarget(null)}><p className="modal-intro">“{deleteTarget.name || "Untitled"}” will be removed from this browser. Download a backup first if you might need it again.</p><div className="modal-footer"><button onClick={() => setDeleteTarget(null)}>Keep project</button><button className="danger-button" disabled={disabled} onClick={() => void run("file", "Removing project…", async () => { if (deleteTarget.id === project.id) await openProject(newProject()); await deleteProject(deleteTarget.id); setProjects(await listProjects()); setDeleteTarget(null); setPanel("projects"); })}>Delete project</button></div></Modal>}
     {panel === "export" && <Modal title="Export options" onClose={() => setPanel(null)}><div className="settings-content">

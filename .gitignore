@@ -44,3 +44,6 @@ next-env.d.ts
 *.tsbuildinfo
 dev.stdout.log
 dev.stderr.log
+
+# local tooling
+/.claude/

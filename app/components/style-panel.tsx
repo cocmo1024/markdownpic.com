@@ -1,0 +1,36 @@
+"use client";
+import { useEffect, useState } from "react";
+import { Modal } from "./modal";
+import { accents, canvasPresets, effectiveDesign, newId, themes, type BrandProfile, type Design, type Project } from "@/lib/studio-model";
+import { listProfiles, saveProfile } from "@/lib/project-store";
+
+export function StylePanel({ project, index, apply, onClose, onDone }: { project: Project; index: number; apply: (updater: (current: Project) => Project) => void; onClose: () => void; onDone: () => void }) {
+  const [scope, setScope] = useState<"all" | "page">("all");
+  const [profiles, setProfiles] = useState<BrandProfile[]>([]);
+  const [name, setName] = useState("");
+  const [message, setMessage] = useState("");
+  const page = project.pages[index];
+  const design = scope === "all" ? project.design : effectiveDesign(project, page);
+  const setDesign = (patch: Partial<Design>) => apply(current => scope === "page" && current.mode === "carousel"
+    ? { ...current, pages: current.pages.map((item, i) => i === index ? { ...item, design: { ...item.design, ...patch } } : item) }
+    : { ...current, design: { ...current.design, ...patch } });
+  useEffect(() => { void listProfiles().then(setProfiles).catch(() => setMessage("Saved styles are unavailable. You can still customize this project.")); }, []);
+  return <Modal title="Customize your image" onClose={onClose}><div className="settings-content">
+    {project.mode === "carousel" && <label>Apply changes to<select value={scope} onChange={event => setScope(event.target.value as typeof scope)}><option value="all">Project default</option><option value="page">This page only</option></select><small>Page overrides stay in place when the default changes.</small></label>}
+    {scope === "page" && Object.keys(page.design).length > 0 && <button onClick={() => apply(current => ({ ...current, pages: current.pages.map((item, i) => i === index ? { ...item, design: {} } : item) }))}>Reset this page to project style</button>}
+    <label>Canvas size<select value={design.presetId} onChange={event => setDesign({ presetId: event.target.value })}>{canvasPresets.map(item => <option key={item.id} value={item.id}>{item.label} · {item.width * design.renderScale} × {item.height ? item.height * design.renderScale : "auto"} px</option>)}</select></label>
+    <fieldset><legend>Theme</legend><div className="theme-grid">{themes.map(theme => <button key={theme.id} aria-pressed={design.theme === theme.id} onClick={() => setDesign({ theme: theme.id })}><span style={{ background: theme.background, color: theme.color }}>Aa</span>{theme.label}</button>)}</div></fieldset>
+    <fieldset><legend>Accent</legend><div className="accent-row">{accents.map(accent => <button key={accent} className="accent-swatch" style={{ background: accent }} aria-label={"Accent " + accent} aria-pressed={design.accent === accent} onClick={() => setDesign({ accent })} />)}<label className="custom-color">Custom<input type="color" aria-label="Custom accent color" value={design.accent} onChange={event => setDesign({ accent: event.target.value })} /></label></div><small>Text contrast is adjusted automatically for readability.</small></fieldset>
+    <label>Image typeface<select value={design.fontFamily} onChange={event => setDesign({ fontFamily: event.target.value as Design["fontFamily"] })}><option value="sans">Sans · clear and modern</option><option value="serif">Serif · editorial</option><option value="mono">Mono · technical</option></select></label>
+    {([{ key: "fontScale", name: "Image text size", min: 76, max: 140, unit: "%" }, { key: "padding", name: "Canvas padding", min: 20, max: 80, unit: "px" }, { key: "imageMaxHeight", name: "Maximum image height", min: 100, max: 1200, unit: "px" }] as const).map(setting => <label key={setting.key} className="range-label" htmlFor={"design-" + setting.key}><span>{setting.name}<output>{design[setting.key]}{setting.unit}</output></span><input id={"design-" + setting.key} aria-label={setting.name} type="range" min={setting.min} max={setting.max} value={design[setting.key]} onChange={event => setDesign({ [setting.key]: Number(event.target.value) })} /></label>)}
+    <details><summary>Signature & finishing touches</summary><div className="detail-content">
+      <label className="check-label"><input type="checkbox" checked={design.showHeader} onChange={event => setDesign({ showHeader: event.target.checked })} />Editorial header</label>
+      <label className="check-label"><input type="checkbox" checked={design.showBrand} onChange={event => setDesign({ showBrand: event.target.checked })} />Made with MarkdownPic</label>
+      <label>Your signature<input maxLength={80} placeholder="@yourname" value={design.watermarkText} onChange={event => setDesign({ watermarkText: event.target.value })} /></label>
+      <label>Signature position<select value={design.watermarkPosition} onChange={event => setDesign({ watermarkPosition: event.target.value as Design["watermarkPosition"] })}><option value="bottom-right">Bottom right</option><option value="top-right">Top right</option><option value="center">Center</option></select></label>
+      <label className="range-label" htmlFor="design-watermarkOpacity"><span>Signature opacity<output>{design.watermarkOpacity}%</output></span><input id="design-watermarkOpacity" aria-label="Signature opacity" type="range" min={6} max={36} value={design.watermarkOpacity} onChange={event => setDesign({ watermarkOpacity: Number(event.target.value) })} /></label>
+    </div></details>
+    <details><summary>Reusable styles</summary><div className="detail-content"><label>Style name<input value={name} maxLength={60} placeholder="My brand" onChange={event => setName(event.target.value)} /></label><button disabled={!name.trim()} onClick={() => void saveProfile({ id: newId("style"), name: name.trim(), design: { ...design } }).then(async () => { setProfiles(await listProfiles()); setName(""); setMessage("Style saved in this browser."); }).catch(error => setMessage(error instanceof Error ? error.message : "Style could not be saved."))}>Save style in this browser</button>{profiles.map(profile => <button key={profile.id} onClick={() => setDesign(profile.design)}>{profile.name}</button>)}</div></details>
+    {message && <p role="status">{message}</p>}
+  </div><div className="modal-footer"><button className="primary-button" onClick={onDone}>Done</button></div></Modal>;
+}

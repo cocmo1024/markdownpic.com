@@ -1,41 +1,57 @@
 {
-  "name": "markdownpic.com",
-  "type": "module",
+  "name": "markdownpic",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22.13.0"
+  },
   "scripts": {
-    "dev": "astro dev",
-    "start": "astro dev",
-    "build": "astro check && astro build",
-    "audit:search-quality": "node ./scripts/search-quality-audit.mjs",
-    "preview": "astro preview",
-    "astro": "astro",
-    "indexnow": "node ./scripts/indexnow-submit.mjs",
-    "cf:dev": "npm run build && wrangler dev",
-    "cf:deploy": "wrangler deploy",
-    "cf:typegen": "wrangler types"
+    "dev": "vinext dev",
+    "build": "vinext build",
+    "start": "vinext start",
+    "test": "npm run test:unit && npm run build && npm run test:render",
+    "test:unit": "node --test tests/model.test.mjs tests/storage.test.mjs tests/async-workflows.test.mjs",
+    "test:render": "node --test tests/rendered-html.test.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next"
   },
   "dependencies": {
-    "@astrojs/sitemap": "^3.7.2",
-    "@astrojs/starlight": "^0.38.2",
-    "@astrojs/starlight-tailwind": "^5.0.0",
-    "@fontsource/ibm-plex-mono": "^5.2.7",
-    "@fontsource/ibm-plex-sans": "^5.2.8",
-    "@fontsource/manrope": "^5.2.8",
-    "@fontsource/source-serif-4": "^5.2.9",
-    "@fontsource/space-grotesk": "^5.2.10",
-    "@fontsource/space-mono": "^5.2.9",
-    "@tailwindcss/vite": "^4.1.18",
-    "astro": "^6.1.3",
-    "sharp": "^0.34.2",
-    "tailwindcss": "^4.1.18"
+    "fflate": "^0.8.3",
+    "html-to-image": "1.11.13",
+    "katex": "0.18.2",
+    "mermaid": "11.17.2",
+    "next": "16.3.8",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-markdown": "10.1.0",
+    "rehype-katex": "7.0.1",
+    "remark-gfm": "4.0.1",
+    "remark-math": "6.0.0",
+    "remark-parse": "11.0.0",
+    "unified": "11.0.5"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.8",
-    "typescript": "^5.9.3",
-    "wrangler": "^4.80.0"
+    "@cloudflare/vite-plugin": "^1.54.8",
+    "@cloudflare/workers-types": "^5.20260801.1",
+    "@tailwindcss/postcss": "4.2.1",
+    "@types/node": "22.19.19",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.0.2",
+    "@vitejs/plugin-rsc": "^0.5.34",
+    "eslint": "9.39.4",
+    "eslint-config-next": "16.3.8",
+    "fake-indexeddb": "6.2.5",
+    "react-server-dom-webpack": "^19.2.8",
+    "tailwindcss": "4.2.1",
+    "typescript": "5.9.3",
+    "vinext": "1.0.0-beta.9",
+    "vite": "^8.2.0",
+    "wrangler": "^4.131.1"
   },
   "overrides": {
-    "vite": "^7.3.1"
-  }
+    "postcss": "8.5.25",
+    "sharp": "0.35.5"
+  },
+  "type": "module"
 }

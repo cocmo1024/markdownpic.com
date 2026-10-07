@@ -1,0 +1,384 @@
+"use client";
+
+import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import Link from "next/link";
+import { CaptureCard } from "./capture-card";
+import { Modal } from "./modal";
+import { useProject } from "./use-project";
+import { defaultDesign, effectiveDesign, MAX_IMAGE_BYTES, MAX_IMAGE_PIXELS, MAX_PAGES, MAX_TEXT_LENGTH, newPage, newProject, presetFor, slugify, type ImageFormat, type Project } from "@/lib/studio-model";
+import { displayMarkdown, documentTitle, localAssetIds, pagesFromMarkdown, serializePages, splitMarkdownPages } from "@/lib/markdown-document";
+import { loadLocalImage, saveLocalImage } from "@/lib/local-image-store";
+import { deleteProject, listProjects, loadProject } from "@/lib/project-store";
+import { templates } from "@/lib/templates";
+import { inspectCard, type CaptureIssue } from "@/lib/capture-checks";
+import type { ExportResult } from "@/lib/capture-engine";
+import { StylePanel } from "./style-panel";
+import { ResultPanel } from "./result-panel";
+
+type Panel = "styles" | "templates" | "projects" | "export" | "result" | null;
+type Task = { type: "export" | "layout" | "file"; message: string; cancellable?: boolean };
+const errorText = (error: unknown) => error instanceof Error ? error.message : "Something went wrong. Your original work is unchanged.";
+
+async function cleanInlineImages(source: string, signal?: AbortSignal) {
+  let result = source;
+  for (const match of source.matchAll(/data:image\/(?:png|jpeg|webp);base64,[a-z0-9+/=\r\n]+/gi)) {
+    if (signal?.aborted) throw new DOMException("Import cancelled. Your original is unchanged.", "AbortError");
+    if (match[0].length > MAX_IMAGE_BYTES * 1.4) throw new Error("An embedded image is too large. Use an image under 12 MB.");
+    const blob = await (await fetch(match[0])).blob();
+    const { imageDimensions } = await import("@/lib/capture-engine");
+    const dimensions = await imageDimensions(blob, signal);
+    if (dimensions.width * dimensions.height > MAX_IMAGE_PIXELS) throw new Error("An embedded image is over 32 megapixels. Resize it before importing.");
+    const id = await saveLocalImage(blob, "Imported image");
+    result = result.replace(match[0], "asset:" + id);
+  }
+  return result;
+}
+
+export default function Workbench() {
+  const doc = useProject();
+  const { project, apply } = doc;
+  const { undo, redo } = doc;
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [mobileView, setMobileView] = useState<"edit" | "preview">("edit");
+  const [panel, setPanel] = useState<Panel>(null);
+  const [task, setTask] = useState<Task | null>(null);
+  const [notice, setNotice] = useState("");
+  const [assetUrls, setAssetUrls] = useState<Record<string, string>>({});
+  const [metrics, setMetrics] = useState<{ width: number; height: number; issue: CaptureIssue | null }>({ width: 600, height: 620, issue: null });
+  const [stageSize, setStageSize] = useState({ width: 720, height: 660 });
+  const [zoom, setZoom] = useState<"fit" | number>("fit");
+  const [editorSize, setEditorSize] = useState(17);
+  const [split, setSplit] = useState(50);
+  const [format, setFormat] = useState<ImageFormat>("png");
+  const [exportScope, setExportScope] = useState<"all" | "page">("all");
+  const [result, setResult] = useState<ExportResult | null>(null);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [deleteTarget, setDeleteTarget] = useState<Project | null>(null);
+  const [dragging, setDragging] = useState(false);
+  const editor = useRef<HTMLTextAreaElement>(null);
+  const projectsButton = useRef<HTMLButtonElement>(null);
+  const exportButton = useRef<HTMLButtonElement>(null);
+  const card = useRef<HTMLElement>(null);
+  const stage = useRef<HTMLDivElement>(null);
+  const grid = useRef<HTMLDivElement>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
+  const imageInput = useRef<HTMLInputElement>(null);
+  const urlMap = useRef(new Map<string, string>());
+  const attemptedImages = useRef(new Set<string>());
+  const assetProjectId = useRef("");
+  const migrated = useRef(new Set<string>());
+  const taskLock = useRef(false);
+  const controller = useRef<AbortController | null>(null);
+  const index = Math.min(activeIndex, project.pages.length - 1);
+  const page = project.pages[index];
+  const source = useMemo(() => serializePages(project.pages), [project.pages]);
+  const previewSource = project.mode === "single" ? displayMarkdown(project.pages) : page.markdown;
+  const deferredPreview = useDeferredValue(previewSource);
+  const editorSource = project.mode === "single" ? source : page.markdown;
+  const design = useMemo(() => ({ ...project.design, ...(project.mode === "carousel" ? page.design : {}) }), [project.design, project.mode, page.design]);
+  const preset = presetFor(design);
+  const oversize = source.length > MAX_TEXT_LENGTH;
+  const fitZoom = Math.min(1, Math.max(.15, (stageSize.width - 48) / metrics.width), preset.height ? Math.max(.15, (stageSize.height - 48) / metrics.height) : 1);
+  const scale = zoom === "fit" ? fitZoom : zoom;
+  const disabled = !doc.ready || Boolean(task);
+  // A mobile editor hides the preview with display:none, so its measured box is 0.
+  // Fixed output sizes come from the design; auto height is unknown until measured.
+  const outputWidth = preset.width * design.renderScale;
+  const outputHeight = preset.height ? preset.height * design.renderScale
+    : metrics.width === preset.width && metrics.height > 0 ? metrics.height * design.renderScale : null;
+  const canCancel = task && (task.cancellable ?? task.type !== "file");
+
+  const run = useCallback(async (type: Task["type"], message: string, action: (signal: AbortSignal) => Promise<void>, cancellable = type !== "file") => {
+    if (taskLock.current) return;
+    taskLock.current = true;
+    const abort = new AbortController();
+    controller.current = abort;
+    setTask({ type, message, cancellable }); setNotice("");
+    try { await action(abort.signal); }
+    catch (error) { setPanel(null); setDeleteTarget(null); setNotice(errorText(error)); }
+    finally { taskLock.current = false; controller.current = null; setTask(null); }
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    const ids = localAssetIds(source);
+    const urls = urlMap.current, attempted = attemptedImages.current;
+    if (assetProjectId.current !== project.id) {
+      for (const url of urls.values()) URL.revokeObjectURL(url);
+      urls.clear(); attempted.clear(); assetProjectId.current = project.id;
+    }
+    void (async () => {
+      for (const id of ids) {
+        if (urlMap.current.has(id) || attemptedImages.current.has(id)) continue;
+        attemptedImages.current.add(id);
+        try {
+          const blob = await loadLocalImage(id);
+          if (blob && !cancelled) urlMap.current.set(id, URL.createObjectURL(blob));
+        } catch (error) { if (!cancelled) setNotice(errorText(error)); }
+      }
+      if (!cancelled) setAssetUrls(previous => {
+        const next = Object.fromEntries(urlMap.current);
+        return Object.keys(next).length === Object.keys(previous).length && Object.entries(next).every(([id, url]) => previous[id] === url) ? previous : next;
+      });
+    })();
+    return () => { cancelled = true; for (const id of ids) if (!urls.has(id)) attempted.delete(id); };
+  }, [source, project.id]);
+
+  useEffect(() => () => {
+    controller.current?.abort();
+    for (const url of urlMap.current.values()) URL.revokeObjectURL(url);
+    urlMap.current.clear();
+    // Reconnected effects (including Fast Refresh) must reload revoked local URLs.
+    attemptedImages.current.clear();
+  }, []);
+
+  useEffect(() => {
+    if (!doc.ready || !/data:image\/(?:png|jpeg|webp);base64,/i.test(source) || migrated.current.has(project.id)) return;
+    migrated.current.add(project.id);
+    const originalId = project.id;
+    void run("file", "Restoring embedded images…", async signal => {
+      const cleaned = await cleanInlineImages(source, signal);
+      apply(current => current.id === originalId ? { ...current, pages: splitMarkdownPages(cleaned).map((part, i) => ({ ...(current.pages[i] ?? newPage()), markdown: part.markdown })) } : current);
+      setNotice("Embedded images restored. The original legacy draft was preserved.");
+    });
+  }, [doc.ready, source, project.id, apply, run]);
+
+  useEffect(() => {
+    const article = card.current, viewport = stage.current;
+    if (!article || !viewport) return;
+    let frame = 0;
+    const measure = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const issue = inspectCard(article);
+        const height = Math.ceil(parseFloat(getComputedStyle(article).height) || article.offsetHeight);
+        setMetrics(previous => previous.width === article.offsetWidth && previous.height === height && previous.issue?.code === issue?.code && previous.issue?.message === issue?.message ? previous : { width: article.offsetWidth, height, issue });
+        setStageSize(previous => previous.width === viewport.clientWidth && previous.height === viewport.clientHeight ? previous : { width: viewport.clientWidth, height: viewport.clientHeight });
+      });
+    };
+    const resize = new ResizeObserver(measure);
+    resize.observe(article); resize.observe(viewport);
+    const mutation = new MutationObserver(measure);
+    mutation.observe(article, { childList: true, subtree: true, attributes: true });
+    article.addEventListener("load", measure, true);
+    article.addEventListener("error", measure, true);
+    measure();
+    return () => { cancelAnimationFrame(frame); resize.disconnect(); mutation.disconnect(); article.removeEventListener("load", measure, true); article.removeEventListener("error", measure, true); };
+  }, [deferredPreview, design.presetId, design.fontScale, design.padding, assetUrls, mobileView, oversize]);
+
+  const changeSource = (value: string, typing = true) => {
+    const parts = splitMarkdownPages(value);
+    const newLength = source.length - editorSource.length + value.length;
+    if (newLength > MAX_TEXT_LENGTH && newLength >= source.length) { setNotice("Keep a project under 120,000 characters. Open large content as separate projects."); return; }
+    if (parts.length + (project.mode === "carousel" ? project.pages.length - 1 : 0) > MAX_PAGES) { setNotice("A project supports up to " + MAX_PAGES + " pages."); return; }
+    apply(current => {
+      const pages = parts.map((part, i) => ({ ...(current.pages[(current.mode === "carousel" ? index : 0) + i] ?? newPage()), markdown: part.markdown }));
+      if (current.mode === "carousel") {
+        for (let i = 1; i < pages.length; i++) pages[i] = newPage(pages[i].markdown);
+        return { ...current, pages: [...current.pages.slice(0, index), ...pages, ...current.pages.slice(index + 1)] };
+      }
+      return { ...current, pages };
+    }, typing);
+  };
+
+  const insertText = (text: string, prefix = "", suffix = "") => {
+    const area = editor.current;
+    const start = area?.selectionStart ?? editorSource.length;
+    const end = area?.selectionEnd ?? start;
+    const selected = editorSource.slice(start, end);
+    const addition = prefix + ((prefix || suffix) ? selected || text : text) + suffix;
+    changeSource(editorSource.slice(0, start) + addition + editorSource.slice(end), false);
+    requestAnimationFrame(() => { area?.focus(); area?.setSelectionRange(start + prefix.length, start + addition.length - suffix.length); });
+  };
+
+  const openProject = async (next: Project, preserve = true, signal?: AbortSignal) => {
+    if (preserve) await doc.flush();
+    if (signal?.aborted) throw new DOMException("Import cancelled. Your original project is unchanged.", "AbortError");
+    await doc.open(next, false);
+    setActiveIndex(0); setPanel(null); setMobileView("edit"); setZoom("fit"); setNotice("");
+  };
+
+  const handleFiles = (files: File[]) => void run("file", "Opening your file…", async signal => {
+    if (!files.length) return;
+    if (files.every(file => file.type.startsWith("image/"))) {
+      if (files.length > 12) throw new Error("Insert up to 12 images at a time.");
+      const { imageDimensions } = await import("@/lib/capture-engine");
+      const insertions: string[] = [];
+      for (const file of files) {
+        if (!["image/png", "image/jpeg", "image/webp"].includes(file.type)) throw new Error("Use a PNG, JPEG, or WebP image. Convert HEIC or SVG before inserting.");
+        if (file.size > MAX_IMAGE_BYTES) throw new Error(file.name + " is larger than 12 MB.");
+        const dimensions = await imageDimensions(file, signal);
+        if (dimensions.width * dimensions.height > MAX_IMAGE_PIXELS) throw new Error(file.name + " is too large. Use an image under 32 megapixels.");
+        if (signal.aborted) throw new Error("Import cancelled.");
+        const id = await saveLocalImage(file, file.name);
+        urlMap.current.set(id, URL.createObjectURL(file));
+        insertions.push("![" + file.name.replace(/[\[\]\r\n]/g, "").replace(/\.[^.]+$/, "") + "](asset:" + id + ")");
+      }
+      setAssetUrls(Object.fromEntries(urlMap.current));
+      insertText("\n\n" + insertions.join("\n\n") + "\n\n");
+      setNotice("Images inserted with short, readable references.");
+      return;
+    }
+    if (files.length !== 1) throw new Error("Open one Markdown or project file at a time.");
+    const file = files[0];
+    if (/\.(mdpic|zip)$/i.test(file.name)) {
+      const { importProjectBundle } = await import("@/lib/project-bundle");
+      const { imageDimensions } = await import("@/lib/capture-engine");
+      const restored = await importProjectBundle(file, async blob => {
+        const dimensions = await imageDimensions(blob, signal);
+        if (dimensions.width * dimensions.height > MAX_IMAGE_PIXELS) throw new Error("This project has an image over 32 megapixels. Resize it before importing.");
+        if (signal.aborted) throw new Error("Import cancelled. Your original project is unchanged.");
+      });
+      if (signal.aborted) throw new Error("Import cancelled. Your original project is unchanged.");
+      await openProject(restored, true, signal);
+      setNotice("Project restored as a new copy. The original remains in My projects.");
+    } else {
+      if (!/\.(md|markdown|mdown|txt)$/i.test(file.name)) throw new Error("Choose a Markdown (.md), text (.txt), or MarkdownPic (.mdpic) file.");
+      if (file.size > 2_000_000) throw new Error("This text file is too large. Split it into smaller files first.");
+      const markdown = await cleanInlineImages(await file.text(), signal);
+      if (signal.aborted) throw new Error("Import cancelled. Your original project is unchanged.");
+      if (markdown.length > MAX_TEXT_LENGTH) throw new Error("This document exceeds 120,000 characters. Split it into smaller files first.");
+      const pages = pagesFromMarkdown(markdown);
+      if (pages.length > MAX_PAGES) throw new Error("This document has more than " + MAX_PAGES + " pages.");
+      const next = newProject("", file.name.replace(/\.[^.]+$/, ""));
+      next.pages = pages; next.mode = pages.length > 1 ? "carousel" : "single";
+      if (pages.length > 1) next.design.presetId = "portrait";
+      await openProject(next, true, signal);
+      setNotice("Opened as a new project. Your previous project is saved.");
+    }
+  }, true);
+
+  const backup = () => void run("file", "Preparing your portable project…", async () => {
+    const { exportProjectBundle } = await import("@/lib/project-bundle");
+    const { downloadBlob } = await import("@/lib/capture-engine");
+    const output = await exportProjectBundle(structuredClone(project));
+    downloadBlob(output.blob, output.name);
+    setNotice("Backup downloaded with Markdown, page styles, and local images.");
+  });
+
+  const autoSplit = () => void run("layout", "Measuring your content…", async signal => {
+    const { captureSurface } = await import("@/lib/capture-engine");
+    const { paginateMarkdown } = await import("@/lib/pagination");
+    const snapshot = structuredClone(project);
+    const layout = { ...snapshot.design, presetId: snapshot.design.presetId === "long" ? "portrait" : snapshot.design.presetId };
+    const surface = captureSurface();
+    let attempts = 0;
+    try {
+      const parts = await paginateMarkdown(displayMarkdown(snapshot.pages), async markdown => {
+        setTask({ type: "layout", message: "Finding page breaks · " + (++attempts) + " checks" });
+        const element = await surface.render({ markdown, design: layout, assetUrls: { ...assetUrls } }, signal);
+        const issue = inspectCard(element);
+        return { fits: !issue, reason: issue?.code === "width" ? "width" : issue?.code === "height" ? "height" : "asset", message: issue?.message };
+      }, signal);
+      apply(current => ({ ...current, mode: "carousel", design: layout, pages: parts.map(markdown => newPage(markdown)) }));
+      setActiveIndex(0); setMobileView("preview"); setNotice("Created " + parts.length + " measured pages. Undo restores the original layout.");
+    } finally { surface.dispose(); }
+  });
+
+  const startExport = useCallback(() => void run("export", "Preparing your image…", async signal => {
+    const { exportProject, downloadBlob } = await import("@/lib/capture-engine");
+    const output = await exportProject(structuredClone(project), { ...assetUrls }, { format, pageIds: exportScope === "page" && project.mode === "carousel" ? [project.pages[index].id] : undefined, signal, onProgress: message => setTask({ type: "export", message }) });
+    setResult(output); setPanel("result");
+    downloadBlob(output.download, output.name);
+  }), [run, project, format, assetUrls, exportScope, index]);
+
+  useEffect(() => {
+    const shortcuts = (event: KeyboardEvent) => {
+      if (!(event.ctrlKey || event.metaKey) || panel) return;
+      if (event.key === "Enter") { event.preventDefault(); if (!disabled) startExport(); }
+      if (event.key.toLowerCase() === "z") { event.preventDefault(); if (!disabled) { if (event.shiftKey) redo(); else undo(); } }
+    };
+    window.addEventListener("keydown", shortcuts);
+    return () => window.removeEventListener("keydown", shortcuts);
+  }, [panel, disabled, startExport, undo, redo]);
+
+  const showProjects = () => void run("file", "Loading projects…", async () => {
+    if (doc.saveState !== "conflict") await doc.flush();
+    setProjects(await listProjects()); setPanel("projects");
+  });
+  const addPage = () => {
+    if (project.pages.length >= MAX_PAGES) { setNotice("You can have up to " + MAX_PAGES + " pages."); return; }
+    apply(current => ({ ...current, mode: "carousel", design: { ...current.design, presetId: current.design.presetId === "long" ? "portrait" : current.design.presetId }, pages: [...current.pages.slice(0, index + 1), newPage(), ...current.pages.slice(index + 1)] }));
+    setActiveIndex(index + 1); setMobileView("edit");
+    requestAnimationFrame(() => editor.current?.focus());
+  };
+  const movePage = (direction: number) => {
+    const destination = index + direction;
+    if (destination < 0 || destination >= project.pages.length) return;
+    apply(current => { const pages = [...current.pages]; [pages[index], pages[destination]] = [pages[destination], pages[index]]; return { ...current, pages }; });
+    setActiveIndex(destination);
+  };
+  const saveMarkdown = async () => {
+    const { downloadBlob } = await import("@/lib/capture-engine");
+    downloadBlob(new Blob([source], { type: "text/markdown;charset=utf-8" }), slugify(project.name) + ".md");
+    setNotice(localAssetIds(source).length ? "Markdown saved. Use Back up project to include local images." : "Markdown saved.");
+  };
+
+  return <main className="studio" aria-label="Markdown to image studio">
+    <header className="app-header">
+      <Link className="wordmark" href="/" aria-label="MarkdownPic home"><span className="brand-icon" aria-hidden="true">M↗P</span><span>MarkdownPic</span></Link>
+      <input className="project-name" aria-label="Project name" value={project.name} maxLength={120} disabled={disabled} onChange={event => apply(current => ({ ...current, name: event.target.value }))} />
+      <nav className="header-actions" aria-label="Projects and help"><button disabled={disabled} onClick={() => void run("file", "Creating a project…", () => openProject(newProject()))}>New</button><button ref={projectsButton} disabled={disabled} onClick={showProjects}>My projects</button><a href="/help">Help</a></nav>
+    </header>
+    <div className="mobile-tabs" role="tablist" aria-label="Workspace view" onKeyDown={event => {
+      if (["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) {
+        event.preventDefault();
+        const next = event.key === "Home" ? "edit" : event.key === "End" ? "preview" : mobileView === "edit" ? "preview" : "edit";
+        setMobileView(next); event.currentTarget.querySelectorAll<HTMLButtonElement>("[role=tab]")[next === "edit" ? 0 : 1]?.focus();
+      }
+    }}><button role="tab" tabIndex={mobileView === "edit" ? 0 : -1} aria-selected={mobileView === "edit"} aria-controls="editor-pane" onClick={() => setMobileView("edit")}>Edit</button><button role="tab" tabIndex={mobileView === "preview" ? 0 : -1} aria-selected={mobileView === "preview"} aria-controls="preview-pane" onClick={() => setMobileView("preview")}>Preview</button></div>
+    {notice && <div className="notice" role="status"><span>{notice}</span><button aria-label="Dismiss message" onClick={() => setNotice("")}>×</button></div>}
+    {doc.saveError && <div className="notice notice-error" role="alert"><span>{doc.saveError}</span><button onClick={() => void doc.saveCopy().catch(error => setNotice(errorText(error)))}>Save a copy</button><button onClick={backup}>Back up</button>{doc.saveState === "error" && <button onClick={() => void doc.flush().catch(() => {})}>Retry save</button>}</div>}
+    <div ref={grid} className={"workbench mobile-" + mobileView} style={{ "--editor-share": split + "%" } as CSSProperties}>
+      <section id="editor-pane" className="editor-pane" aria-label="Markdown editor">
+        <div className="pane-heading"><h1>Markdown</h1><div className="inline-actions"><button disabled={disabled} onClick={() => fileInput.current?.click()}>Open file</button><button disabled={disabled} onClick={() => setPanel("templates")}>Templates</button></div></div>
+        <div className="editor-toolbar" aria-label="Formatting">
+          <button disabled={disabled} title="Bold" aria-label="Bold" onClick={() => insertText("bold text", "**", "**")}><b>B</b></button><button disabled={disabled} title="Italic" aria-label="Italic" onClick={() => insertText("italic text", "*", "*")}><i>I</i></button><button disabled={disabled} title="Heading" aria-label="Insert heading" onClick={() => insertText("Heading", "\n## ", "\n")}>H₂</button><button disabled={disabled} title="List" aria-label="Insert list" onClick={() => insertText("List item", "\n- ", "\n")}>☷</button><span className="toolbar-divider" /><button disabled={disabled || !doc.canUndo} aria-label="Undo" title="Undo" onClick={doc.undo}>↶</button><button disabled={disabled || !doc.canRedo} aria-label="Redo" title="Redo" onClick={doc.redo}>↷</button>
+          <label className="editor-font-label">Text size<select aria-label="Editor text size" value={editorSize} onChange={event => setEditorSize(Number(event.target.value))}>{[16,17,18,20,22].map(size => <option key={size} value={size}>{size}px</option>)}</select></label>
+        </div>
+        <div className={"editor-body " + (dragging ? "is-dragging" : "")} onDragOver={event => { if (event.dataTransfer.types.includes("Files")) { event.preventDefault(); setDragging(true); } }} onDragLeave={() => setDragging(false)} onDrop={event => { if (event.dataTransfer.files.length) { event.preventDefault(); setDragging(false); handleFiles(Array.from(event.dataTransfer.files)); } }}>
+          <textarea ref={editor} aria-label={project.mode === "carousel" ? "Markdown for page " + (index + 1) : "Markdown source"} spellCheck={false} value={editorSource} disabled={disabled} style={{ fontSize: editorSize + "px" }} placeholder={"# Start with your words\n\nPaste Markdown, open a file, or try a template."} onChange={event => changeSource(event.target.value)} onPaste={event => { const files = Array.from(event.clipboardData.files); if (files.length) { event.preventDefault(); handleFiles(files); } }} />
+          {dragging && <div className="drop-hint">Drop Markdown, a project, or images here</div>}
+        </div>
+        <div className="editor-bottom"><button disabled={disabled} onClick={() => imageInput.current?.click()}>＋ Add image</button><span className={"save-state " + doc.saveState}>{doc.saveState === "saved" ? "Saved in this browser" : doc.saveState === "saving" ? "Saving…" : doc.saveState === "loading" ? "Restoring draft…" : "Backup recommended"}</span><span className="character-count">{editorSource.length.toLocaleString()} characters</span></div>
+      </section>
+      <div className="pane-resizer" role="separator" tabIndex={0} aria-label="Resize editor and preview" aria-orientation="vertical" aria-valuemin={30} aria-valuemax={70} aria-valuenow={Math.round(split)} onDoubleClick={() => setSplit(50)} onKeyDown={event => { if (event.key === "ArrowLeft" || event.key === "ArrowRight") { event.preventDefault(); setSplit(value => Math.max(30, Math.min(70, value + (event.key === "ArrowRight" ? 2 : -2)))); } }} onPointerDown={event => event.currentTarget.setPointerCapture(event.pointerId)} onPointerMove={event => { if (event.currentTarget.hasPointerCapture(event.pointerId) && grid.current) { const rect = grid.current.getBoundingClientRect(); setSplit(Math.max(30, Math.min(70, (event.clientX - rect.left) / rect.width * 100))); } }} onPointerUp={event => event.currentTarget.releasePointerCapture(event.pointerId)} />
+      <section id="preview-pane" className="preview-pane" aria-label="Image preview">
+        <div className="pane-heading"><h2>Preview</h2><span className="output-dimensions">{outputWidth} × {outputHeight ?? "auto"} px</span><button className="style-button" disabled={disabled} onClick={() => setPanel("styles")}>Customize</button></div>
+        <div className="preview-toolbar"><div className="segmented" aria-label="Output mode"><button disabled={disabled} aria-pressed={project.mode === "single"} onClick={() => apply(current => ({ ...current, mode: "single" }))}>Single image</button><button disabled={disabled} aria-pressed={project.mode === "carousel"} onClick={() => apply(current => ({ ...current, mode: "carousel" }))}>Pages{project.pages.length > 1 ? " · " + project.pages.length : ""}</button></div><button disabled={disabled || oversize} onClick={autoSplit}>Auto split</button></div>
+        <div className="preview-stage" ref={stage} aria-busy={previewSource !== deferredPreview}>
+          {oversize ? <div className="empty-message">This draft exceeds 120,000 characters. Its source has been preserved. Remove some content or save the Markdown and split it into smaller projects.</div> :
+            <div className="canvas-placement" style={{ width: metrics.width * scale, height: metrics.height * scale }}><div style={{ transform: "scale(" + scale + ")", transformOrigin: "top left" }}>
+              <CaptureCard markdown={deferredPreview} design={design} assetUrls={assetUrls} label={project.mode === "carousel" ? (index + 1) + " / " + project.pages.length : preset.label} articleRef={card} />
+            </div></div>}
+        </div>
+        <div className="preview-bottom"><span>{project.mode === "carousel" ? "Page " + (index + 1) + " of " + project.pages.length : preset.label}{project.mode === "carousel" && Object.keys(page.design).length ? " · Custom style" : ""}</span><div className="zoom-control"><button aria-pressed={zoom === "fit"} onClick={() => setZoom("fit")}>Fit</button><button aria-pressed={zoom === 1} onClick={() => setZoom(1)}>100%</button><span>{Math.round(scale * 100)}%</span></div></div>
+      </section>
+    </div>
+    {project.mode === "carousel" && <div className="page-strip"><div className="page-thumbnails" aria-label="Pages">{project.pages.map((item, i) => {
+      const itemDesign = effectiveDesign(project, item), itemPreset = presetFor(itemDesign);
+      return <button className="page-thumbnail" key={item.id} aria-label={"Page " + (i + 1) + ": " + (documentTitle(item.markdown) || "Empty page")} aria-current={i === index ? "page" : undefined} disabled={disabled} onClick={() => setActiveIndex(i)}><div className="miniature" aria-hidden="true"><div style={{ transform: "scale(" + 54 / itemPreset.width + ")", transformOrigin: "top left" }}><CaptureCard markdown={item.markdown.slice(0, 5000)} design={itemDesign} assetUrls={assetUrls} /></div></div><span>{i + 1}</span></button>;
+    })}<button className="add-page" disabled={disabled || project.pages.length >= MAX_PAGES} onClick={addPage}>＋<span>Add page</span></button></div><div className="page-actions"><button disabled={disabled || index === 0} aria-label="Move page earlier" onClick={() => movePage(-1)}>←</button><button disabled={disabled || index === project.pages.length - 1} aria-label="Move page later" onClick={() => movePage(1)}>→</button><button disabled={disabled || project.pages.length === 1} onClick={() => { apply(current => ({ ...current, pages: current.pages.filter((_, i) => i !== index) })); setActiveIndex(Math.max(0, index - 1)); setNotice("Page removed. Undo can restore it."); }}>Remove page</button></div></div>}
+    <footer className="export-bar">
+      <div className={"export-status " + (metrics.issue ? "has-issue" : "")} role="status"><span className="status-dot" /><span>{task?.message ?? (oversize ? "Shorten this draft to preview and export" : metrics.issue?.message ?? (metrics.width === 0 ? "Checked before export" : project.mode === "carousel" ? "Current page fits" : "Ready to export"))}</span>{metrics.issue?.code === "height" && !task && <button onClick={() => apply(current => ({ ...current, design: { ...current.design, presetId: "long" }, pages: current.pages.map((item, i) => i === index ? { ...item, design: { ...item.design, presetId: "long" } } : item) }))}>Auto height</button>}</div>
+      <div className="export-actions">
+        {task ? <button disabled={!canCancel} onClick={() => controller.current?.abort()}>{canCancel ? "Cancel" : "Working…"}</button> : <button disabled={!doc.ready} onClick={() => setPanel("export")}>Options</button>}
+        <button ref={exportButton} className="primary-button" disabled={disabled || oversize} onClick={startExport}>{task?.type === "export" ? "Exporting…" : project.mode === "carousel" && exportScope === "all" && project.pages.length > 1 ? "Export " + project.pages.length + " images" : "Export " + format.toUpperCase()}<span aria-hidden="true">↗</span></button>
+      </div>
+    </footer>
+    <input ref={fileInput} type="file" aria-label="Open a Markdown or project file" className="sr-only" tabIndex={-1} accept=".md,.markdown,.mdown,.txt,.mdpic,.zip,image/png,image/jpeg,image/webp" onChange={event => { handleFiles(Array.from(event.target.files ?? [])); event.target.value = ""; }} />
+    <input ref={imageInput} type="file" aria-label="Choose local images" className="sr-only" tabIndex={-1} multiple accept="image/png,image/jpeg,image/webp" onChange={event => { handleFiles(Array.from(event.target.files ?? [])); event.target.value = ""; }} />
+    {panel === "styles" && <StylePanel project={project} index={index} apply={apply} onClose={() => setPanel(null)} onDone={() => { setPanel(null); setMobileView("preview"); }} />}
+    {panel === "templates" && <Modal title="Start from a template" wide onClose={() => setPanel(null)}><p className="modal-intro">Each template opens as a new project. Your current work is saved.</p><div className="template-grid">{templates.map(template => <button className="template-option" disabled={disabled} key={template.id} onClick={() => void run("file", "Opening template…", async () => { const next = newProject("", template.name, { ...defaultDesign, theme: template.theme, presetId: template.size }); next.pages = pagesFromMarkdown(template.markdown); next.mode = next.pages.length > 1 ? "carousel" : "single"; await openProject(next); })}><span className={"template-sample sample-" + template.theme} aria-hidden="true">{template.id === "code" ? "</>" : template.id === "math" ? "∑" : template.id === "diagram" ? "A → B" : "Aa"}</span><strong>{template.name}</strong><span>{template.description}</span></button>)}</div></Modal>}
+    {panel === "projects" && <Modal title="My projects" onClose={() => setPanel(null)} returnFocusRef={projectsButton}><p className="modal-intro">Saved only in this browser. Back up important work before clearing browser data or switching devices.</p><div className="project-list">{projects.map(item => <div className="project-row" key={item.id}><button disabled={disabled} onClick={() => void run("file", "Opening project…", async () => { const latest = await loadProject(item.id); if (!latest) throw new Error("This project was removed in another tab."); await openProject(latest, doc.saveState !== "conflict"); })}><strong>{item.name || "Untitled"}{item.id === project.id ? " · Current" : ""}</strong><span>{item.pages.length} {item.pages.length === 1 ? "page" : "pages"} · {new Date(item.updatedAt).toLocaleDateString("en")}</span></button><button className="icon-button" aria-label={"Delete " + (item.name || "Untitled")} onClick={() => setDeleteTarget(item)}>×</button></div>)}</div><div className="modal-footer wrap"><button disabled={disabled} onClick={backup}>Back up current project</button><button disabled={disabled} onClick={() => fileInput.current?.click()}>Restore .mdpic</button><button disabled={disabled} onClick={() => void saveMarkdown().catch(error => setNotice(errorText(error)))}>Save Markdown</button></div></Modal>}
+    {deleteTarget && <Modal title="Delete this local project?" onClose={() => setDeleteTarget(null)}><p className="modal-intro">“{deleteTarget.name || "Untitled"}” will be removed from this browser. Download a backup first if you might need it again.</p><div className="modal-footer"><button onClick={() => setDeleteTarget(null)}>Keep project</button><button className="danger-button" disabled={disabled} onClick={() => void run("file", "Removing project…", async () => { if (deleteTarget.id === project.id) await openProject(newProject()); await deleteProject(deleteTarget.id); setProjects(await listProjects()); setDeleteTarget(null); setPanel("projects"); })}>Delete project</button></div></Modal>}
+    {panel === "export" && <Modal title="Export options" onClose={() => setPanel(null)}><div className="settings-content">
+      <label>File name<input maxLength={120} value={project.name} onChange={event => apply(current => ({ ...current, name: event.target.value }))} /></label>
+      <label>Image format<select value={format} onChange={event => setFormat(event.target.value as ImageFormat)}><option value="png">PNG · sharp text, clipboard support</option><option value="jpeg">JPEG · smaller photo-heavy images</option><option value="webp">WebP · compact modern format</option></select></label>
+      <label>Resolution<select value={project.design.renderScale} onChange={event => { const renderScale = Number(event.target.value) as 1 | 2 | 3; apply(current => ({ ...current, design: { ...current.design, renderScale }, pages: current.pages.map(item => { const overrides = { ...item.design }; delete overrides.renderScale; return { ...item, design: overrides }; }) })); }}><option value={1}>1× · smaller file</option><option value={2}>2× · recommended</option><option value={3}>3× · extra detail</option></select><small>{outputHeight === null ? `Width: ${outputWidth} pixels. Auto height is measured when you preview or export.` : `Current image: ${outputWidth} × ${outputHeight} pixels. The preview uses the same layout.`}</small></label>
+      {project.mode === "carousel" && <label>Pages<select value={exportScope} onChange={event => setExportScope(event.target.value as typeof exportScope)}><option value="all">All {project.pages.length} pages · ZIP when multiple</option><option value="page">Current page only · page {index + 1}</option></select></label>}
+      <p className="field-note">Every page is checked before download. If content does not fit, the export stops and tells you which page needs attention.</p>
+    </div><div className="modal-footer"><button onClick={() => setPanel(null)}>Back</button><button className="primary-button" disabled={disabled} onClick={() => { setPanel(null); startExport(); }}>Export {format.toUpperCase()} ↗</button></div></Modal>}
+    {panel === "result" && result && <ResultPanel result={result} onClose={() => setPanel(null)} returnFocusRef={exportButton} />}
+  </main>;
+}

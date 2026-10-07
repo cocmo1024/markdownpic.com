@@ -1,0 +1,12 @@
+import type { Metadata } from "next";
+import { InfoShell } from "../components/info-shell";
+export const metadata: Metadata = { title: "Privacy", description: "How MarkdownPic handles local drafts, images, exports, browser storage, and remote content.", alternates: { canonical: "/privacy" } };
+export default function Privacy() {
+  return <InfoShell><h1>Privacy</h1><p>MarkdownPic is a browser-based Markdown-to-image editor. This page describes the local-first version of the tool.</p>
+    <h2>Your writing and images</h2><p>Markdown, locally inserted images, project styles, and drafts are processed and saved in your browser. The editor does not upload those items to a MarkdownPic account or content-processing service. Image exports and project backups are created on your device.</p>
+    <h2>Browser storage</h2><p>Drafts and inserted images use IndexedDB. A small browser preference identifies the active project. This storage is specific to the browser, device, and site address; local preview and the live site do not share it. It is not an online backup. Clearing site data or using a temporary browsing session can remove your work.</p><p>Use My projects to delete individual drafts. To remove all local drafts, images, styles, and preferences, use your browser’s controls to clear this site’s data. Back up any work you want to keep first.</p>
+    <h2>Requests outside your device</h2><p>Loading the website sends normal connection information, such as your IP address and browser request headers, to its hosting provider. If your Markdown includes a remote image, the browser requests it from that image’s host. That host can receive connection information. Links you choose to open are governed by the destination site’s practices.</p>
+    <h2>Advertising and analytics</h2><p>This version does not include a third-party advertising network, tracking pixel, or analytics script. Sponsorship support is disabled by default. If a clearly labeled sponsor link is enabled in the future, it will not receive your draft content from the editor. Adding analytics, personalized advertising, cloud storage, or accounts requires an updated privacy notice and any applicable consent controls.</p>
+    <h2>Your control</h2><p>You choose what to import, export, copy, or share. Device-level sharing and clipboard access are controlled by your browser and operating system. Avoid opening untrusted project files, and do not treat local browser storage as secure storage for sensitive information.</p>
+  </InfoShell>;
+}

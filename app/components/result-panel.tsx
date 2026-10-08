@@ -76,7 +76,7 @@ export function ResultPanel({ result, onClose, onCopyLink, onSetUpBrand, returnF
     if (!navigator.canShare?.({ files: [file] })) { setMessage("Sharing is unavailable here. Copy or download the image instead."); return; }
     void navigator.share({ files: [file] }).then(() => succeed("share", "Shared.")).catch(error => { if (error?.name !== "AbortError") setMessage("Sharing did not complete. Copy or download the image instead."); });
   };
-  const extension = (result.name.split(".").pop() ?? "png").toUpperCase().replace("JPG", "JPEG");
+  const extension = (result.name.split(".").pop() ?? "png").toUpperCase().replace("JPG", "JPEG").replace("WEBP", "WebP");
   const size = (bytes: number) => bytes >= 1_000_000 ? (bytes / 1_000_000).toFixed(1) + " MB" : Math.ceil(bytes / 1000) + " KB";
 
   return <Modal title="Your image is ready" wide onClose={onClose} returnFocusRef={returnFocusRef}>
@@ -100,8 +100,8 @@ export function ResultPanel({ result, onClose, onCopyLink, onSetUpBrand, returnF
           <h3 id="result-share">Share</h3>
           {shareSheet && <Action primary={shareFirst} icon="share" label="Share…" hint="Messages, AirDrop, mail and other apps" done={done === "share"} onClick={share} />}
           <Action icon="copy" label={done === "image" ? "Copied" : "Copy image"} hint="Paste into chats, documents or posts" done={done === "image"} onClick={copyImage} />
-          {onCopyLink && <Action icon="link" label="Copy editable link" hint="Anyone with it gets their own copy to edit" onClick={() => { onCopyLink(); setDone("link"); }} done={done === "link"} />}
-          <Action icon="doc-text" label={done === "alt" ? "Copied" : "Copy alt text"} hint="Image description for X, LinkedIn, Bluesky" done={done === "alt"} onClick={() => copyText("alt", image.alt, "Alt text copied. Paste it into the image description when you post.")} />
+          {onCopyLink && <Action icon="link" label="Copy editable link" hint="Anyone with it gets an editable copy" onClick={() => { onCopyLink(); setDone("link"); }} done={done === "link"} />}
+          <Action icon="doc-text" label={done === "alt" ? "Copied" : "Copy alt text"} hint="A description for X, LinkedIn, Bluesky" done={done === "alt"} onClick={() => copyText("alt", image.alt, "Alt text copied. Paste it into the image description when you post.")} />
           <Action icon="file" label={done === "markdown" ? "Copied" : "Copy Markdown"} hint="The source text, ready to paste" done={done === "markdown"} onClick={() => copyText("markdown", result.markdown, "Markdown copied.")} />
           {urls[index] && <Action icon="arrow" label="Open in a new tab" hint="View at full size" href={urls[index]} />}
         </section>

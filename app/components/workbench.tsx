@@ -30,6 +30,7 @@ const FORMATTING = [
   ["quote", "Insert quote", "A line worth remembering", "\n> ", "\n", ""], ["code", "Inline code", "code", "`", "`", "Ctrl/⌘ E"],
   ["link", "Insert link", "link text", "[", "](https://)", "Ctrl/⌘ K"],
 ] as const;
+const FORMAT_NAMES = { png: "PNG", jpeg: "JPEG", webp: "WebP" } as const;
 const PREFS_KEY = "markdownpic.ui.v1";
 const STYLE_KEY = "markdownpic.style.v1";
 /** New projects start in the style the person used last: it should feel like their tool. */
@@ -518,6 +519,9 @@ export default function Workbench() {
     const shortcuts = (event: KeyboardEvent) => {
       if (!(event.ctrlKey || event.metaKey) || panel) return;
       const key = event.key.toLowerCase();
+      // Text fields outside the editor (project name, find) keep their own undo history.
+      const target = event.target instanceof HTMLElement ? event.target : null;
+      if ((key === "z" || key === "y") && target?.matches("input, textarea, [contenteditable]") && !target.closest(".md-editor")) return;
       if (event.key === "Enter") { event.preventDefault(); if (!disabled) startExport(); }
       if (key === "z") { event.preventDefault(); if (!disabled) { if (event.shiftKey) redo(); else undo(); } }
       if (key === "y") { event.preventDefault(); if (!disabled) redo(); }
@@ -551,7 +555,7 @@ export default function Workbench() {
   };
 
   const statusMessage = task?.message ?? (oversize ? "Shorten this draft to preview and export." : metrics.issue?.code === "loading" ? "" : metrics.issue?.message ?? "");
-  const exportLabel = task?.type === "export" ? (task.progress !== undefined ? "Exporting " + Math.round(task.progress * 100) + "%" : "Exporting…") : project.mode === "carousel" && exportScope === "all" && project.pages.length > 1 ? "Export " + project.pages.length + " images" : "Export " + format.toUpperCase();
+  const exportLabel = task?.type === "export" ? (task.progress !== undefined ? "Exporting " + Math.round(task.progress * 100) + "%" : "Exporting…") : project.mode === "carousel" && exportScope === "all" && project.pages.length > 1 ? "Export " + project.pages.length + " images" : "Export " + FORMAT_NAMES[format];
   // Long image = one auto-height image; Card = one fixed canvas; Pages = several fixed canvases.
   // Leaving a mode never discards content: pages are joined or kept, and Undo restores the previous layout.
   const setOutput = (output: "long" | "card" | "pages") => apply(current => {
@@ -646,7 +650,7 @@ export default function Workbench() {
     {deleteTarget && <Modal title="Delete this local project?" onClose={() => setDeleteTarget(null)}><p className="modal-intro">“{deleteTarget.name || "Untitled"}” will be removed from this browser. Download a backup first if you might need it again.</p><div className="modal-footer"><button onClick={() => setDeleteTarget(null)}>Keep project</button><button className="danger-button" disabled={disabled} onClick={() => void run("file", "Removing project…", async () => { if (deleteTarget.id === project.id) await openProject(freshProject()); await deleteProject(deleteTarget.id); setProjects(await listProjects()); setDeleteTarget(null); setPanel("projects"); })}>Delete project</button></div></Modal>}
     {panel === "export" && <Modal title="Export options" onClose={() => setPanel(null)}><div className="settings-content">
       <label>File name<input maxLength={120} value={project.name} onChange={event => apply(current => ({ ...current, name: event.target.value }))} /></label>
-      <fieldset><legend>Format</legend><div className="choice-row">{(["png", "jpeg", "webp"] as const).map(item => <button key={item} aria-pressed={format === item} onClick={() => setFormat(item)}><strong>{item.toUpperCase()}</strong><small>{item === "png" ? "Sharp text · copyable" : item === "jpeg" ? "Smaller photos" : "Compact, modern"}</small></button>)}</div></fieldset>
+      <fieldset><legend>Format</legend><div className="choice-row">{(["png", "jpeg", "webp"] as const).map(item => <button key={item} aria-pressed={format === item} onClick={() => setFormat(item)}><strong>{FORMAT_NAMES[item]}</strong><small>{item === "png" ? "Sharp text · copyable" : item === "jpeg" ? "Smaller photos" : "Compact, modern"}</small></button>)}</div></fieldset>
       <fieldset><legend>Resolution</legend><div className="choice-row">{([1, 2, 3] as const).map(renderScale => <button key={renderScale} aria-pressed={project.design.renderScale === renderScale} onClick={() => apply(current => ({ ...current, design: { ...current.design, renderScale }, pages: current.pages.map(item => { const overrides = { ...item.design }; delete overrides.renderScale; return { ...item, design: overrides }; }) }))}><strong>{renderScale}×</strong><small>{preset.width * renderScale} px wide{renderScale === 2 ? " · best" : ""}</small></button>)}</div><small className="size-readout">{outputHeight === null ? "Auto height is measured when you export." : <>{outputWidth.toLocaleString()} × {outputHeight.toLocaleString()} px · {(outputWidth * outputHeight / 1e6).toFixed(1)} MP{outputWidth * outputHeight > 24e6 || Math.max(outputWidth, outputHeight) > 16384 ? <span className="size-warning"> · Large image: needs a desktop browser. Choose 2× or Pages if export fails.</span> : null}</>}</small></fieldset>
       {project.mode === "carousel" && <label>Pages<select value={exportScope} onChange={event => setExportScope(event.target.value as typeof exportScope)}><option value="all">All {project.pages.length} pages · ZIP when multiple</option><option value="page">Current page only · page {index + 1}</option></select></label>}
       <p className="field-note">Every page is checked before download. If content does not fit, the export stops and tells you which page needs attention.</p>

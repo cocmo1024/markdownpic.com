@@ -25,7 +25,7 @@ export const guides: Guide[] = [
       <h2>3. Style it</h2>
       <p>Open <strong>Customize</strong> to choose one of eight themes, an accent color, a sans, serif or mono typeface, text size and padding. Text contrast is adjusted automatically so accent-colored words stay readable on every theme.</p>
       <h2>4. Export</h2>
-      <p>Choose <strong>Export PNG</strong>. The <strong>···</strong> menu next to it sets the format and resolution:</p>
+      <p>Choose <strong>Export PNG</strong> to see the finished file, then <strong>Download</strong> it or copy it. The <strong>···</strong> menu next to Export sets the format and resolution:</p>
       <ul>
         <li><strong>PNG</strong> keeps text perfectly sharp and can be copied to the clipboard.</li>
         <li><strong>JPEG</strong> is smaller for photo-heavy images.</li>
@@ -49,7 +49,7 @@ export const guides: Guide[] = [
       <ol>
         <li>Select <strong>Long image</strong> in the preview toolbar. The canvas is 600 logical pixels wide and grows with your content.</li>
         <li>Open the <strong>···</strong> menu beside Export and choose <strong>3×</strong> for an 1800-pixel-wide file, or 2× for 1200 pixels.</li>
-        <li>Choose <strong>Export PNG</strong>. The preview corner shows the final pixel size before you export.</li>
+        <li>Choose <strong>Export PNG</strong>, check the result, then <strong>Download</strong>. The preview corner shows the final pixel size before you export.</li>
       </ol>
       <h2>How long can it be?</h2>
       <p>Browsers limit how large an image they can draw. MarkdownPic tests the browser you are using before it renders:</p>

@@ -441,11 +441,11 @@ export default function Workbench() {
   // Batch: the current page (or the whole single image) is the template; each row becomes one image.
   const batchTemplate = project.mode === "single" ? displayMarkdown(project.pages) : page.markdown;
   const exportBatch = (markdowns: string[], names: string[]) => void run("export", "Preparing your batch…", async signal => {
-    const { exportProject, downloadBlob } = await import("@/lib/capture-engine");
+    const { exportProject } = await import("@/lib/capture-engine");
     const snapshot: Project = { ...structuredClone(project), mode: "carousel", design: { ...design }, pages: markdowns.map(markdown => newPage(markdown)) };
     const output = await exportProject(snapshot, { ...assetUrls }, { format, brand, signal, batch: { maxPages: 100, names, pixelBudget: 600_000_000 }, onProgress: (message, progress) => setTask({ type: "export", message, progress }) });
+    // Exporting renders and opens the result; downloading is the person’s next choice there.
     setResult(output); setPanel("result");
-    downloadBlob(output.download, output.name);
   });
   const openBatchAsPages = (markdowns: string[]) => void run("file", "Creating pages…", async () => {
     const next = newProject("", (documentTitle(batchTemplate) || "Batch") + " · batch", { ...design });
@@ -455,10 +455,10 @@ export default function Workbench() {
   });
 
   const startExport = useCallback(() => void run("export", "Preparing your image…", async signal => {
-    const { exportProject, downloadBlob } = await import("@/lib/capture-engine");
+    const { exportProject } = await import("@/lib/capture-engine");
     const output = await exportProject(structuredClone(project), { ...assetUrls }, { format, brand, pageIds: exportScope === "page" && project.mode === "carousel" ? [project.pages[index].id] : undefined, signal, onProgress: (message, progress) => setTask({ type: "export", message, progress }) });
+    // Exporting renders and opens the result; downloading is the person’s next choice there.
     setResult(output); setPanel("result");
-    downloadBlob(output.download, output.name);
   }), [run, project, format, assetUrls, exportScope, index, brand]);
 
   // The clipboard write starts inside the click, with the PNG supplied as a promise, so

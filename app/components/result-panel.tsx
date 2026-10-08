@@ -41,14 +41,14 @@ export function ResultPanel({ result, onClose, onCopyLink, onSetUpBrand, returnF
     void withDeadline(navigator.clipboard.writeText(result.markdown), { timeoutMs: 10_000, message: "Clipboard access did not finish." }).then(() => setMessage("Markdown copied.")).catch(() => setMessage("Markdown could not be copied. Use Save Markdown instead."));
   };
   return <Modal title="Your image is ready" wide onClose={onClose} returnFocusRef={returnFocusRef}>
-    <p className="modal-intro">This is the actual exported file. If the download did not start, use Download again or open the image to save it.</p>
+    <p className="modal-intro">This is the exact file that will be saved. Download it, copy it, or take it from More.</p>
     <div className="export-result-preview">{urls[index] && <img src={urls[index]} alt={"Actual exported image, page " + image.page} />}</div>
     <div className="result-meta">{image.width} × {image.height} px · {image.blob.size >= 1_000_000 ? (image.blob.size / 1_000_000).toFixed(1) + " MB" : Math.ceil(image.blob.size / 1000) + " KB"} · {image.name}</div>
     {result.images.length > 1 && <label className="result-page-label">Inspect exported page<select value={index} onChange={event => setIndex(Number(event.target.value))}>{result.images.map((item, i) => <option key={item.name} value={i}>Page {item.page}</option>)}</select></label>}
     {message && <p role="status" className="result-message">{message}</p>}
     {onSetUpBrand && <div className="brand-nudge"><span>Sign every image with your name and avatar, automatically.</span><button onClick={onSetUpBrand}>Set up my brand</button></div>}
     <div className="modal-footer result-actions">
-      <button className="primary-button" onClick={() => downloadBlob(result.download, result.name)}><Icon name="download" />Download again</button>
+      <button className="primary-button" onClick={() => downloadBlob(result.download, result.name)}><Icon name="download" />{result.name.endsWith(".zip") ? "Download ZIP · " + result.images.length + " images" : "Download " + (result.name.split(".").pop() ?? "image").toUpperCase().replace("JPG", "JPEG")}</button>
       <button onClick={copy}><Icon name="copy" />Copy image</button>
       <button title="A plain-text description for X, LinkedIn, Mastodon or Bluesky" onClick={copyAlt}><Icon name="doc-text" />Copy alt text</button>
       {touchShare && <button onClick={share}><Icon name="share" />Share</button>}

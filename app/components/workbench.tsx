@@ -5,7 +5,7 @@ import Link from "next/link";
 import { CaptureCard } from "./capture-card";
 import { Modal } from "./modal";
 import { useProject } from "./use-project";
-import { defaultDesign, effectiveDesign, MAX_IMAGE_BYTES, MAX_IMAGE_PIXELS, MAX_PAGES, MAX_TEXT_LENGTH, newPage, newProject, normalizeDesign, presetFor, slugify, themes, type Design, type ImageFormat, type Project, type ThemeId } from "@/lib/studio-model";
+import { defaultDesign, effectiveDesign, MAX_IMAGE_BYTES, MAX_IMAGE_PIXELS, MAX_PAGES, MAX_TEXT_LENGTH, newPage, newProject, normalizeDesign, presetFor, slugify, themes, type Design, type ImageFormat, type Project, type StudioPage, type ThemeId } from "@/lib/studio-model";
 import { displayMarkdown, documentTitle, localAssetIds, pagesFromMarkdown, serializePages, splitMarkdownPages } from "@/lib/markdown-document";
 import { loadLocalImage, saveLocalImage } from "@/lib/local-image-store";
 import { deleteProject, listProjects, loadProject } from "@/lib/project-store";
@@ -313,22 +313,41 @@ export default function Workbench() {
     setNotice("Backup downloaded with Markdown, page styles, and local images.");
   });
 
-  const autoSplit = () => void run("layout", "Measuring your content…", async signal => {
+  /**
+   * Splits pages that are too long into measured pages that fit the canvas. Manual page breaks are
+   * kept: each existing page is split on its own. With `onlyCurrent`, only the current page is split.
+   */
+  const autoSplit = (onlyCurrent = false) => void run("layout", "Measuring your content…", async signal => {
     const { captureSurface } = await import("@/lib/capture-engine");
     const { paginateMarkdown } = await import("@/lib/pagination");
     const snapshot = structuredClone(project);
-    const layout = { ...snapshot.design, presetId: snapshot.design.presetId === "long" ? "portrait" : snapshot.design.presetId };
+    const fixed = (presetId: string) => presetId === "long" ? (snapshot.design.presetId === "long" ? "portrait" : snapshot.design.presetId) : presetId;
+    const layout = { ...snapshot.design, presetId: fixed(snapshot.design.presetId) };
+    const targets = onlyCurrent ? [index] : snapshot.pages.map((_, i) => i);
     const surface = captureSurface();
     let attempts = 0;
     try {
-      const parts = await paginateMarkdown(displayMarkdown(snapshot.pages), async markdown => {
-        setTask({ type: "layout", message: "Finding page breaks · " + (++attempts) + " checks" });
-        const element = await surface.render({ markdown, design: layout, assetUrls: { ...assetUrls }, brand }, signal);
-        const issue = inspectCard(element);
-        return { fits: !issue, reason: issue?.code === "width" ? "width" : issue?.code === "height" ? "height" : "asset", message: issue?.message };
-      }, signal);
-      apply(current => ({ ...current, mode: "carousel", design: layout, pages: parts.map(markdown => newPage(markdown)) }));
-      setActiveIndex(0); setMobileView("preview"); setNotice("Created " + parts.length + " measured pages. Undo restores the original layout.");
+      const split = new Map<number, StudioPage[]>();
+      for (const at of targets) {
+        const source = snapshot.pages[at];
+        // A page's own size override is kept, except auto height, which cannot be paginated.
+        const design = source.design.presetId ? { ...source.design, presetId: fixed(source.design.presetId) } : source.design;
+        const measured = { ...layout, ...design };
+        const parts = source.markdown.trim() ? await paginateMarkdown(source.markdown, async markdown => {
+          setTask({ type: "layout", message: "Finding page breaks · " + (++attempts) + " checks" });
+          const element = await surface.render({ markdown, design: measured, assetUrls: { ...assetUrls }, brand }, signal);
+          const issue = inspectCard(element);
+          return { fits: !issue, reason: issue?.code === "width" ? "width" : issue?.code === "height" ? "height" : "asset", message: issue?.message };
+        }, signal) : [source.markdown];
+        split.set(at, parts.map(markdown => newPage(markdown, design)));
+      }
+      const pages = snapshot.pages.flatMap((page, i) => split.get(i) ?? [page]);
+      if (pages.length > MAX_PAGES) throw new Error("This would make " + pages.length + " pages; a project holds up to " + MAX_PAGES + ". Shorten the text or split it into separate projects.");
+      const added = pages.length - snapshot.pages.length;
+      apply(current => ({ ...current, mode: "carousel", design: layout, pages }));
+      if (onlyCurrent) { setNotice(added ? "Split this page into " + (added + 1) + ". Undo restores it." : "This page already fits."); return; }
+      setActiveIndex(0); setMobileView("preview");
+      setNotice(added ? "Created " + pages.length + " measured pages. Your page breaks were kept. Undo restores the original layout." : "Every page already fits.");
     } finally { surface.dispose(); }
   });
 
@@ -470,6 +489,8 @@ export default function Workbench() {
     if (taskLock.current) return;
     let resolveImage!: (blob: Blob) => void, rejectImage!: (error: unknown) => void;
     const image = new Promise<Blob>((resolve, reject) => { resolveImage = resolve; rejectImage = reject; });
+    // The clipboard may give up on the image before rendering fails; the failure is reported by run().
+    image.catch(() => {});
     const writing = navigator.clipboard.write([new ClipboardItem({ "image/png": image })]);
     writing.catch(() => {});
     void run("export", "Copying image…", async signal => {
@@ -620,7 +641,7 @@ export default function Workbench() {
         <section id="preview-pane" className="preview-pane" aria-label="Image preview">
           <div className="pane-bar preview-toolbar">
             <div className="segmented" role="group" aria-label="Output mode"><button disabled={disabled} title="One image that grows with your content" aria-pressed={project.mode === "single" && project.design.presetId === "long"} onClick={() => setOutput("long")}>Long image</button><button disabled={disabled} title="One fixed-size image: square, portrait, story or landscape" aria-pressed={project.mode === "single" && project.design.presetId !== "long"} onClick={() => setOutput("card")}>Card</button><button disabled={disabled} title="Several fixed-size images, exported as a ZIP" aria-pressed={project.mode === "carousel"} onClick={() => setOutput("pages")}>Pages{project.pages.length > 1 ? " · " + project.pages.length : ""}</button></div>
-            <button className="ghost-button" disabled={disabled || oversize} title="Split into pages that fit the canvas" onClick={autoSplit}><Icon name="split" /><span>Auto split</span></button>
+            <button className="ghost-button" disabled={disabled || oversize} title="Split into pages that fit the canvas" onClick={() => autoSplit()}><Icon name="split" /><span>Auto split</span></button>
             <span className="bar-spacer" />
             <div className="quick-themes" role="group" aria-label="Theme">{themes.map(theme => <button key={theme.id} className="theme-dot" title={theme.label} aria-label={"Theme: " + theme.label} aria-pressed={design.theme === theme.id} disabled={disabled} style={{ background: theme.background, color: theme.color }} onClick={() => setTheme(theme.id)} />)}</div>
             <button className="style-button" disabled={disabled} onClick={() => setPanel("styles")}><Icon name="sliders" /><span>Customize</span></button>
@@ -633,7 +654,10 @@ export default function Workbench() {
                   <CaptureCard markdown={deferredPreview} design={design} assetUrls={assetUrls} label={project.mode === "carousel" ? (index + 1) + " / " + project.pages.length : preset.label} articleRef={card} brand={brand} />
                 </div></div>}
             </div>
-            <div className={"stage-status" + (statusMessage ? "" : " is-quiet") + (metrics.issue && !task ? " has-issue" : "") + (task ? " is-busy" : "")} role="status"><i aria-hidden="true" /><span>{statusMessage || (project.mode === "carousel" ? "Current page fits" : "Ready to export")}</span>{metrics.issue?.code === "height" && !task && preset.height && <button onClick={fitText}>Fit text</button>}{metrics.issue?.code === "height" && !task && <button onClick={() => apply(current => ({ ...current, design: { ...current.design, presetId: "long" }, pages: current.pages.map((item, i) => i === index ? { ...item, design: { ...item.design, presetId: "long" } } : item) }))}>Use auto height</button>}</div>
+            <div className={"stage-status" + (statusMessage ? "" : " is-quiet") + (metrics.issue && !task ? " has-issue" : "") + (task ? " is-busy" : "")} role="status"><i aria-hidden="true" /><span>{statusMessage || (project.mode === "carousel" ? "Current page fits" : "Ready to export")}</span>{metrics.issue?.code === "height" && !task && preset.height && <button onClick={fitText}>Fit text</button>}{metrics.issue?.code === "height" && !task && (project.mode === "carousel"
+              // In a carousel every page keeps the canvas size; splitting is the fix, not a taller page.
+              ? <button onClick={() => autoSplit(true)}>Split this page</button>
+              : <button onClick={() => apply(current => ({ ...current, design: { ...current.design, presetId: "long" }, pages: current.pages.map((item, i) => i === index ? { ...item, design: { ...item.design, presetId: "long" } } : item) }))}>Use auto height</button>)}</div>
             <span className="stage-meta">{preset.label} · {outputWidth} × {outputHeight ?? "auto"}{project.mode === "carousel" && Object.keys(page.design).length ? " · page style" : ""}</span>
             <div className="zoom-control" role="group" aria-label="Preview zoom"><button aria-pressed={zoom === "fit"} onClick={() => setZoom("fit")}>Fit</button><button aria-pressed={zoom === 1} onClick={() => setZoom(1)}>100%</button><span>{Math.round(scale * 100)}%</span></div>
           </div>

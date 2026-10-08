@@ -188,7 +188,7 @@ export const guides: Guide[] = [
       <Code>{"# One idea, three frames\n\n<!-- page -->\n\n# Show the reasoning\n\n<!-- page -->\n\n# Make it actionable"}</Code>
       <p>Opening a file that contains page markers starts in Pages mode. Markers inside code blocks are treated as code.</p>
       <h2>Or let Auto split do it</h2>
-      <p><strong>Auto split</strong> measures your real content against the canvas and finds safe breaks. Headings stay with the paragraph that follows them, and long lists and tables split between items. If a single block is taller than a page, such as a large image or formula, it tells you instead of cutting it. Undo restores the original layout.</p>
+      <p><strong>Auto split</strong> measures your real content against the canvas and finds safe breaks. Headings stay with the paragraph that follows them, and long lists and tables split between items. If a single block is taller than a page, such as a large image or formula, it tells you instead of cutting it. Page breaks you placed yourself are kept, and a page that overflows shows a <strong>Split this page</strong> button that splits just that page. Undo restores the original layout.</p>
       <h2>Sizes for each platform</h2>
       <ul>
         <li><strong>Portrait</strong> (1080 × 1350) fills the most space in Instagram and LinkedIn feeds.</li>

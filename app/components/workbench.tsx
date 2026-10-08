@@ -19,6 +19,8 @@ import { MarkdownEditor } from "./markdown-editor";
 import { decodeShare, encodeShare } from "@/lib/share-link";
 import { FindBar, OutlineMenu } from "./editor-tools";
 import { useBrand } from "./use-brand";
+import { AppearanceSwitch } from "./appearance-switch";
+import { BatchPanel } from "./batch-panel";
 import type { BrandKit } from "@/lib/brand-kit";
 import { ResultPanel } from "./result-panel";
 
@@ -38,7 +40,7 @@ function freshProject() {
 // Fixed-size rail units: a responsive unit would resize the workbench around it.
 const RAIL_SIZES = [{ media: "(min-width: 1600px)", width: 300, height: 600 }, { media: "(min-width: 1280px)", width: 160, height: 600 }];
 
-type Panel = "styles" | "templates" | "projects" | "export" | "result" | null;
+type Panel = "styles" | "templates" | "projects" | "export" | "result" | "batch" | null;
 type Task = { type: "export" | "layout" | "file"; message: string; cancellable?: boolean; progress?: number };
 const errorText = (error: unknown) => error instanceof Error ? error.message : "Something went wrong. Your original work is unchanged.";
 
@@ -436,6 +438,22 @@ export default function Workbench() {
     return () => { document.removeEventListener("pointerdown", close); document.removeEventListener("keydown", close); };
   }, []);
 
+  // Batch: the current page (or the whole single image) is the template; each row becomes one image.
+  const batchTemplate = project.mode === "single" ? displayMarkdown(project.pages) : page.markdown;
+  const exportBatch = (markdowns: string[], names: string[]) => void run("export", "Preparing your batch…", async signal => {
+    const { exportProject, downloadBlob } = await import("@/lib/capture-engine");
+    const snapshot: Project = { ...structuredClone(project), mode: "carousel", design: { ...design }, pages: markdowns.map(markdown => newPage(markdown)) };
+    const output = await exportProject(snapshot, { ...assetUrls }, { format, brand, signal, batch: { maxPages: 100, names, pixelBudget: 600_000_000 }, onProgress: (message, progress) => setTask({ type: "export", message, progress }) });
+    setResult(output); setPanel("result");
+    downloadBlob(output.download, output.name);
+  });
+  const openBatchAsPages = (markdowns: string[]) => void run("file", "Creating pages…", async () => {
+    const next = newProject("", (documentTitle(batchTemplate) || "Batch") + " · batch", { ...design });
+    next.pages = markdowns.map(markdown => newPage(markdown)); next.mode = "carousel";
+    await openProject(next);
+    setNotice("Opened " + markdowns.length + " rows as pages in a new project. Your template is saved.");
+  });
+
   const startExport = useCallback(() => void run("export", "Preparing your image…", async signal => {
     const { exportProject, downloadBlob } = await import("@/lib/capture-engine");
     const output = await exportProject(structuredClone(project), { ...assetUrls }, { format, brand, pageIds: exportScope === "page" && project.mode === "carousel" ? [project.pages[index].id] : undefined, signal, onProgress: (message, progress) => setTask({ type: "export", message, progress }) });
@@ -559,7 +577,7 @@ export default function Workbench() {
           setMobileView(next); event.currentTarget.querySelectorAll<HTMLButtonElement>("[role=tab]")[next === "edit" ? 0 : 1]?.focus();
         }
       }}><button role="tab" tabIndex={mobileView === "edit" ? 0 : -1} aria-selected={mobileView === "edit"} aria-controls="editor-pane" onClick={() => setMobileView("edit")}>Edit</button><button role="tab" tabIndex={mobileView === "preview" ? 0 : -1} aria-selected={mobileView === "preview"} aria-controls="preview-pane" onClick={() => setMobileView("preview")}>Preview</button></div>
-      <nav className="header-actions" aria-label="Projects and help"><button className="ghost-button" title="New project" disabled={disabled} onClick={() => void run("file", "Creating a project…", () => openProject(freshProject()))}><Icon name="plus" /><span>New</span></button><button className="ghost-button" title="My projects" ref={projectsButton} disabled={disabled} onClick={showProjects}><Icon name="folder" /><span>My projects</span></button><details className="help-menu"><summary className="ghost-button" title="Help and guides"><Icon name="help" /><span>Help</span></summary><div className="help-popover" role="menu"><Link role="menuitem" href="/help">Help</Link><Link role="menuitem" href="/guides">Guides</Link><Link role="menuitem" href="/privacy">Privacy</Link><Link role="menuitem" href="/terms">Terms</Link></div></details></nav>
+      <nav className="header-actions" aria-label="Projects and help"><button className="ghost-button" title="New project" disabled={disabled} onClick={() => void run("file", "Creating a project…", () => openProject(freshProject()))}><Icon name="plus" /><span>New</span></button><button className="ghost-button" title="My projects" ref={projectsButton} disabled={disabled} onClick={showProjects}><Icon name="folder" /><span>My projects</span></button><details className="help-menu"><summary className="ghost-button" title="Help and guides"><Icon name="help" /><span>Help</span></summary><div className="help-popover" role="menu"><Link role="menuitem" href="/help">Help</Link><Link role="menuitem" href="/guides">Guides</Link><Link role="menuitem" href="/privacy">Privacy</Link><Link role="menuitem" href="/terms">Terms</Link><div className="popover-section"><span>Appearance</span><AppearanceSwitch /></div></div></details></nav>
       <div className="export-actions">
         {task ? <button disabled={!canCancel} onClick={() => controller.current?.abort()}>{canCancel ? "Cancel" : "Working…"}</button> : <button className="icon-only" title="Export options: format, resolution, pages" aria-label="Export options" disabled={!doc.ready} onClick={() => setPanel("export")}><Icon name="more" /></button>}
         <button className="icon-only" title="Copy image to clipboard" aria-label="Copy image" disabled={disabled || oversize} onClick={copyImage}><Icon name="copy" /></button>
@@ -628,9 +646,11 @@ export default function Workbench() {
       <fieldset><legend>Format</legend><div className="choice-row">{(["png", "jpeg", "webp"] as const).map(item => <button key={item} aria-pressed={format === item} onClick={() => setFormat(item)}><strong>{item.toUpperCase()}</strong><small>{item === "png" ? "Sharp text · copyable" : item === "jpeg" ? "Smaller photos" : "Compact, modern"}</small></button>)}</div></fieldset>
       <fieldset><legend>Resolution</legend><div className="choice-row">{([1, 2, 3] as const).map(renderScale => <button key={renderScale} aria-pressed={project.design.renderScale === renderScale} onClick={() => apply(current => ({ ...current, design: { ...current.design, renderScale }, pages: current.pages.map(item => { const overrides = { ...item.design }; delete overrides.renderScale; return { ...item, design: overrides }; }) }))}><strong>{renderScale}×</strong><small>{preset.width * renderScale} px wide{renderScale === 2 ? " · best" : ""}</small></button>)}</div><small className="size-readout">{outputHeight === null ? "Auto height is measured when you export." : <>{outputWidth.toLocaleString()} × {outputHeight.toLocaleString()} px · {(outputWidth * outputHeight / 1e6).toFixed(1)} MP{outputWidth * outputHeight > 24e6 || Math.max(outputWidth, outputHeight) > 16384 ? <span className="size-warning"> · Large image: needs a desktop browser. Choose 2× or Pages if export fails.</span> : null}</>}</small></fieldset>
       {project.mode === "carousel" && <label>Pages<select value={exportScope} onChange={event => setExportScope(event.target.value as typeof exportScope)}><option value="all">All {project.pages.length} pages · ZIP when multiple</option><option value="page">Current page only · page {index + 1}</option></select></label>}
+      <fieldset><legend>Batch</legend><div className="share-row"><button onClick={() => setPanel("batch")}><Icon name="grid" />Create a batch from a table</button><small>One image per row of a spreadsheet or CSV, using this page as the template.</small></div></fieldset>
       <fieldset><legend>Share</legend><div className="share-row"><button onClick={() => void copyShareLink()}><Icon name="link" />Copy editable link</button><small>The draft travels inside the link itself and is never uploaded. Local images are not included.</small></div></fieldset>
       <p className="field-note">Every page is checked before download. If content does not fit, the export stops and tells you which page needs attention.</p>
     </div><div className="modal-footer"><button onClick={() => setPanel(null)}>Back</button><button className="primary-button" disabled={disabled} onClick={() => { setPanel(null); startExport(); }}>{exportLabel}<Icon name="arrow" /></button></div></Modal>}
+    {panel === "batch" && <BatchPanel template={batchTemplate} design={design} brand={brand} assetUrls={assetUrls} disabled={disabled} onExport={exportBatch} onOpenAsPages={openBatchAsPages} onClose={() => setPanel(null)} />}
     {panel === "result" && result && <ResultPanel result={result} onClose={() => setPanel(null)} returnFocusRef={exportButton} onCopyLink={() => void copyShareLink()} onSetUpBrand={brand ? undefined : () => setPanel("styles")} />}
   </main>;
 }

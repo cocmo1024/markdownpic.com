@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Newsreader } from "next/font/google";
+import { Geist, Geist_Mono, Newsreader, Noto_Sans_SC, Noto_Serif_SC } from "next/font/google";
 import "katex/dist/katex.min.css";
 import "./globals.css";
 import { SITE_URL, siteDescription } from "@/lib/site-config";
@@ -21,7 +21,18 @@ const newsreader = Newsreader({
   style: ["normal", "italic"],
 });
 
-export const viewport: Viewport = { themeColor: "#f4f2ec", colorScheme: "light" };
+// Chinese (and other CJK) text in cards. Self-hosted, sliced by unicode-range and never preloaded:
+// a slice downloads only when a card actually contains characters from it.
+const notoSans = Noto_Sans_SC({ variable: "--font-noto-sans-sc", subsets: ["latin"], weight: ["400", "700"], preload: false, display: "swap" });
+const notoSerif = Noto_Serif_SC({ variable: "--font-noto-serif-sc", subsets: ["latin"], weight: ["400", "700"], preload: false, display: "swap" });
+
+export const viewport: Viewport = {
+  themeColor: [{ media: "(prefers-color-scheme: light)", color: "#f4f2ec" }, { media: "(prefers-color-scheme: dark)", color: "#161512" }],
+  colorScheme: "light dark",
+};
+
+// Applies a saved Light/Dark choice before first paint, so the page never flashes the wrong theme.
+const appearanceScript = `try{var t=localStorage.getItem("markdownpic.appearance");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -58,7 +69,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${newsreader.variable}`}>
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${newsreader.variable} ${notoSans.variable} ${notoSerif.variable}`} suppressHydrationWarning>
+      <head><script dangerouslySetInnerHTML={{ __html: appearanceScript }} /></head>
       <body>{children}</body>
     </html>
   );

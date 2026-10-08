@@ -6,6 +6,7 @@ import { toBlob } from "html-to-image";
 import { CaptureCard, type CaptureProps } from "@/app/components/capture-card";
 import { displayMarkdown, documentTitle, localAssetIds, serializePages } from "./markdown-document";
 import { markdownToAltText } from "./alt-text";
+import { fontEmbedCssFor } from "./font-embed";
 import { effectiveDesign, MAX_PAGES, presetFor, slugify, type Project, type ImageFormat } from "./studio-model";
 import type { BrandKit } from "./brand-kit";
 import { assertExportSize, EXTENDED_LIMITS, inspectCard, STANDARD_LIMITS } from "./capture-checks";
@@ -105,13 +106,16 @@ async function encodeImage(png: Blob, format: ImageFormat, width: number, height
 }
 
 export async function exportProject(project: Project, assetUrls: Record<string, string>, options: {
-  format: ImageFormat; pageIds?: string[]; signal?: AbortSignal; brand?: BrandKit | null; onProgress: (message: string, progress: number) => void;
+  format: ImageFormat; pageIds?: string[]; signal?: AbortSignal; brand?: BrandKit | null;
+  /** Batch exports: up to this many pages, per-image file names, and a total pixel budget per run. */
+  batch?: { maxPages: number; names: string[]; pixelBudget: number }; onProgress: (message: string, progress: number) => void;
 }): Promise<ExportResult> {
   // Own the exact content and design version at the start of the task.
   const snapshot = structuredClone(project);
   const assets = { ...assetUrls };
   const pages = snapshot.mode === "single" ? [{ id: "single", markdown: displayMarkdown(snapshot.pages), design: {} }] : snapshot.pages.filter(p => !options.pageIds || options.pageIds.includes(p.id));
-  if (!pages.length || pages.length > MAX_PAGES) throw new Error(`Choose between 1 and ${MAX_PAGES} pages.`);
+  const maxPages = options.batch?.maxPages ?? MAX_PAGES;
+  if (!pages.length || pages.length > maxPages) throw new Error(`Choose between 1 and ${maxPages} pages.`);
   // An unnamed project takes its file name from the first heading, not "untitled".
   const named = snapshot.name.trim() && !/^untitled$/i.test(snapshot.name.trim());
   const baseName = slugify(named ? snapshot.name : documentTitle(snapshot.pages[0]?.markdown ?? "") || snapshot.name);
@@ -134,11 +138,12 @@ export async function exportProject(project: Project, assetUrls: Record<string, 
         const logicalHeight = preset.height ?? Math.ceil(card.getBoundingClientRect().height);
         const width = preset.width * design.renderScale;
         const height = logicalHeight * design.renderScale;
-        assertExportSize(width, height, totalPixels, canvasFits(width, height) ? EXTENDED_LIMITS : STANDARD_LIMITS);
+        const limits = canvasFits(width, height) ? EXTENDED_LIMITS : STANDARD_LIMITS;
+        assertExportSize(width, height, totalPixels, options.batch ? { ...limits, batch: options.batch.pixelBudget } : limits);
         // Long images render for longer; the deadline grows with the pixel count.
         const renderTimeout = Math.max(30_000, width * height / 1_000_000 * 1_500);
         // Query parameters can identify different images from the same endpoint.
-        const png = await withDeadline(toBlob(card, { pixelRatio: design.renderScale, width: preset.width, height: logicalHeight, includeQueryParams: true, skipAutoScale: true, fetchRequestInit: { signal: options.signal } }), { signal: options.signal, timeoutMs: renderTimeout, message: "This image took too long to render. Keep the tab visible, reduce the resolution, or split the content." });
+        const png = await withDeadline(toBlob(card, { fontEmbedCSS: await fontEmbedCssFor(card), pixelRatio: design.renderScale, width: preset.width, height: logicalHeight, includeQueryParams: true, skipAutoScale: true, fetchRequestInit: { signal: options.signal } }), { signal: options.signal, timeoutMs: renderTimeout, message: "This image took too long to render. Keep the tab visible, reduce the resolution, or split the content." });
         checkAbort(options.signal);
         if (!png) throw new Error("The image could not be rendered. Try a lower resolution.");
         const actual = await imageDimensions(png, options.signal);
@@ -146,7 +151,7 @@ export async function exportProject(project: Project, assetUrls: Record<string, 
         const blob = await encodeImage(png, options.format, width, height, options.signal);
         totalPixels += width * height;
         const extension = options.format === "jpeg" ? "jpg" : options.format;
-        images.push({ blob, alt: markdownToAltText(page.markdown), name: `${baseName}${snapshot.mode === "carousel" ? `-${String(pageNumber).padStart(2, "0")}` : ""}.${extension}`, width, height, page: pageNumber });
+        images.push({ blob, alt: markdownToAltText(page.markdown), name: options.batch ? `${String(index + 1).padStart(3, "0")}-${slugify(options.batch.names[index] ?? baseName)}.${extension}` : `${baseName}${snapshot.mode === "carousel" ? `-${String(pageNumber).padStart(2, "0")}` : ""}.${extension}`, width, height, page: pageNumber });
       } catch (error) {
         if (error instanceof DOMException && error.name === "AbortError") throw error;
         throw new Error(`Page ${pageNumber}: ${error instanceof Error ? error.message : "Export failed. Please try again."}`);

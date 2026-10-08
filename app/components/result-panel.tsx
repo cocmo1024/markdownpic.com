@@ -12,6 +12,7 @@ export function ResultPanel({ result, onClose, onCopyLink, onSetUpBrand, returnF
   const [urls, setUrls] = useState<string[]>([]);
   const [index, setIndex] = useState(0);
   const [message, setMessage] = useState("");
+  const [touchShare] = useState(() => typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches && Boolean(navigator.canShare?.({ files: [new File([""], "x.png", { type: "image/png" })] })));
   const image = result.images[index];
   useEffect(() => {
     const next = result.images.map(item => URL.createObjectURL(item.blob));
@@ -29,7 +30,15 @@ export function ResultPanel({ result, onClose, onCopyLink, onSetUpBrand, returnF
     if (image.blob.type !== "image/png") { setMessage("Choose PNG in export options to copy an image."); return; }
     if (!navigator.clipboard?.write || typeof ClipboardItem === "undefined") { setMessage("Image copy is not supported here. Download or share the image instead."); return; }
     setMessage("Copying image… Allow clipboard access if your browser asks.");
-    void withDeadline(navigator.clipboard.write([new ClipboardItem({ "image/png": image.blob })]), { timeoutMs: 10_000, message: "Clipboard access did not finish. Use Download or Open image instead." }).then(() => setMessage("Image copied.")).catch(error => setMessage(error instanceof Error ? error.message + " You can download the image instead." : "Clipboard access was blocked. Use Download or Share instead."));
+    void withDeadline(navigator.clipboard.write([new ClipboardItem({ "image/png": image.blob })]), { timeoutMs: 10_000, message: "Clipboard access did not finish. Use Download or Open image instead." }).then(() => setMessage("Image copied. Paste it anywhere.")).catch(error => setMessage(error instanceof Error ? error.message + " You can download the image instead." : "Clipboard access was blocked. Use Download or Share instead."));
+  };
+  const copyAlt = () => {
+    if (!navigator.clipboard?.writeText) { setMessage("Text copy is unavailable in this browser."); return; }
+    void withDeadline(navigator.clipboard.writeText(image.alt), { timeoutMs: 10_000, message: "Clipboard access did not finish." }).then(() => setMessage("Alt text copied. Paste it into the image description when you post.")).catch(() => setMessage("Alt text could not be copied. Allow clipboard access and try again."));
+  };
+  const copySource = () => {
+    if (!navigator.clipboard?.writeText) { setMessage("Text copy is unavailable. Use Save Markdown instead."); return; }
+    void withDeadline(navigator.clipboard.writeText(result.markdown), { timeoutMs: 10_000, message: "Clipboard access did not finish." }).then(() => setMessage("Markdown copied.")).catch(() => setMessage("Markdown could not be copied. Use Save Markdown instead."));
   };
   return <Modal title="Your image is ready" wide onClose={onClose} returnFocusRef={returnFocusRef}>
     <p className="modal-intro">This is the actual exported file. If the download did not start, use Download again or open the image to save it.</p>
@@ -38,13 +47,21 @@ export function ResultPanel({ result, onClose, onCopyLink, onSetUpBrand, returnF
     {result.images.length > 1 && <label className="result-page-label">Inspect exported page<select value={index} onChange={event => setIndex(Number(event.target.value))}>{result.images.map((item, i) => <option key={item.name} value={i}>Page {item.page}</option>)}</select></label>}
     {message && <p role="status" className="result-message">{message}</p>}
     {onSetUpBrand && <div className="brand-nudge"><span>Sign every image with your name and avatar, automatically.</span><button onClick={onSetUpBrand}>Set up my brand</button></div>}
-    <div className="modal-footer wrap"><button className="primary-button" onClick={() => downloadBlob(result.download, result.name)}><Icon name="download" />Download again</button><a className="button-link" href={urls[index]} target="_blank" rel="noopener noreferrer"><Icon name="arrow" />Open image</a><button onClick={share}><Icon name="share" />Share image</button><button onClick={copy}><Icon name="copy" />Copy PNG</button><button title="A plain-text description for X, LinkedIn, Mastodon or Bluesky" onClick={() => {
-      if (!navigator.clipboard?.writeText) { setMessage("Text copy is unavailable in this browser."); return; }
-      void withDeadline(navigator.clipboard.writeText(image.alt), { timeoutMs: 10_000, message: "Clipboard access did not finish." }).then(() => setMessage("Alt text copied. Paste it into the image description when you post.")).catch(() => setMessage("Alt text could not be copied. Allow clipboard access and try again."));
-    }}><Icon name="doc-text" />Copy alt text</button>{onCopyLink && <button onClick={onCopyLink}><Icon name="link" />Copy editable link</button>}<button onClick={() => {
-      if (!navigator.clipboard?.writeText) { setMessage("Text copy is unavailable. Use Save Markdown below to download the source."); return; }
-      setMessage("Copying source… Allow clipboard access if your browser asks.");
-      void withDeadline(navigator.clipboard.writeText(result.markdown), { timeoutMs: 10_000, message: "Clipboard access did not finish." }).then(() => setMessage("Source text copied.")).catch(() => setMessage("Text copy was not completed. Use Save Markdown below to download the source."));
-    }}>Copy source</button><button onClick={() => downloadBlob(new Blob([result.markdown], { type: "text/markdown;charset=utf-8" }), result.name.replace(/\.[^.]+$/, "") + ".md")}>Save Markdown</button>{result.images.length > 1 && <button onClick={() => downloadBlob(image.blob, image.name)}>Save this page</button>}</div>
+    <div className="modal-footer result-actions">
+      <button className="primary-button" onClick={() => downloadBlob(result.download, result.name)}><Icon name="download" />Download again</button>
+      <button onClick={copy}><Icon name="copy" />Copy image</button>
+      <button title="A plain-text description for X, LinkedIn, Mastodon or Bluesky" onClick={copyAlt}><Icon name="doc-text" />Copy alt text</button>
+      {touchShare && <button onClick={share}><Icon name="share" />Share</button>}
+      <details className="more-menu">
+        <summary className="button-link" aria-label="More actions"><Icon name="more" />More</summary>
+        <div className="more-popover" role="menu">
+          <a role="menuitem" href={urls[index]} target="_blank" rel="noopener noreferrer"><Icon name="arrow" />Open image in a new tab</a>
+          {onCopyLink && <button role="menuitem" onClick={onCopyLink}><Icon name="link" />Copy editable link</button>}
+          <button role="menuitem" onClick={copySource}><Icon name="file" />Copy Markdown</button>
+          <button role="menuitem" onClick={() => downloadBlob(new Blob([result.markdown], { type: "text/markdown;charset=utf-8" }), result.name.replace(/\.[^.]+$/, "") + ".md")}><Icon name="download" />Save Markdown</button>
+          {result.images.length > 1 && <button role="menuitem" onClick={() => downloadBlob(image.blob, image.name)}><Icon name="image" />Save this page only</button>}
+        </div>
+      </details>
+    </div>
   </Modal>;
 }

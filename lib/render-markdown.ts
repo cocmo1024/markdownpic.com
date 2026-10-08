@@ -22,13 +22,17 @@ function transformInline(prose: string, transform: (prose: string) => string) {
   return prose.split(/(`+[^`]*?`+)/).map((part, i) => i % 2 ? part : transform(part)).join("");
 }
 
+const ONE_LINE_DISPLAY = /^[ \t]*\$\$([^\n$][^\n]*?)\$\$[ \t]*$/gm;
+
 /**
  * ChatGPT, Claude and Gemini write math as \( … \) and \[ … \]; the renderer expects $ … $ and $$ … $$.
  * Display math is moved onto its own lines so it renders centered.
  */
 export function normalizeMathDelimiters(markdown: string) {
-  if (!/\\[([]/.test(markdown)) return markdown;
+  if (!/\\[([]/.test(markdown) && !markdown.includes("$$")) return markdown;
   return mapProse(markdown, prose => prose
+    // `$$ x $$` alone on a line is a display formula everywhere else (GitHub, AI chats); keep it one.
+    .replace(ONE_LINE_DISPLAY, (_, body: string) => "\n$$\n" + body.trim() + "\n$$\n")
     .replace(/\\\[([\s\S]+?)\\\]/g, (_, body: string) => "\n$$\n" + body.trim() + "\n$$\n")
     .replace(/\\\(([\s\S]+?)\\\)/g, (_, body: string) => "$" + body.trim() + "$"));
 }

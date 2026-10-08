@@ -7,6 +7,10 @@ test("AI-style math delimiters become renderer math, outside code only", () => {
   assert.equal(normalizeMathDelimiters("Before\n\\[\n\\int_0^1 x\\,dx\n\\]\nAfter"), "Before\n\n$$\n\\int_0^1 x\\,dx\n$$\n\nAfter");
   assert.equal(normalizeMathDelimiters("Code `\\(x\\)` stays"), "Code `\\(x\\)` stays");
   assert.equal(normalizeMathDelimiters("```\n\\(x\\)\n```\n"), "```\n\\(x\\)\n```\n");
+  assert.equal(normalizeMathDelimiters("Text\n$$\\frac{1}{3}$$\nMore"), "Text\n\n$$\n\\frac{1}{3}\n$$\n\nMore");
+  assert.equal(normalizeMathDelimiters("Inline $$x$$ stays inline"), "Inline $$x$$ stays inline");
+  assert.equal(normalizeMathDelimiters("$$\nx\n$$"), "$$\nx\n$$");
+  assert.equal(normalizeMathDelimiters("```\n$$x$$\n```"), "```\n$$x$$\n```");
   assert.equal(normalizeMathDelimiters("No math at all"), "No math at all");
   assert.ok(hasMath("\\(a\\)")); assert.ok(hasMath("$a$")); assert.ok(!hasMath("plain"));
 });

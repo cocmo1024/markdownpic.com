@@ -105,7 +105,7 @@ export const moreGuides: Guide[] = [
       <p>The heading is the quote; a short line under it adds context; the bold name uses your accent color.</p>
       <h2>Details that make it look designed</h2>
       <ul>
-        <li><strong>Serif</strong> typeface and a dark theme such as <strong>Ink</strong> give an editorial feel.</li>
+        <li>The <strong>Noir</strong> theme (serif on warm black, with gold) or <strong>Editorial</strong> (serif headlines on cream) give a quote an editorial feel; <strong>Swiss</strong> makes it a bold poster.</li>
         <li>Straight quotes and dashes become typographic quotation marks and em dashes automatically.</li>
         <li>On a fixed canvas, the text is balanced vertically. Use <strong>Fit text</strong> to pick the largest size that still fits.</li>
         <li>Add a <strong>Frame</strong> in Customize to set the card on a gradient backdrop.</li>
@@ -250,7 +250,7 @@ export const moreGuides: Guide[] = [
       <p>Images from other servers appear only if those servers allow cross-origin access. If a logo or badge is missing, download it and add it with <strong>Add image</strong>. Relative paths such as <code>./docs/screenshot.png</code> need to be inserted the same way.</p>
       <h2>A good layout</h2>
       <Code>{"# Install in one line\n\n```bash\nnpm install your-package\n```\n\nThen import it and you’re done."}</Code>
-      <p>The <strong>Midnight</strong> and <strong>Ink</strong> themes suit code; <strong>Mono</strong> gives the whole card a technical look.</p>
+      <p>The <strong>Terminal</strong> and <strong>Midnight</strong> themes suit code; <strong>Clean</strong> keeps it neutral for documentation.</p>
     </>,
   },
   {

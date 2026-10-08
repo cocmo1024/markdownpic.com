@@ -29,6 +29,14 @@ test("themes and selectable accents meet readable contrast", () => {
     assert.ok(contrastRatio(safe,foregroundOn(safe))>=4.5,theme.id+" heading");
   }
 });
+test("each theme's own accent and ink are readable as designed, without adjustment", () => {
+  assert.equal(new Set(themes.map(theme=>theme.id)).size,themes.length);
+  for(const theme of themes) {
+    assert.equal(readableAccent(theme.accent,theme.background),theme.accent,theme.id+" accent");
+    assert.ok(contrastRatio(theme.color,theme.background)>=12,theme.id+" ink");
+    assert.equal(theme.dark,contrastRatio(theme.background,"#000000")<contrastRatio(theme.background,"#ffffff"),theme.id+" dark flag");
+  }
+});
 test("project imports reject invalid versions, empty pages, oversized source and too many pages",()=>{
   assert.throws(()=>validateProject({version:99}),/version/);
   assert.throws(()=>validateProject({...newProject(),pages:[]}),/1–20/);

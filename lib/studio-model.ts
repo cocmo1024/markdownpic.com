@@ -1,4 +1,4 @@
-export type ThemeId = "editorial" | "mono" | "linen" | "mist" | "harbor" | "rose" | "midnight" | "ink";
+export type ThemeId = "editorial" | "mono" | "linen" | "mist" | "harbor" | "rose" | "swiss" | "citrus" | "midnight" | "ink" | "terminal" | "plum";
 export type OutputMode = "single" | "carousel";
 export type ImageFormat = "png" | "jpeg" | "webp";
 export type FontFamily = "sans" | "serif" | "mono";
@@ -75,21 +75,33 @@ export const canvasPresets: CanvasPreset[] = [
   { id: "tall", label: "Tall 3:4", width: 540, height: 720 },
 ];
 
-export interface Theme { id: ThemeId; label: string; background: string; color: string; dark: boolean }
+/**
+ * A theme is a complete look: canvas, ink, its own accent and a typeface pairing, plus detail
+ * treatments (headings, tables, quotes, rules) in globals.css under `.theme-<id>`. Choosing a
+ * theme applies its accent and typeface; both can be changed afterwards. Ids are stored in
+ * projects, so they never change (labels can).
+ */
+export interface Theme { id: ThemeId; label: string; note: string; background: string; color: string; accent: string; font: FontFamily; dark: boolean }
 export const themes: Theme[] = [
-  { id: "editorial", label: "Cream", background: "#f7f2e7", color: "#1c1b17", dark: false },
-  { id: "mono", label: "Clean", background: "#ffffff", color: "#15171c", dark: false },
-  { id: "linen", label: "Paper", background: "#efe5cf", color: "#23291f", dark: false },
-  { id: "mist", label: "Sage", background: "#e6ece3", color: "#1b261f", dark: false },
-  { id: "harbor", label: "Harbor", background: "#e5ecf5", color: "#132038", dark: false },
-  { id: "rose", label: "Rose", background: "#f7e9e3", color: "#2c1c18", dark: false },
-  { id: "midnight", label: "Midnight", background: "#0f1522", color: "#edf0f7", dark: true },
-  { id: "ink", label: "Ink", background: "#171613", color: "#ece6d6", dark: true },
+  { id: "mono", label: "Clean", note: "Crisp white, product clarity", background: "#ffffff", color: "#121417", accent: "#2f55e4", font: "sans", dark: false },
+  { id: "editorial", label: "Editorial", note: "Magazine serif headlines on warm paper", background: "#f6f1e6", color: "#1c1a15", accent: "#b7361f", font: "sans", dark: false },
+  { id: "linen", label: "Book", note: "Classic book typography, ruled tables", background: "#f2ebdd", color: "#211d17", accent: "#8a2b1d", font: "serif", dark: false },
+  { id: "harbor", label: "Harbor", note: "Calm navy for reports and business", background: "#edf2f8", color: "#0f1d33", accent: "#1d4ed8", font: "sans", dark: false },
+  { id: "mist", label: "Sage", note: "Soft green, quiet and natural", background: "#e8eee6", color: "#18261d", accent: "#2c6a4c", font: "sans", dark: false },
+  { id: "rose", label: "Blush", note: "Warm terracotta with serif type", background: "#f8ede7", color: "#2b1a16", accent: "#b1452f", font: "serif", dark: false },
+  { id: "swiss", label: "Swiss", note: "Bold poster grotesk, red and black", background: "#ffffff", color: "#0b0b0b", accent: "#d6120b", font: "sans", dark: false },
+  { id: "citrus", label: "Citrus", note: "Sunny and loud for social posts", background: "#fbe9a6", color: "#1c1910", accent: "#a83a0c", font: "sans", dark: false },
+  { id: "midnight", label: "Midnight", note: "Deep navy for tech and product", background: "#0e1424", color: "#e8edf7", accent: "#8ab4ff", font: "sans", dark: true },
+  { id: "ink", label: "Noir", note: "Warm black with gold, serif elegance", background: "#151411", color: "#eee7d5", accent: "#e0b45c", font: "serif", dark: true },
+  { id: "terminal", label: "Terminal", note: "Monospace green on black for code", background: "#0b110d", color: "#cfe8d5", accent: "#4ade80", font: "mono", dark: true },
+  { id: "plum", label: "Plum", note: "Rich violet for creative work", background: "#1b1530", color: "#eee8ff", accent: "#c4a3ff", font: "sans", dark: true },
 ];
-export const themeFor = (id: ThemeId) => themes.find(theme => theme.id === id) ?? themes[0];
+export const themeFor = (id: ThemeId) => themes.find(theme => theme.id === id) ?? themes[1];
+/** The design fields a theme sets when chosen: its look, accent and typeface. */
+export const themeLook = (id: ThemeId) => { const theme = themeFor(id); return { theme: theme.id, accent: theme.accent, fontFamily: theme.font }; };
 export const accents = ["#4e66ff", "#ff5f3d", "#17785b", "#8d4dff", "#efb500", "#1c1b17"];
 export const defaultDesign: Design = {
-  presetId: "long", theme: "editorial", accent: accents[0], fontScale: 100,
+  presetId: "long", theme: "editorial", accent: "#b7361f", fontScale: 100,
   fontFamily: "sans", padding: 44, showBrand: false, showHeader: false,
   renderScale: 2, watermarkText: "", watermarkOpacity: 16,
   watermarkPosition: "bottom-right", imageMaxHeight: 480, byline: "bottom",

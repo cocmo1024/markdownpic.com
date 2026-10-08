@@ -147,8 +147,8 @@ input[type=color]{width:40px;height:36px;padding:3px;border:1px solid var(--line
 .segmented button{min-height:26px;padding:.1rem .65rem;border:0;border-radius:7px;background:transparent;color:var(--muted);font-size:.8125rem}
 .segmented button:hover:not(:disabled){background:rgb(255 255 255 / .6);color:var(--ink)}
 .segmented button[aria-pressed=true]{background:var(--raised);color:var(--ink);box-shadow:var(--shadow-1)}
-.quick-themes{display:flex;align-items:center;gap:4px;flex:none}
-.theme-dot{width:18px;min-height:18px;height:18px;padding:0;border-radius:50%;border:1px solid rgb(var(--ink-rgb) / .18);box-shadow:inset 0 0 0 1px rgb(255 255 255 / .35)}
+.quick-themes{display:flex;align-items:center;gap:3px;flex:none}
+.theme-dot{width:16px;min-height:16px;height:16px;padding:0;border-radius:50%;border:1px solid rgb(var(--ink-rgb) / .18);box-shadow:inset 0 0 0 1px rgb(255 255 255 / .35)}
 .theme-dot:hover:not(:disabled){transform:scale(1.15);border-color:rgb(var(--ink-rgb) / .4)}
 .theme-dot[aria-pressed=true]{border-color:var(--paper);box-shadow:0 0 0 2px var(--ink)}
 .style-button{min-height:32px;padding:.25rem .65rem;margin-left:4px;font-size:.8125rem;background:var(--raised);box-shadow:var(--shadow-1);flex:none}
@@ -239,8 +239,8 @@ input[type=color]{width:40px;height:36px;padding:3px;border:1px solid var(--line
 .font-sample.font-serif{font-family:var(--serif);font-weight:500}
 .font-sample.font-mono{font-family:var(--mono);font-size:1.45rem;font-weight:500}
 .font-grid small{font-size:.75rem!important}
-.accent-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
-.accent-swatch{width:30px;min-height:30px;height:30px;padding:0;border:0;border-radius:50%;box-shadow:inset 0 0 0 1px rgb(var(--ink-rgb) / .22)}
+.accent-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.accent-swatch{width:28px;min-height:28px;height:28px;padding:0;border:0;border-radius:50%;box-shadow:inset 0 0 0 1px rgb(var(--ink-rgb) / .22)}
 .accent-swatch:hover:not(:disabled){transform:scale(1.1);background-color:inherit}
 .accent-swatch[aria-pressed=true]{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--ink)}
 .settings-content .custom-color{display:flex;align-items:center;gap:8px;margin-left:auto;font-size:.8125rem;font-weight:500;color:var(--muted)}
@@ -397,7 +397,7 @@ summary{cursor:pointer;font-weight:600;min-height:30px;list-style-position:insid
 @container (max-width:430px){.editor-toolbar .tool-button:nth-child(n+5):nth-child(-n+7){display:none}}
 @container (max-width:430px){.editor-toolbar .tool-button[aria-label=Redo],.editor-toolbar .toolbar-divider{display:none}.editor-toolbar .tool-button,.editor-toolbar .ghost-button{width:32px;min-width:32px;padding:0;justify-content:center}}
 @container (max-width:700px){.preview-toolbar .ghost-button span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}}
-@container (max-width:600px){.quick-themes{display:none}}
+@container (max-width:660px){.quick-themes{display:none}}
 @container (max-width:430px){.style-button span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}}
 @media(max-width:980px){.app-header .project-name{width:clamp(100px,16vw,200px)}}
 @media(max-width:900px){.template-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -683,3 +683,112 @@ summary{cursor:pointer;font-weight:600;min-height:30px;list-style-position:insid
   --md-h:#17160f;--md-strong:#9a4f00;--md-em:#6941c6;--md-code:#0b7556;--md-pre:#245e4c;--md-link:#2952cc;--md-image:#c2410c;--md-quote:#5b584f;--md-math:#b0236f;--md-bullet:#4d6b00;--md-page-bg:rgb(110 140 0 / .12)}}
 .theme-select{width:84px}
 @container (max-width:760px){.theme-select{display:none}}
+
+/* ── Theme personalities ──────────────────────────────────────────────────────────────────
+   Every theme shares the base card typography above; these rules give each one its own
+   headings, tables, quotes, markers and rules. Shared treatments are grouped first. */
+.capture-card{--card-serif:var(--font-newsreader,"Newsreader"),var(--font-noto-serif-sc,"Noto Serif SC"),Georgia,serif}
+
+/* Ruled "book" tables: no fill, ink rules above and below the header and at the end. */
+.theme-editorial .capture-content th,.theme-linen .capture-content th,.theme-ink .capture-content th{background:none;color:var(--card-ink);border-top:1.5px solid currentColor;border-bottom:1px solid currentColor;border-radius:0!important}
+.theme-editorial .capture-content tbody tr:nth-child(even) td,.theme-linen .capture-content tbody tr:nth-child(even) td,.theme-ink .capture-content tbody tr:nth-child(even) td{background:none}
+.theme-editorial .capture-content tbody tr:last-child td,.theme-linen .capture-content tbody tr:last-child td,.theme-ink .capture-content tbody tr:last-child td{border-bottom:1.5px solid var(--card-ink)}
+.theme-ink .capture-content th{color:var(--card-accent);border-color:var(--card-accent)}
+.theme-ink .capture-content tbody tr:last-child td{border-bottom-color:var(--card-accent)}
+
+/* A hanging quotation mark instead of a bar. */
+.theme-editorial .capture-content blockquote,.theme-rose .capture-content blockquote,.theme-ink .capture-content blockquote{position:relative;border-left:0;padding:.1em 0 .1em 1.15em;font-family:var(--card-serif);font-style:italic;letter-spacing:0}
+.theme-editorial .capture-content blockquote::before,.theme-rose .capture-content blockquote::before,.theme-ink .capture-content blockquote::before{content:"\201C";position:absolute;left:-.04em;top:-.12em;font-family:var(--card-serif);font-style:normal;font-size:2.5em;line-height:1;color:var(--card-accent)}
+
+/* Callout quotes: a tinted panel with an accent edge. */
+.theme-harbor .capture-content blockquote,.theme-mist .capture-content blockquote,.theme-midnight .capture-content blockquote,.theme-plum .capture-content blockquote{padding:.75em 1em;border-left-width:3px;border-radius:0 8px 8px 0;background:color-mix(in srgb,var(--card-accent) 9%,var(--card-bg))}
+.theme-harbor .capture-content blockquote,.theme-midnight .capture-content blockquote{font-family:inherit;font-style:normal;font-size:1.02em;letter-spacing:inherit}
+
+/* Soft table headers: a light accent tint with ink text. */
+.theme-mist .capture-content th,.theme-rose .capture-content th,.theme-midnight .capture-content th,.theme-plum .capture-content th{background:color-mix(in srgb,var(--card-accent) 18%,var(--card-bg));color:var(--card-ink)}
+
+/* Kicker subheads: small, tracked, in the accent. */
+.theme-editorial .capture-content h3,.theme-harbor .capture-content h3,.theme-ink .capture-content h3{font-family:var(--font-geist-sans,"Geist"),var(--font-noto-sans-sc,"Noto Sans SC"),Arial,sans-serif;font-size:.74em;font-weight:650;font-style:normal;letter-spacing:.14em;text-transform:uppercase;color:var(--card-accent)}
+
+/* Editorial: serif display headlines over a sans text face, hairline rules. */
+.theme-editorial.font-sans .capture-content h1,.theme-editorial.font-sans .capture-content h2{font-family:var(--card-serif);font-weight:500;letter-spacing:-.022em}
+.theme-editorial.font-sans .capture-content h1{font-size:2.45em;line-height:1.03}
+.theme-editorial.font-sans .capture-content h2{font-size:1.55em}
+.theme-editorial .capture-content hr{width:100%;border-top:1px solid var(--card-faint)}
+.theme-editorial .capture-content ul>li::before{border-radius:1px;width:.32em;height:.32em}
+
+/* Book: italic section heads, small-caps subheads, ink bold, old-style figures. */
+.theme-linen .capture-content h2{font-style:italic;font-weight:500}
+.theme-linen .capture-content h3{font-variant:small-caps;font-weight:600;letter-spacing:.05em;font-size:1.08em}
+.theme-linen .capture-content strong{color:var(--card-ink)}
+.theme-linen .capture-content{font-variant-numeric:oldstyle-nums}
+.theme-linen .capture-content table,.theme-linen .capture-content code,.theme-linen .capture-content pre{font-variant-numeric:lining-nums tabular-nums}
+.theme-linen .capture-content blockquote{border-left:0;padding-left:1.5em;color:var(--card-soft)}
+.theme-linen .capture-content hr{width:28%;margin:1.6em auto;border-top:1px solid var(--card-ink);opacity:.5}
+.theme-linen .capture-content ul>li::before{width:.3em;height:.3em;background:var(--card-ink);opacity:.7}
+
+/* Harbor: an accent rule under section heads. */
+.theme-harbor .capture-content h2{padding-bottom:.3em;border-bottom:2px solid var(--card-accent)}
+.theme-harbor .capture-content th:first-child,.theme-harbor .capture-content th:last-child{border-radius:0}
+
+/* Sage: rounded, soft. */
+.theme-mist .capture-content th:first-child{border-top-left-radius:10px}
+.theme-mist .capture-content th:last-child{border-top-right-radius:10px}
+.theme-mist .capture-content .code-block{border-radius:14px}
+
+/* Blush: italic serif subheads. */
+.theme-rose .capture-content h2{font-style:italic}
+
+/* Swiss: heavy grotesk, rules, black table heads, square markers. */
+.theme-swiss .capture-content h1{font-size:2.6em;font-weight:800;letter-spacing:-.055em;line-height:.98}
+.theme-swiss .capture-content h2{margin-top:1.4em;padding-top:.45em;border-top:3px solid var(--card-ink);font-size:.86em;font-weight:750;letter-spacing:.08em;text-transform:uppercase}
+.theme-swiss .capture-content h3{font-weight:750}
+.theme-swiss .capture-content p{color:var(--card-ink)}
+.theme-swiss .capture-content ul,.theme-swiss .capture-content ol{color:var(--card-ink)}
+.theme-swiss .capture-content ul>li::before{border-radius:0;width:.4em;height:.4em;top:.55em}
+.theme-swiss .capture-content ol>li::before{font-weight:800}
+.theme-swiss .capture-content th{background:var(--card-ink);color:var(--card-bg);border-radius:0!important;text-transform:uppercase;letter-spacing:.06em;font-size:.86em}
+.theme-swiss .capture-content tbody tr:nth-child(even) td{background:none}
+.theme-swiss .capture-content td{border-bottom-color:var(--card-ink)}
+.theme-swiss .capture-content blockquote{border-left-width:6px;font-family:inherit;font-style:normal;font-weight:700;font-size:1.22em;letter-spacing:-.025em;line-height:1.25}
+.theme-swiss .capture-content hr{width:100%;border-top:4px solid var(--card-ink)}
+.theme-swiss .capture-content code{border-radius:0}
+.theme-swiss .capture-content .code-block{border-radius:0}
+
+/* Citrus: loud and friendly; bold text gets a highlighter stroke. */
+.theme-citrus .capture-content h1{font-weight:800;letter-spacing:-.05em}
+.theme-citrus .capture-content strong{color:var(--card-ink);font-weight:750;background:linear-gradient(transparent 56%,color-mix(in srgb,var(--card-accent) 30%,var(--card-bg)) 56%);-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.theme-citrus .capture-content th{background:var(--card-ink);color:var(--card-bg)}
+.theme-citrus .capture-content th:first-child{border-top-left-radius:10px}
+.theme-citrus .capture-content th:last-child{border-top-right-radius:10px}
+.theme-citrus .capture-content blockquote{border-left:0;padding:.8em 1.05em;border-radius:14px;background:color-mix(in srgb,#fff 50%,var(--card-bg));font-family:inherit;font-style:normal;font-weight:650;font-size:1.06em;letter-spacing:-.01em}
+.theme-citrus .capture-content .code-block{border-radius:14px;background:color-mix(in srgb,#fff 45%,var(--card-bg))}
+
+/* Midnight: crisp product type on deep navy. */
+.theme-midnight .capture-content h1{letter-spacing:-.05em}
+
+/* Noir: light serif display, gold details, diamond markers. */
+.theme-ink .capture-content h1{font-weight:400;letter-spacing:-.015em;font-size:2.5em}
+.theme-ink .capture-content h2{font-weight:400;font-style:italic}
+.theme-ink .capture-content ul>li::before{border-radius:0;width:.3em;height:.3em;transform:rotate(45deg);top:.66em}
+.theme-ink .capture-content hr{width:3em;border-top:1px solid var(--card-accent)}
+
+/* Terminal: Markdown marks kept visible, dashed rules, prompt-style markers. */
+.theme-terminal .capture-content h1::before{content:"# ";color:var(--card-accent);opacity:.6}
+.theme-terminal .capture-content h2::before{content:"## ";color:var(--card-accent);opacity:.6}
+.theme-terminal .capture-content h1{font-size:1.7em;letter-spacing:-.03em}
+.theme-terminal .capture-content ul>li::before{content:">";width:auto;height:auto;top:0;left:-1.15em;border-radius:0;background:none;color:var(--card-accent)}
+.theme-terminal .capture-content th{background:none;color:var(--card-accent);border-bottom:1px dashed var(--card-accent);border-radius:0!important}
+.theme-terminal .capture-content td{border-bottom-style:dashed}
+.theme-terminal .capture-content tbody tr:nth-child(even) td{background:none}
+.theme-terminal .capture-content blockquote{border-left:2px dashed var(--card-accent);font-style:normal;color:var(--card-soft)}
+.theme-terminal .capture-content hr{width:100%;border-top:1px dashed var(--card-faint)}
+.theme-terminal .capture-content .code-block{border-radius:4px}
+
+/* Plum: soft glow on headings. */
+.theme-plum .capture-content h1{letter-spacing:-.045em}
+
+/* Theme swatches preview the personality. */
+.theme-swatch.theme-editorial b,.theme-swatch.theme-ink b{font-family:var(--serif);font-weight:500;letter-spacing:-.02em}
+.theme-swatch.theme-swiss b,.theme-swatch.theme-citrus b{font-weight:800;letter-spacing:-.06em}
+.theme-swatch.theme-terminal b::before{content:"#";margin-right:.15em;color:#4ade80;opacity:.7}

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { CaptureCard } from "./capture-card";
 import { Modal } from "./modal";
 import { useProject } from "./use-project";
-import { defaultDesign, effectiveDesign, MAX_IMAGE_BYTES, MAX_IMAGE_PIXELS, MAX_PAGES, MAX_TEXT_LENGTH, newPage, newProject, normalizeDesign, presetFor, slugify, themes, type Design, type ImageFormat, type Project, type StudioPage, type ThemeId } from "@/lib/studio-model";
+import { defaultDesign, effectiveDesign, MAX_IMAGE_BYTES, MAX_IMAGE_PIXELS, MAX_PAGES, MAX_TEXT_LENGTH, newPage, newProject, normalizeDesign, presetFor, slugify, themeLook, themes, type Design, type ImageFormat, type Project, type StudioPage, type ThemeId } from "@/lib/studio-model";
 import { displayMarkdown, documentTitle, localAssetIds, pagesFromMarkdown, serializePages, splitMarkdownPages } from "@/lib/markdown-document";
 import { loadLocalImage, saveLocalImage } from "@/lib/local-image-store";
 import { deleteProject, listProjects, loadProject } from "@/lib/project-store";
@@ -586,9 +586,10 @@ export default function Workbench() {
     if (output === "card") return { ...current, mode: "single", design: { ...current.design, presetId: lastFixed }, pages: withoutPagePresets };
     return { ...current, mode: "carousel", design: { ...current.design, presetId: lastFixed } };
   });
+  // A theme brings its own accent and typeface; both stay adjustable in Customize.
   const setTheme = (theme: ThemeId) => apply(current => current.mode === "carousel" && "theme" in (current.pages[index]?.design ?? {})
-    ? { ...current, pages: current.pages.map((item, i) => i === index ? { ...item, design: { ...item.design, theme } } : item) }
-    : { ...current, design: { ...current.design, theme } });
+    ? { ...current, pages: current.pages.map((item, i) => i === index ? { ...item, design: { ...item.design, ...themeLook(theme) } } : item) }
+    : { ...current, design: { ...current.design, ...themeLook(theme) } });
 
   return <main className={"studio mobile-" + mobileView} aria-label="Markdown to image studio">
     <h1 className="sr-only">MarkdownPic — Markdown to image</h1>
@@ -643,7 +644,7 @@ export default function Workbench() {
             <div className="segmented" role="group" aria-label="Output mode"><button disabled={disabled} title="One image that grows with your content" aria-pressed={project.mode === "single" && project.design.presetId === "long"} onClick={() => setOutput("long")}>Long image</button><button disabled={disabled} title="One fixed-size image: square, portrait, story or landscape" aria-pressed={project.mode === "single" && project.design.presetId !== "long"} onClick={() => setOutput("card")}>Card</button><button disabled={disabled} title="Several fixed-size images, exported as a ZIP" aria-pressed={project.mode === "carousel"} onClick={() => setOutput("pages")}>Pages{project.pages.length > 1 ? " · " + project.pages.length : ""}</button></div>
             <button className="ghost-button" disabled={disabled || oversize} title="Split into pages that fit the canvas" onClick={() => autoSplit()}><Icon name="split" /><span>Auto split</span></button>
             <span className="bar-spacer" />
-            <div className="quick-themes" role="group" aria-label="Theme">{themes.map(theme => <button key={theme.id} className="theme-dot" title={theme.label} aria-label={"Theme: " + theme.label} aria-pressed={design.theme === theme.id} disabled={disabled} style={{ background: theme.background, color: theme.color }} onClick={() => setTheme(theme.id)} />)}</div>
+            <div className="quick-themes" role="group" aria-label="Theme">{themes.map(theme => <button key={theme.id} className="theme-dot" aria-label={"Theme: " + theme.label} title={theme.label + " · " + theme.note} aria-pressed={design.theme === theme.id} disabled={disabled} style={{ background: theme.background, color: theme.color }} onClick={() => setTheme(theme.id)} />)}</div>
             <button className="style-button" disabled={disabled} onClick={() => setPanel("styles")}><Icon name="sliders" /><span>Customize</span></button>
           </div>
           <div className="preview-frame">

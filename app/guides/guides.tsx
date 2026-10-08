@@ -25,7 +25,7 @@ export const guides: Guide[] = [
         <li><strong>Pages</strong>: several fixed canvases for a carousel, exported together as a ZIP.</li>
       </ul>
       <h2>3. Style it</h2>
-      <p>Open <strong>Customize</strong> to choose one of eight themes, an accent color, a sans, serif or mono typeface, text size and padding. Text contrast is adjusted automatically so accent-colored words stay readable on every theme.</p>
+      <p>Open <strong>Customize</strong> to choose one of twelve themes, from crisp Clean and magazine-style Editorial to bold Swiss and dark Noir and Terminal. Each theme brings its own accent and typeface, and you can still change the accent color, the sans, serif or mono typeface, text size and padding. Text contrast is adjusted automatically so accent-colored words stay readable on every theme.</p>
       <h2>4. Export</h2>
       <p>Choose <strong>Export PNG</strong> to see the finished file, then <strong>Download</strong> it or copy it. The <strong>···</strong> menu next to Export sets the format and resolution:</p>
       <ul>
@@ -166,7 +166,7 @@ export const guides: Guide[] = [
       <p>Code wraps at the canvas edge instead of being cut off, so nothing is lost. For the cleanest result, keep lines under about 60 characters on a 600-pixel canvas, or lower the image text size. Tabs are shown two spaces wide.</p>
       <h2>Choosing a theme for code</h2>
       <ul>
-        <li><strong>Midnight</strong> and <strong>Ink</strong> are dark themes with a deeper code panel.</li>
+        <li><strong>Terminal</strong> sets the whole card in monospace green on black; <strong>Midnight</strong> and <strong>Plum</strong> are dark themes with a deeper code panel.</li>
         <li><strong>Clean</strong> is best for printed documentation.</li>
         <li>The <strong>Mono</strong> typeface sets the whole card in Geist Mono for a technical look.</li>
       </ul>

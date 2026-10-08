@@ -70,7 +70,7 @@ export function AdSlot({ slot, media, sizes, className = "", fallback }: { slot:
     const element = unit.current;
     if (mode !== "live" || !element) return;
     const release = protectAncestors(element);
-    const watch = new MutationObserver(() => setUnfilled(element.dataset.adStatus === "unfilled"));
+    const watch = new MutationObserver(() => setUnfilled(element.dataset.adStatus?.startsWith("unfill") ?? false));
     watch.observe(element, { attributes: true, attributeFilter: ["data-ad-status"] });
     // The ad loader waits until the editor is interactive.
     const idle = window.requestIdleCallback ?? ((callback: () => void) => window.setTimeout(callback, 1200));

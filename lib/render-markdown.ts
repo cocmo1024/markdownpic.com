@@ -29,12 +29,60 @@ const ONE_LINE_DISPLAY = /^[ \t]*\$\$([^\n$][^\n]*?)\$\$[ \t]*$/gm;
  * Display math is moved onto its own lines so it renders centered.
  */
 export function normalizeMathDelimiters(markdown: string) {
-  if (!/\\[([]/.test(markdown) && !markdown.includes("$$")) return markdown;
-  return mapProse(markdown, prose => prose
+  if (!/\\[([]/.test(markdown) && !markdown.includes("$")) return markdown;
+  return mapProse(markdown, prose => escapeCurrency(latexForKatex(prose
     // `$$ x $$` alone on a line is a display formula everywhere else (GitHub, AI chats); keep it one.
     .replace(ONE_LINE_DISPLAY, (_, body: string) => "\n$$\n" + body.trim() + "\n$$\n")
     .replace(/\\\[([\s\S]+?)\\\]/g, (_, body: string) => "\n$$\n" + body.trim() + "\n$$\n")
-    .replace(/\\\(([\s\S]+?)\\\)/g, (_, body: string) => "$" + body.trim() + "$"));
+    .replace(/\\\(([\s\S]+?)\\\)/g, (_, body: string) => "$" + body.trim() + "$"))));
+}
+
+/**
+ * LaTeX that KaTeX rejects but that means nothing in a picture: `\label` is dropped,
+ * `\newcommand` becomes `\gdef` (so it may also replace a KaTeX built-in such as `\R`),
+ * and `\DeclareMathOperator` becomes an `\operatorname` macro.
+ */
+export function latexForKatex(text: string) {
+  if (!text.includes("\\")) return text;
+  return text
+    .replace(/\\label\s*\{[^{}]*\}/g, "")
+    .replace(/\\(?:re|provide)?newcommand\*?\s*\{?\s*(\\[A-Za-z]+)\s*\}?\s*(?:\[(\d)\])?\s*(?=\{)/g, (_, name: string, count?: string) => "\\gdef" + name + Array.from({ length: Number(count ?? 0) }, (_, i) => "#" + (i + 1)).join(""))
+    .replace(/\\DeclareMathOperator(\*?)\s*\{\s*(\\[A-Za-z]+)\s*\}\s*\{([^{}]*)\}/g, (_, star: string, name: string, label: string) => "\\gdef" + name + "{\\operatorname" + star + "{" + label + "}}");
+}
+
+/**
+ * Prices are not math. Like Pandoc, a single `$` opens inline math only when the next `$`
+ * can close it: the opener is followed by a non-space, the closer follows a non-space and is
+ * not followed by a digit. Any other single `$` is escaped, so "$5 and $10" stays text.
+ */
+export function escapeCurrency(text: string) {
+  if (!text.includes("$")) return text;
+  let out = "";
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    if (char === "\\") { out += char + (text[i + 1] ?? ""); i++; continue; }
+    if (char !== "$") { out += char; continue; }
+    if (text[i + 1] === "$") {
+      // Display math: copied through to its closing $$ untouched.
+      const end = text.indexOf("$$", i + 2);
+      const stop = end === -1 ? text.length : end + 2;
+      out += text.slice(i, stop); i = stop - 1; continue;
+    }
+    const close = nextDollar(text, i + 1);
+    const opens = /\S/.test(text[i + 1] ?? "");
+    const closes = close !== -1 && text[close + 1] !== "$" && /\S/.test(text[close - 1]) && !/\d/.test(text[close + 1] ?? "") && !text.slice(i + 1, close).includes("\n\n");
+    if (opens && closes) { out += text.slice(i, close + 1); i = close; continue; }
+    out += "\\$";
+  }
+  return out;
+}
+
+function nextDollar(text: string, from: number) {
+  for (let i = from; i < text.length; i++) {
+    if (text[i] === "\\") { i++; continue; }
+    if (text[i] === "$") return i;
+  }
+  return -1;
 }
 
 export const hasMath = (markdown: string) => markdown.includes("$") || /\\[([]/.test(markdown);

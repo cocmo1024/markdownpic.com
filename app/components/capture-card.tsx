@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, isValidElement, memo, useEffect, useMemo, useState, type CSSProperties, type ImgHTMLAttributes, type ReactNode, type Ref } from "react";
+import { Fragment, isValidElement, memo, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ImgHTMLAttributes, type ReactNode, type Ref } from "react";
 import { jsx, jsxs } from "react/jsx-runtime";
 import { toJsxRuntime } from "hast-util-to-jsx-runtime";
 import ReactMarkdown, { defaultUrlTransform, type Options } from "react-markdown";
@@ -12,12 +12,15 @@ import { hasMath, normalizeMathDelimiters, rehypeDisplayHeadings, rehypeSmartTyp
 // KaTeX is the heaviest renderer, so it loads only for documents that contain math ($).
 // Until it arrives the card carries a pending marker, which holds back measurement and export.
 type Plugins = NonNullable<Options["remarkPlugins"]>;
-let mathPlugins: { remark: Plugins; rehype: Plugins } | null = null;
+type KatexPlugin = NonNullable<Options["rehypePlugins"]>[number];
+let mathPlugins: { remark: Plugins; katex: KatexPlugin } | null = null;
 let mathLoading: Promise<void> | null = null;
-const loadMath = () => mathLoading ??= Promise.all([import("remark-math"), import("rehype-katex")])
-  .then(([math, katex]) => { mathPlugins = { remark: [remarkGfm, math.default], rehype: [katex.default] }; })
+// mhchem adds \ce and \pu for chemistry; it registers itself on the same KaTeX that rehype-katex uses.
+const loadMath = () => mathLoading ??= Promise.all([import("remark-math"), import("rehype-katex"), import("katex/contrib/mhchem")])
+  .then(([math, katex]) => { mathPlugins = { remark: [remarkGfm, math.default], katex: katex.default as KatexPlugin }; })
   .catch(error => { mathLoading = null; throw error; });
 const basePlugins: Plugins = [remarkGfm];
+const MIN_FORMULA_SCALE = .55;
 
 const diagramCache = new Map<string, string>();
 let diagramQueue = Promise.resolve();
@@ -135,14 +138,37 @@ export const CaptureCard = memo(function CaptureCard({ markdown, design, assetUr
     return () => { active = false; };
   }, [wantsMath]);
   const math = wantsMath ? mathPlugins : null;
-  const rehypePlugins = useMemo(() => [...(math?.rehype ?? []), rehypeDisplayHeadings, ...(design.smartTypography ? [rehypeSmartTypography] : [])], [math, design.smartTypography]);
+  // One macro table per document: \newcommand in one formula works in the formulas after it.
+  // `source` is a deliberate dependency: each new document gets a fresh macro table.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const rehypePlugins = useMemo(() => [...(math ? [[math.katex, { macros: {}, globalGroup: true, strict: "ignore" }]] : []), rehypeDisplayHeadings, ...(design.smartTypography ? [rehypeSmartTypography] : [])], [math, design.smartTypography, source]);
+  // A display formula wider than the card is set smaller to fit, as a typesetter would, down to
+  // MIN_FORMULA_SCALE. Runs before measurement and export, and again once the math fonts load.
+  const content = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const root = content.current;
+    if (!root || !math) return;
+    const fit = () => {
+      for (const display of root.querySelectorAll<HTMLElement>(".katex-display")) {
+        const formula = display.firstElementChild as HTMLElement | null;
+        if (!formula) continue;
+        formula.style.fontSize = "";
+        const overflow = display.scrollWidth / Math.max(1, display.clientWidth);
+        if (overflow > 1.001) formula.style.fontSize = Math.max(MIN_FORMULA_SCALE, 1 / overflow * .99) * 1.1 + "em";
+      }
+    };
+    fit();
+    let active = true;
+    void document.fonts?.ready.then(() => { if (active) fit(); });
+    return () => { active = false; };
+  });
   const body = <>
     {design.showHeader && <div className="card-rule"><span className="card-rule-mark" /><span>Markdown / Picture</span><span>{label}</span></div>}
     {byline === "top" && <Byline brand={brand!} position="top" align={design.bylineAlign} divider={design.bylineDivider} />}
     {wantsMath && !math && (mathError
       ? <span className="capture-error" data-capture-error="The math renderer could not load. Check your connection and try again.">Math could not load · check your connection</span>
       : <span hidden data-capture-pending="math" />)}
-    <div className="capture-content">
+    <div className="capture-content" ref={content}>
       <ReactMarkdown remarkPlugins={math?.remark ?? basePlugins} rehypePlugins={rehypePlugins as Plugins}
         urlTransform={url => url.startsWith("asset:") ? assetUrls[url.slice(6)] ?? "" : defaultUrlTransform(url)}
         components={{

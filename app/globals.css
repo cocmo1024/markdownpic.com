@@ -838,3 +838,6 @@ summary{cursor:pointer;font-weight:600;min-height:30px;list-style-position:insid
 .theme-swiss .capture-content h3:has(+h1),.theme-swiss .capture-content h3:has(+h2){color:var(--card-ink);font-weight:750}
 .theme-swiss .capture-content h3:has(+h2)+h2{border-top:0;padding-top:0}
 .theme-terminal .capture-content h3:has(+h1)::before,.theme-terminal .capture-content h3:has(+h2)::before{content:"// ";opacity:.6}
+
+/* Equation numbers count per card (KaTeX resets them on <body>, which an exported card never sees). */
+.capture-content{counter-reset:katexEqnNo mmlEqnNo}

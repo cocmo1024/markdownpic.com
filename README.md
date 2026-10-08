@@ -59,6 +59,7 @@ npm audit
 
 The application uses React/TypeScript and vinext on Vite. The UI is split into focused components; shared output styling is independent from editor UI fonts.
 
+- lib/markdown-highlight.ts and lib/markdown-edits.ts: the editor’s syntax tinting (cached per line) and structured edits (list continuation, indent, wrap, paste-as-link).
 - lib/studio-model.ts: validated projects, page settings, sizes and accessible accent selection.
 - lib/markdown-document.ts and lib/pagination.ts: syntax-aware segmentation and measured pagination.
 - lib/project-store.ts and lib/local-image-store.ts: local storage and conflict control.
@@ -69,9 +70,9 @@ The application uses React/TypeScript and vinext on Vite. The UI is split into f
 
 ## SEO and advertising
 
-Public identity is https://markdownpic.com, configured in lib/site-config.ts. The tool replaced the former Astro content site and the tool.markdownpic.com subdomain (now a 301 to the root) in October 2026. The homepage has a canonical, truthful WebApplication structured data, and a server-rendered guide below the workbench (template gallery, steps, features, FAQ). Help, privacy and terms are server-rendered and in the sitemap. No hidden keyword stuffing, crawler-only content or fake ratings.
+Public identity is https://markdownpic.com, configured in lib/site-config.ts. The tool replaced the former Astro content site and the tool.markdownpic.com subdomain (now a 301 to the root) in October 2026. The homepage is the tool only, with a canonical and truthful WebApplication structured data. Help, privacy and terms are server-rendered and in the sitemap. No hidden keyword stuffing, crawler-only content or fake ratings.
 
-Google AdSense (`adsense` in lib/site-config.ts) runs in reserved, labelled slots only: a 300px rail beside the workbench at ≥1360px, and in-content units in the homepage guide and help page. `app/components/ad-slot.tsx` injects the loader after hydration, requests a unit only when its media query matches, and shows a tips card when AdSense reports no fill. Ads never enter the editor or the capture card. On localhost the slots render dashed placeholders without any request. public/ads.txt authorizes the publisher; EEA/UK/CH consent is served by Google's CMP configured in AdSense. AdSense Auto ads are configured per site in the AdSense dashboard, not in code.
+Google AdSense (`adsense` in lib/site-config.ts) runs in reserved, labelled slots only: one fixed rail beside the workbench (160px wide at ≥1280px, 300px at ≥1600px) and in-content units on the help page. `app/components/ad-slot.tsx` injects the loader after hydration once the browser is idle, requests a unit only when its media query matches, and shows a tips card when AdSense reports no fill. Ads never enter the editor or the capture card. On localhost the slots render dashed placeholders without any request. public/ads.txt authorizes the publisher; EEA/UK/CH consent is served by Google's CMP configured in AdSense. AdSense Auto ads are configured per site in the AdSense dashboard, not in code.
 
 ## Deployment
 

@@ -4,7 +4,7 @@ export interface CaptureIssue { code: "empty" | "loading" | "asset" | "width" | 
 export function inspectCard(card: HTMLElement): CaptureIssue | null {
   const content = card.querySelector<HTMLElement>(".capture-content");
   if (!content) return { code: "loading", message: "Preparing the preview…" };
-  if (card.querySelector("[data-capture-pending]")) return { code: "loading", message: "Finishing the diagram…" };
+  if (card.querySelector("[data-capture-pending]")) return { code: "loading", message: "Rendering math or diagrams…" };
   const problem = card.querySelector<HTMLElement>("[data-capture-error]");
   if (problem) return { code: "asset", message: problem.dataset.captureError ?? "An image could not be loaded." };
   if (!content.textContent?.trim() && !content.querySelector("img,svg")) return { code: "empty", message: "This page is empty. Add some content before exporting." };

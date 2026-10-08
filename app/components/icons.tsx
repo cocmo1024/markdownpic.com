@@ -14,12 +14,12 @@ const paths = {
   redo: "M12.5 4.5 16 8l-3.5 3.5M16 8H8.5a4.5 4.5 0 0 0 0 9H11",
   file: "M11 3H6.5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2V7.5zM11 3v4.5h4.5",
   grid: "M4 4h5v5H4zM11 4h5v5h-5zM4 11h5v5H4zM11 11h5v5h-5z",
+  more: "M4.75 10h.01M10 10h.01M15.25 10h.01",
   sliders: "M4 6h7M15 6h1M4 14h1M9 14h7M13 4v4M7 12v4",
   plus: "M10 4.5v11M4.5 10h11",
   arrow: "M6 14 14 6M7.5 6H14v6.5",
   close: "M5.5 5.5l9 9M14.5 5.5l-9 9",
   folder: "M3.5 6.5a2 2 0 0 1 2-2h3l1.75 2h4.25a2 2 0 0 1 2 2v5.5a2 2 0 0 1-2 2h-9a2 2 0 0 1-2-2z",
-  doc: "M10 4.5v-1M10 16.5v-1M6.5 6.5h7a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1h-7a1 1 0 0 1-1-1v-5a1 1 0 0 1 1-1zM8.5 9h3M8.5 11h2",
   help: "M10 17.5a7.5 7.5 0 1 0 0-15 7.5 7.5 0 0 0 0 15zM8 8a2 2 0 1 1 2.75 1.85c-.45.2-.75.62-.75 1.1v.55M10 14h.01",
   left: "M12 5 7 10l5 5",
   right: "M8 5l5 5-5 5",
@@ -34,7 +34,7 @@ const paths = {
 export type IconName = keyof typeof paths;
 
 export function Icon({ name, size = 18, ...props }: { name: IconName; size?: number } & SVGProps<SVGSVGElement>) {
-  return <svg width={size} height={size} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false" {...props}><path d={paths[name]} /></svg>;
+  return <svg width={size} height={size} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false" {...props}><path d={paths[name]} strokeWidth={name === "more" ? 3 : undefined} /></svg>;
 }
 
 /** The MarkdownPic mark: an ink tile with the signal-green "M↗". */

@@ -43,12 +43,16 @@ export function AdSlot({ slot, media, className = "", fallback }: { slot: keyof 
     if (mode !== "live" || !element) return;
     const watch = new MutationObserver(() => setUnfilled(element.dataset.adStatus === "unfilled"));
     watch.observe(element, { attributes: true, attributeFilter: ["data-ad-status"] });
-    loadScript();
-    if (!element.dataset.adsbygoogleStatus) {
+    // The ad loader waits until the editor is interactive.
+    const idle = window.requestIdleCallback ?? ((callback: () => void) => window.setTimeout(callback, 1200));
+    const cancelIdle = window.cancelIdleCallback ?? window.clearTimeout;
+    const pending = idle(() => {
+      loadScript();
+      if (element.dataset.adsbygoogleStatus) return;
       // A blocked or failed loader is treated like an unfilled slot.
       try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch { element.dataset.adStatus = "unfilled"; }
-    }
-    return () => watch.disconnect();
+    }, { timeout: 2500 });
+    return () => { cancelIdle(pending); watch.disconnect(); };
   }, [mode]);
 
   if (mode === "off") return null;

@@ -1,11 +1,19 @@
 "use client";
 
 import { isValidElement, memo, useEffect, useState, type CSSProperties, type ImgHTMLAttributes, type ReactNode, type Ref } from "react";
-import ReactMarkdown, { defaultUrlTransform } from "react-markdown";
+import ReactMarkdown, { defaultUrlTransform, type Options } from "react-markdown";
 import remarkGfm from "remark-gfm";
-import remarkMath from "remark-math";
-import rehypeKatex from "rehype-katex";
 import { foregroundOn, presetFor, readableAccent, themeFor, type Design } from "@/lib/studio-model";
+
+// KaTeX is the heaviest renderer, so it loads only for documents that contain math ($).
+// Until it arrives the card carries a pending marker, which holds back measurement and export.
+type Plugins = NonNullable<Options["remarkPlugins"]>;
+let mathPlugins: { remark: Plugins; rehype: Plugins } | null = null;
+let mathLoading: Promise<void> | null = null;
+const loadMath = () => mathLoading ??= Promise.all([import("remark-math"), import("rehype-katex")])
+  .then(([math, katex]) => { mathPlugins = { remark: [remarkGfm, math.default], rehype: [katex.default] }; })
+  .catch(error => { mathLoading = null; throw error; });
+const basePlugins: Plugins = [remarkGfm];
 
 const diagramCache = new Map<string, string>();
 let diagramQueue = Promise.resolve();
@@ -75,10 +83,23 @@ export const CaptureCard = memo(function CaptureCard({ markdown, design, assetUr
     width: preset.width, height: preset.height ?? undefined,
     backgroundColor: theme.background, color: theme.color,
   } as CSSProperties;
+  const wantsMath = markdown.includes("$");
+  const [, setMathReady] = useState(Boolean(mathPlugins));
+  const [mathError, setMathError] = useState(false);
+  useEffect(() => {
+    if (!wantsMath || mathPlugins) return;
+    let active = true;
+    loadMath().then(() => { if (active) setMathReady(true); }, () => { if (active) setMathError(true); });
+    return () => { active = false; };
+  }, [wantsMath]);
+  const math = wantsMath ? mathPlugins : null;
   return <article ref={articleRef} className={`capture-card theme-${design.theme} font-${design.fontFamily}${theme.dark ? " is-dark" : ""}`} style={style}>
     {design.showHeader && <div className="card-rule"><span className="card-rule-mark" /><span>Markdown / Picture</span><span>{label}</span></div>}
+    {wantsMath && !math && (mathError
+      ? <span className="capture-error" data-capture-error="The math renderer could not load. Check your connection and try again.">Math could not load · check your connection</span>
+      : <span hidden data-capture-pending="math" />)}
     <div className="capture-content">
-      <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]}
+      <ReactMarkdown remarkPlugins={math?.remark ?? basePlugins} rehypePlugins={math?.rehype}
         urlTransform={url => url.startsWith("asset:") ? assetUrls[url.slice(6)] ?? "" : defaultUrlTransform(url)}
         components={{
           img: props => <MarkdownImage key={String(props.src)} {...props} />,

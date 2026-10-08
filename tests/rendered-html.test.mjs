@@ -64,7 +64,7 @@ test("guides are real, linked, canonical pages listed in the sitemap",async()=>{
   const index=await request("/guides");assert.equal(index.status,200);
   const indexHtml=await index.text();
   const slugs=[...indexHtml.matchAll(/href="\/guides\/([a-z0-9-]+)"/g)].map(match=>match[1]);
-  assert.ok(new Set(slugs).size>=7,"guide links on the index");
+  assert.ok(new Set(slugs).size>=20,"guide links on the index");
   const xml=await (await request("/sitemap.xml")).text();
   for(const slug of new Set(slugs)){
     const response=await request("/guides/"+slug);assert.equal(response.status,200,slug);

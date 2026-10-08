@@ -4,13 +4,13 @@ import { notFound } from "next/navigation";
 import { InfoShell } from "../../components/info-shell";
 import { AdSlot } from "../../components/ad-slot";
 import { Icon } from "../../components/icons";
-import { guideFor, guides } from "../guides";
+import { allGuides, guideFor } from "../guides";
 import { SITE_URL } from "@/lib/site-config";
 
 type Props = { params: Promise<{ slug: string }> };
 
 export function generateStaticParams() {
-  return guides.map(guide => ({ slug: guide.slug }));
+  return allGuides.map(guide => ({ slug: guide.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -22,7 +22,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function GuidePage({ params }: Props) {
   const guide = guideFor((await params).slug);
   if (!guide) notFound();
-  const related = guides.filter(item => item.slug !== guide.slug).slice(0, 3);
+  const others = allGuides.filter(item => item.slug !== guide.slug);
+  const related = [...others.filter(item => item.group === guide.group), ...others.filter(item => item.group !== guide.group)].slice(0, 4);
   return <InfoShell>
     <nav className="breadcrumbs" aria-label="Breadcrumb"><Link href="/guides">Guides</Link></nav>
     <h1>{guide.title}</h1>

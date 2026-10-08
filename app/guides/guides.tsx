@@ -1,13 +1,15 @@
 import type { ReactNode } from "react";
+import { moreGuides } from "./more-guides";
 
 /** Task guides: each one documents a real workflow in the tool and opens the matching template. */
-export interface Guide { slug: string; title: string; description: string; template: string; summary: string; body: ReactNode }
+export interface Guide { slug: string; group: string; title: string; description: string; template: string; summary: string; body: ReactNode }
 
 const Code = ({ children }: { children: string }) => <pre><code>{children}</code></pre>;
 
 export const guides: Guide[] = [
   {
     slug: "markdown-to-image",
+    group: "Formats",
     title: "How to convert Markdown to an image (PNG, JPEG or WebP)",
     description: "Turn Markdown into a clean PNG, JPEG or WebP in your browser: choose a long image, a fixed-size card or a carousel, set the resolution, and export.",
     template: "note",
@@ -19,7 +21,7 @@ export const guides: Guide[] = [
       <h2>2. Choose what kind of image you need</h2>
       <ul>
         <li><strong>Long image</strong>: one image that grows with your content. Best for notes, articles and documentation excerpts.</li>
-        <li><strong>Card</strong>: one fixed canvas, Square (1080 × 1080), Portrait (1080 × 1350), Story (1080 × 1920) or Landscape (1200 × 630) at 2×.</li>
+        <li><strong>Card</strong>: one fixed canvas, Square (1080 × 1080), Portrait (1080 × 1350), Tall 3:4 (1080 × 1440), Story (1080 × 1920), Wide 16:9 (1280 × 720) or Landscape (1200 × 630) at 2×.</li>
         <li><strong>Pages</strong>: several fixed canvases for a carousel, exported together as a ZIP.</li>
       </ul>
       <h2>3. Style it</h2>
@@ -39,6 +41,7 @@ export const guides: Guide[] = [
   },
   {
     slug: "long-image",
+    group: "Formats",
     title: "Export a high-resolution long image from Markdown",
     description: "Create one tall, sharp image from a long Markdown document: Long image mode, 3× resolution, the real size limits per browser, and what to do when a file is too large.",
     template: "note",
@@ -71,6 +74,7 @@ export const guides: Guide[] = [
   },
   {
     slug: "markdown-table-to-image",
+    group: "Content",
     title: "Turn a Markdown table into an image",
     description: "Export a GitHub-flavored Markdown table as a readable PNG: table syntax, alignment, line breaks in cells, and how to fix tables that are too wide.",
     template: "table",
@@ -100,6 +104,7 @@ export const guides: Guide[] = [
   },
   {
     slug: "mermaid-to-png",
+    group: "Content",
     title: "Convert a Mermaid diagram to PNG",
     description: "Render Mermaid flowcharts, sequence diagrams and more to a PNG in your browser, with syntax examples and fixes for diagrams that do not render.",
     template: "diagram",
@@ -124,6 +129,7 @@ export const guides: Guide[] = [
   },
   {
     slug: "latex-math-to-image",
+    group: "Content",
     title: "Render LaTeX math from Markdown as an image",
     description: "Write inline and display LaTeX formulas in Markdown and export them as a PNG with KaTeX: syntax, common errors, and tips for readable equations.",
     template: "math",
@@ -146,6 +152,7 @@ export const guides: Guide[] = [
   },
   {
     slug: "code-to-image",
+    group: "Content",
     title: "Share code snippets as images",
     description: "Turn a code snippet and its explanation into a clean, readable image: fenced code blocks, language labels, long lines, and themes that work for code.",
     template: "code",
@@ -169,6 +176,7 @@ export const guides: Guide[] = [
   },
   {
     slug: "markdown-carousel",
+    group: "Platforms & sizes",
     title: "Make an Instagram or LinkedIn carousel from Markdown",
     description: "Create a multi-page carousel from one Markdown document: page breaks, Auto split, portrait and square sizes, per-page styles, and ZIP export.",
     template: "carousel",
@@ -195,4 +203,9 @@ export const guides: Guide[] = [
   },
 ];
 
-export const guideFor = (slug: string) => guides.find(guide => guide.slug === slug);
+/** Index order. */
+export const guideGroups = ["Formats", "Sources", "Content", "Platforms & sizes", "Workflows"];
+
+export const allGuides: Guide[] = [...guides, ...moreGuides];
+
+export const guideFor = (slug: string) => allGuides.find(guide => guide.slug === slug);

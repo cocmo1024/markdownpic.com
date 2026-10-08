@@ -9,6 +9,8 @@ const worker = {
     const url = new URL(request.url);
     // MarkdownPic renders images on-device; no server image proxy or IMAGES binding.
     if (url.pathname === "/_vinext/image") return new Response("Not found", { status: 404 });
+    // One canonical host: www (and anything else routed here) folds into the apex domain.
+    if (url.hostname.startsWith("www.")) return new Response(null, { status: 301, headers: { Location: "https://" + url.hostname.slice(4) + url.pathname + url.search, "Cache-Control": "public, max-age=86400" } });
     const moved = legacyRedirect(url.pathname);
     if (moved) return new Response(null, { status: 301, headers: { Location: new URL(moved, url.origin).href, "Cache-Control": "public, max-age=86400" } });
     const response = await handler.fetch(request, env, ctx);

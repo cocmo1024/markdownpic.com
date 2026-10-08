@@ -86,5 +86,8 @@ test("legacy reference-site URLs redirect only to matching pages",async()=>{
   await check("/syntax/markdown-tables-that-survive-mobile-pdf-and-image-export","/guides/markdown-table-to-image");
   await check("/terms-of-use/","/terms");
   await check("/sitemap-index.xml","/sitemap.xml");
+  await check("/posts/convert-markdown-to-long-image/","/guides/long-image");
+  const www=await worker.fetch(new Request("https://www.markdownpic.com/guides?x=1"),{ASSETS:{fetch:async()=>new Response("",{status:404})}},{waitUntil(){},passThroughOnException(){}});
+  assert.equal(www.status,301);assert.equal(www.headers.get("location"),"https://markdownpic.com/guides?x=1");
   assert.equal((await request("/syntax/markdown-wiki-links-vs-standard-links")).status,404,"unrelated articles stay gone");
 });

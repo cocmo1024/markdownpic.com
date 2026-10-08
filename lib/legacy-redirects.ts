@@ -23,6 +23,9 @@ export const legacyRedirects: Record<string, string> = {
   "/syntax/markdown-code-blocks-fenced-vs-indented": "/guides/code-to-image",
   "/syntax/markdown-horizontal-rules-page-breaks-and-section-dividers": "/guides/markdown-carousel",
   "/syntax/markdown-cheat-sheet-with-standard-examples": "/help",
+  // Added from Search Console impressions (October 2026).
+  "/posts/convert-markdown-to-long-image": "/guides/long-image",
+  "/syntax/markdown-table-rowspan-and-colspan-why-html-is-required": "/guides/markdown-table-to-image",
 };
 
 /** The redirect target for a legacy path (trailing slash and case-insensitive), or null. */

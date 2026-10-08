@@ -3,7 +3,7 @@ import test from "node:test";
 import { newProject, newPage, effectiveDesign, normalizeDesign, validateProject, canvasPresets, themes, accents, contrastRatio, readableAccent, foregroundOn, slugify } from "../lib/studio-model.ts";
 import { splitMarkdownPages, serializePages, pagesFromMarkdown, semanticBlocks, splitOversizeBlock, localAssetIds } from "../lib/markdown-document.ts";
 import { paginateMarkdown } from "../lib/pagination.ts";
-import { assertExportSize, inspectCard } from "../lib/capture-checks.ts";
+import { assertExportSize, EXTENDED_LIMITS, inspectCard } from "../lib/capture-checks.ts";
 
 test("all fixed presets match promised output dimensions at 2x", () => {
   assert.deepEqual(canvasPresets.filter(p => p.height).map(p => [p.id,p.width*2,p.height*2]), [["square",1080,1080],["portrait",1080,1350],["story",1080,1920],["social",1200,630]]);
@@ -89,6 +89,10 @@ test("pagination abort and unsafe block failures preserve the original source",a
 test("capture size checks cover dimension, area, batch and non-finite values",()=>{
   assert.doesNotThrow(()=>assertExportSize(1080,1920));
   for (const values of [[0,1],[1,20000],[6000,6000],[1080,1920,79_000_000],[NaN,100],[100,Infinity]]) assert.throws(()=>assertExportSize(...values),/too large/);
+  // A 3x long image fits only where the browser proved it can allocate the canvas.
+  assert.throws(()=>assertExportSize(1800,30000),/too large/);
+  assert.doesNotThrow(()=>assertExportSize(1800,30000,0,EXTENDED_LIMITS));
+  assert.throws(()=>assertExportSize(1800,40000,0,EXTENDED_LIMITS),/too large/);
 });
 test("capture preflight catches both axes, missing assets, loading and empty states",()=>{
   const content={textContent:"Hello",scrollWidth:400,clientWidth:400,querySelector:()=>null};

@@ -13,7 +13,7 @@ test("server-rendered homepage exposes the tool and correct SEO identity",async(
   assert.match(html,/<title>Markdown to Image/);
   assert.match(html,/<html[^>]*lang="en"/);
   assert.match(html,/<link[^>]*rel="canonical"[^>]*href="https:\/\/markdownpic\.com\/?"/);
-  for(const label of ["Markdown source","Open file","Templates","Add image","Customize","Auto split","Single image","Export PNG","My projects"]) assert.ok(html.includes(label),label);
+  for(const label of ["Markdown source","Open file","Templates","Add image","Customize","Auto split","Long image","Card","Export PNG","My projects"]) assert.ok(html.includes(label),label);
   assert.match(html,/application\/ld\+json/);assert.match(html,/"@type":"WebApplication"/);
   assert.doesNotMatch(html,/aggregateRating|googleads|googlesyndication|adsbygoogle|doubleclick/i);
   assert.doesNotMatch(html,/class="product-intro"|Your site is taking shape/);

@@ -6,7 +6,7 @@ import { toBlob } from "html-to-image";
 import { CaptureCard, type CaptureProps } from "@/app/components/capture-card";
 import { displayMarkdown, localAssetIds, serializePages } from "./markdown-document";
 import { effectiveDesign, MAX_PAGES, presetFor, slugify, type Project, type ImageFormat } from "./studio-model";
-import { assertExportSize, inspectCard } from "./capture-checks";
+import { assertExportSize, EXTENDED_LIMITS, inspectCard, STANDARD_LIMITS } from "./capture-checks";
 import { withDeadline } from "./async-deadline";
 
 export interface ExportedImage { blob: Blob; name: string; width: number; height: number; page: number }
@@ -56,6 +56,19 @@ export function captureSurface() {
   };
 }
 
+/** Whether this browser can allocate and draw a canvas this large (limits differ by browser and device). */
+function canvasFits(width: number, height: number) {
+  if (width <= STANDARD_LIMITS.edge && height <= STANDARD_LIMITS.edge && width * height <= STANDARD_LIMITS.pixels) return true;
+  const canvas = document.createElement("canvas");
+  try {
+    canvas.width = width; canvas.height = height;
+    const context = canvas.getContext("2d");
+    if (!context) return false;
+    context.fillRect(width - 1, height - 1, 1, 1);
+    return context.getImageData(width - 1, height - 1, 1, 1).data[3] !== 0;
+  } catch { return false; } finally { canvas.width = 0; canvas.height = 0; }
+}
+
 export async function imageDimensions(blob: Blob, signal?: AbortSignal) {
   const url = URL.createObjectURL(blob);
   const image = new Image();
@@ -71,6 +84,7 @@ export async function imageDimensions(blob: Blob, signal?: AbortSignal) {
 
 async function encodeImage(png: Blob, format: ImageFormat, width: number, height: number, signal?: AbortSignal) {
   if (format === "png") return png;
+  if (format === "webp" && Math.max(width, height) > 16383) throw new Error("WebP images are limited to 16,383 pixels per side. Choose PNG or JPEG for this long image.");
   const url = URL.createObjectURL(png);
   const canvas = document.createElement("canvas");
   try {
@@ -115,9 +129,11 @@ export async function exportProject(project: Project, assetUrls: Record<string, 
         const logicalHeight = preset.height ?? Math.ceil(card.getBoundingClientRect().height);
         const width = preset.width * design.renderScale;
         const height = logicalHeight * design.renderScale;
-        assertExportSize(width, height, totalPixels);
+        assertExportSize(width, height, totalPixels, canvasFits(width, height) ? EXTENDED_LIMITS : STANDARD_LIMITS);
+        // Long images render for longer; the deadline grows with the pixel count.
+        const renderTimeout = Math.max(30_000, width * height / 1_000_000 * 1_500);
         // Query parameters can identify different images from the same endpoint.
-        const png = await withDeadline(toBlob(card, { pixelRatio: design.renderScale, width: preset.width, height: logicalHeight, includeQueryParams: true, fetchRequestInit: { signal: options.signal } }), { signal: options.signal, timeoutMs: 30_000, message: "This image took too long to render. Keep the tab visible, reduce the resolution, or split the content." });
+        const png = await withDeadline(toBlob(card, { pixelRatio: design.renderScale, width: preset.width, height: logicalHeight, includeQueryParams: true, skipAutoScale: true, fetchRequestInit: { signal: options.signal } }), { signal: options.signal, timeoutMs: renderTimeout, message: "This image took too long to render. Keep the tab visible, reduce the resolution, or split the content." });
         checkAbort(options.signal);
         if (!png) throw new Error("The image could not be rendered. Try a lower resolution.");
         const actual = await imageDimensions(png, options.signal);

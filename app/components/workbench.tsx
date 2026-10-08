@@ -25,6 +25,8 @@ const FORMATTING = [
   ["link", "Insert link", "link text", "[", "](https://)", "Ctrl/⌘ K"],
 ] as const;
 const PREFS_KEY = "markdownpic.ui.v1";
+// Fixed-size rail units: a responsive unit would resize the workbench around it.
+const RAIL_SIZES = [{ media: "(min-width: 1600px)", width: 300, height: 600 }, { media: "(min-width: 1280px)", width: 160, height: 600 }];
 
 type Panel = "styles" | "templates" | "projects" | "export" | "result" | null;
 type Task = { type: "export" | "layout" | "file"; message: string; cancellable?: boolean };
@@ -418,6 +420,15 @@ export default function Workbench() {
 
   const statusMessage = task?.message ?? (oversize ? "Shorten this draft to preview and export." : metrics.issue?.code === "loading" ? "" : metrics.issue?.message ?? "");
   const exportLabel = task?.type === "export" ? "Exporting…" : project.mode === "carousel" && exportScope === "all" && project.pages.length > 1 ? "Export " + project.pages.length + " images" : "Export " + format.toUpperCase();
+  // Long image = one auto-height image; Card = one fixed canvas; Pages = several fixed canvases.
+  // Leaving a mode never discards content: pages are joined or kept, and Undo restores the previous layout.
+  const setOutput = (output: "long" | "card" | "pages") => apply(current => {
+    const lastFixed = current.design.presetId === "long" ? (current.mode === "carousel" ? "portrait" : "square") : current.design.presetId;
+    const withoutPagePresets = current.pages.map(item => { const design = { ...item.design }; delete design.presetId; return { ...item, design }; });
+    if (output === "long") return { ...current, mode: "single", design: { ...current.design, presetId: "long" }, pages: withoutPagePresets };
+    if (output === "card") return { ...current, mode: "single", design: { ...current.design, presetId: lastFixed }, pages: withoutPagePresets };
+    return { ...current, mode: "carousel", design: { ...current.design, presetId: lastFixed } };
+  });
   const setTheme = (theme: ThemeId) => apply(current => current.mode === "carousel" && "theme" in (current.pages[index]?.design ?? {})
     ? { ...current, pages: current.pages.map((item, i) => i === index ? { ...item, design: { ...item.design, theme } } : item) }
     : { ...current, design: { ...current.design, theme } });
@@ -467,7 +478,7 @@ export default function Workbench() {
         <div className="pane-resizer" role="separator" tabIndex={0} aria-label="Resize editor and preview" aria-orientation="vertical" aria-valuemin={30} aria-valuemax={70} aria-valuenow={Math.round(split)} onDoubleClick={() => setSplit(50)} onKeyDown={event => { if (event.key === "ArrowLeft" || event.key === "ArrowRight") { event.preventDefault(); setSplit(value => Math.max(30, Math.min(70, value + (event.key === "ArrowRight" ? 2 : -2)))); } }} onPointerDown={event => event.currentTarget.setPointerCapture(event.pointerId)} onPointerMove={event => { if (event.currentTarget.hasPointerCapture(event.pointerId) && grid.current) { const rect = grid.current.getBoundingClientRect(); setSplit(Math.max(30, Math.min(70, (event.clientX - rect.left) / rect.width * 100))); } }} onPointerUp={event => event.currentTarget.releasePointerCapture(event.pointerId)} />
         <section id="preview-pane" className="preview-pane" aria-label="Image preview">
           <div className="pane-bar preview-toolbar">
-            <div className="segmented" role="group" aria-label="Output mode"><button disabled={disabled} aria-pressed={project.mode === "single"} onClick={() => apply(current => ({ ...current, mode: "single" }))}>Single image</button><button disabled={disabled} aria-pressed={project.mode === "carousel"} onClick={() => apply(current => ({ ...current, mode: "carousel" }))}>Pages{project.pages.length > 1 ? " · " + project.pages.length : ""}</button></div>
+            <div className="segmented" role="group" aria-label="Output mode"><button disabled={disabled} title="One image that grows with your content" aria-pressed={project.mode === "single" && project.design.presetId === "long"} onClick={() => setOutput("long")}>Long image</button><button disabled={disabled} title="One fixed-size image: square, portrait, story or landscape" aria-pressed={project.mode === "single" && project.design.presetId !== "long"} onClick={() => setOutput("card")}>Card</button><button disabled={disabled} title="Several fixed-size images, exported as a ZIP" aria-pressed={project.mode === "carousel"} onClick={() => setOutput("pages")}>Pages{project.pages.length > 1 ? " · " + project.pages.length : ""}</button></div>
             <button className="ghost-button" disabled={disabled || oversize} title="Split into pages that fit the canvas" onClick={autoSplit}><Icon name="split" /><span>Auto split</span></button>
             <span className="bar-spacer" />
             <div className="quick-themes" role="group" aria-label="Theme">{themes.map(theme => <button key={theme.id} className="theme-dot" title={theme.label} aria-label={"Theme: " + theme.label} aria-pressed={design.theme === theme.id} disabled={disabled} style={{ background: theme.background, color: theme.color }} onClick={() => setTheme(theme.id)} />)}</div>
@@ -487,7 +498,7 @@ export default function Workbench() {
           {project.mode === "carousel" && <div className="page-strip"><div className="page-thumbnails" aria-label="Pages">{project.pages.map((item, i) => <PageThumb key={item.id} number={i + 1} markdown={item.markdown} design={effectiveDesign(project, item)} assetUrls={assetUrls} current={i === index} disabled={disabled} onSelect={() => setActiveIndex(i)} />)}<button className="add-page" title="Add page" disabled={disabled || project.pages.length >= MAX_PAGES} onClick={addPage}><Icon name="plus" /><span>Add page</span></button></div><div className="page-actions"><button disabled={disabled || index === 0} aria-label="Move page earlier" title="Move earlier" onClick={() => movePage(-1)}><Icon name="left" /></button><button disabled={disabled || index === project.pages.length - 1} aria-label="Move page later" title="Move later" onClick={() => movePage(1)}><Icon name="right" /></button><button disabled={disabled || project.pages.length === 1} title="Remove page" onClick={() => { apply(current => ({ ...current, pages: current.pages.filter((_, i) => i !== index) })); setActiveIndex(Math.max(0, index - 1)); setNotice("Page removed. Undo can restore it."); }}><Icon name="trash" /><span>Remove page</span></button></div></div>}
         </section>
       </div>
-      <AdSlot slot="rail" media="(min-width: 1280px)" className="ad-rail" fallback={<div className="rail-tips"><strong>Shortcuts</strong><p><kbd>Ctrl/⌘</kbd> <kbd>Enter</kbd> Export</p><p><kbd>Ctrl/⌘</kbd> <kbd>B</kbd> / <kbd>I</kbd> / <kbd>K</kbd> Bold, italic, link</p><p><kbd>Ctrl/⌘</kbd> <kbd>S</kbd> Save now</p><p><kbd>Tab</kbd> Indent a list</p></div>} />
+      <AdSlot slot="rail" media="(min-width: 1280px)" sizes={RAIL_SIZES} className="ad-rail" fallback={<div className="rail-tips"><strong>Shortcuts</strong><p><kbd>Ctrl/⌘</kbd> <kbd>Enter</kbd> Export</p><p><kbd>Ctrl/⌘</kbd> <kbd>B</kbd> / <kbd>I</kbd> / <kbd>K</kbd> Bold, italic, link</p><p><kbd>Ctrl/⌘</kbd> <kbd>S</kbd> Save now</p><p><kbd>Tab</kbd> Indent a list</p></div>} />
     </div>
     <input ref={fileInput} type="file" aria-label="Open a Markdown or project file" className="sr-only" tabIndex={-1} accept=".md,.markdown,.mdown,.txt,.mdpic,.zip,image/png,image/jpeg,image/webp" onChange={event => { handleFiles(Array.from(event.target.files ?? [])); event.target.value = ""; }} />
     <input ref={imageInput} type="file" aria-label="Choose local images" className="sr-only" tabIndex={-1} multiple accept="image/png,image/jpeg,image/webp" onChange={event => { handleFiles(Array.from(event.target.files ?? [])); event.target.value = ""; }} />

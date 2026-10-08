@@ -17,8 +17,13 @@ export function inspectCard(card: HTMLElement): CaptureIssue | null {
   return null;
 }
 
-export function assertExportSize(width: number, height: number, totalPixels = 0) {
-  if (!Number.isFinite(width) || !Number.isFinite(height) || !Number.isFinite(totalPixels) || width <= 0 || height <= 0 || totalPixels < 0 || width > 16384 || height > 16384 || width * height > 24_000_000 || totalPixels + width * height > 80_000_000) {
-    throw new Error("This export is too large for a safe browser download. Use a lower resolution, split the content, or export fewer pages.");
+/** Safe everywhere, including phones. */
+export const STANDARD_LIMITS = { edge: 16384, pixels: 24_000_000, batch: 80_000_000 };
+/** Long images on browsers that proved they can allocate the canvas (desktop Chrome, Edge, Firefox). */
+export const EXTENDED_LIMITS = { edge: 32767, pixels: 120_000_000, batch: 160_000_000 };
+
+export function assertExportSize(width: number, height: number, totalPixels = 0, limits = STANDARD_LIMITS) {
+  if (!Number.isFinite(width) || !Number.isFinite(height) || !Number.isFinite(totalPixels) || width <= 0 || height <= 0 || totalPixels < 0 || width > limits.edge || height > limits.edge || width * height > limits.pixels || totalPixels + width * height > limits.batch) {
+    throw new Error("This image is too large for this browser. Use 2× or 1× resolution, a smaller text size, or split it into pages.");
   }
 }

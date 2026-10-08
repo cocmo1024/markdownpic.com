@@ -3,6 +3,8 @@ export type OutputMode = "single" | "carousel";
 export type ImageFormat = "png" | "jpeg" | "webp";
 export type FontFamily = "sans" | "serif" | "mono";
 export type WatermarkPosition = "center" | "top-right" | "bottom-right";
+/** Where the brand-kit byline (avatar, name, handle) sits; it only renders once a brand kit exists. */
+export type BylinePosition = "bottom" | "top" | "none";
 
 export interface CanvasPreset {
   id: string;
@@ -25,6 +27,7 @@ export interface Design {
   watermarkOpacity: number;
   watermarkPosition: WatermarkPosition;
   imageMaxHeight: number;
+  byline: BylinePosition;
 }
 
 export interface StudioPage {
@@ -79,7 +82,7 @@ export const defaultDesign: Design = {
   presetId: "long", theme: "editorial", accent: accents[0], fontScale: 100,
   fontFamily: "sans", padding: 44, showBrand: false, showHeader: false,
   renderScale: 2, watermarkText: "", watermarkOpacity: 16,
-  watermarkPosition: "bottom-right", imageMaxHeight: 480,
+  watermarkPosition: "bottom-right", imageMaxHeight: 480, byline: "bottom",
 };
 
 export const exampleMarkdown = `# Good ideas deserve a clear picture.
@@ -137,6 +140,7 @@ export function normalizeDesign(input: unknown): Design {
     watermarkText: typeof value.watermarkText === "string" ? value.watermarkText.slice(0, 80) : "",
     watermarkOpacity: number("watermarkOpacity", 6, 36) as number,
     watermarkPosition: ["center", "top-right", "bottom-right"].includes(String(value.watermarkPosition)) ? value.watermarkPosition as WatermarkPosition : "bottom-right",
+    byline: ["bottom", "top", "none"].includes(String(value.byline)) ? value.byline as BylinePosition : "bottom",
   };
 }
 

@@ -485,3 +485,34 @@ summary{cursor:pointer;font-weight:600;min-height:30px;list-style-position:insid
 .share-row{display:grid;gap:8px;justify-items:start}
 .share-row button{min-height:38px}
 .fit-button{justify-self:start;min-height:36px;font-size:.8125rem}
+
+/* ───────────────────────── Brand kit ───────────────────────── */
+.brand-section{display:grid;gap:12px;padding:16px;border-radius:14px;background:var(--paper);box-shadow:inset 0 0 0 1px var(--line)}
+.brand-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.brand-head h3{font-size:.9375rem;font-weight:650}
+.brand-head small{font-size:.75rem!important}
+.brand-identity{display:flex;align-items:center;gap:12px}
+.brand-avatar{flex:none;width:58px;height:58px;min-height:58px;padding:0;border-radius:50%;border:1px dashed var(--line-2);background:var(--surface);overflow:hidden;color:var(--muted)}
+.brand-avatar img{width:100%;height:100%;object-fit:cover}
+.brand-avatar:hover:not(:disabled){border-color:var(--ink);background:var(--surface)}
+.brand-fields{flex:1;min-width:0;display:grid;gap:6px}
+.brand-fields input{min-height:36px!important;padding:.35rem .6rem!important;font-size:.875rem!important}
+.link-button{justify-self:start;min-height:24px;padding:0;border:0;background:transparent;color:var(--muted);font-size:.75rem;text-decoration:underline;text-underline-offset:3px}
+.link-button:hover:not(:disabled){background:transparent;color:var(--ink)}
+.choice-row.compact button{min-height:32px;padding:.2rem .6rem}
+.brand-style{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.8125rem;color:var(--ink-2)}
+.brand-style>span:nth-child(2){flex:1;min-width:120px}
+.brand-style button{min-height:32px;padding:.2rem .7rem;font-size:.8125rem}
+.brand-swatch{width:16px;height:16px;border-radius:50%;box-shadow:inset 0 0 0 1px rgb(0 0 0 / .15)}
+.brand-message{font-size:.8125rem;color:var(--ink-2)}
+.brand-nudge{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 24px 16px;padding:12px 14px;border-radius:12px;background:rgb(217 255 61 / .25);font-size:.875rem}
+.brand-nudge button{flex:none;min-height:34px}
+/* The byline inside exported cards. */
+.card-byline{flex:none;display:flex;align-items:center;gap:.6em;font-family:var(--font-geist-sans,"Geist"),Arial,sans-serif;font-size:calc(14px * var(--card-scale));line-height:1.25;color:var(--card-ink)}
+.card-byline img{width:2.6em;height:2.6em;border-radius:50%;object-fit:cover;box-shadow:0 0 0 1.5px var(--card-bg),0 0 0 2.5px var(--card-faint)}
+.card-byline span{display:grid;min-width:0}
+.card-byline strong{font-weight:650;letter-spacing:-.01em}
+.card-byline em{font-style:normal;color:color-mix(in srgb,var(--card-ink) 60%,var(--card-bg));font-size:.92em}
+.byline-top{margin-bottom:1.8em}
+.byline-bottom{margin-top:auto;padding-top:1.8em}
+.byline-bottom+.card-brand{margin-top:0;padding-top:12px}

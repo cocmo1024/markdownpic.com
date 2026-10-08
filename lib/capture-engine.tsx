@@ -6,6 +6,7 @@ import { toBlob } from "html-to-image";
 import { CaptureCard, type CaptureProps } from "@/app/components/capture-card";
 import { displayMarkdown, localAssetIds, serializePages } from "./markdown-document";
 import { effectiveDesign, MAX_PAGES, presetFor, slugify, type Project, type ImageFormat } from "./studio-model";
+import type { BrandKit } from "./brand-kit";
 import { assertExportSize, EXTENDED_LIMITS, inspectCard, STANDARD_LIMITS } from "./capture-checks";
 import { withDeadline } from "./async-deadline";
 
@@ -103,7 +104,7 @@ async function encodeImage(png: Blob, format: ImageFormat, width: number, height
 }
 
 export async function exportProject(project: Project, assetUrls: Record<string, string>, options: {
-  format: ImageFormat; pageIds?: string[]; signal?: AbortSignal; onProgress: (message: string, progress: number) => void;
+  format: ImageFormat; pageIds?: string[]; signal?: AbortSignal; brand?: BrandKit | null; onProgress: (message: string, progress: number) => void;
 }): Promise<ExportResult> {
   // Own the exact content and design version at the start of the task.
   const snapshot = structuredClone(project);
@@ -123,7 +124,7 @@ export async function exportProject(project: Project, assetUrls: Record<string, 
         const design = effectiveDesign(snapshot, page);
         const preset = presetFor(design);
         const label = snapshot.mode === "single" ? preset.label : `${pageNumber} / ${snapshot.pages.length}`;
-        const card = await surface.render({ markdown: page.markdown, design, assetUrls: assets, label }, options.signal);
+        const card = await surface.render({ markdown: page.markdown, design, assetUrls: assets, label, brand: options.brand }, options.signal);
         const issue = inspectCard(card);
         if (issue) throw new Error(issue.message);
         const logicalHeight = preset.height ?? Math.ceil(card.getBoundingClientRect().height);

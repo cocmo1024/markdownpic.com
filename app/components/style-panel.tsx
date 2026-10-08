@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Modal } from "./modal";
 import { accents, canvasPresets, effectiveDesign, newId, readableAccent, themes, type BrandProfile, type Design, type Project } from "@/lib/studio-model";
 import { listProfiles, saveProfile } from "@/lib/project-store";
+import { BrandSection } from "./brand-section";
 
 export function StylePanel({ project, index, apply, onFit, onClose, onDone }: { project: Project; index: number; apply: (updater: (current: Project) => Project) => void; onFit?: () => void; onClose: () => void; onDone: () => void }) {
   const [scope, setScope] = useState<"all" | "page">("all");
@@ -16,6 +17,7 @@ export function StylePanel({ project, index, apply, onFit, onClose, onDone }: { 
     : { ...current, design: { ...current.design, ...patch } });
   useEffect(() => { void listProfiles().then(setProfiles).catch(() => setMessage("Saved styles are unavailable. You can still customize this project.")); }, []);
   return <Modal title="Customize your image" drawer onClose={onClose}><div className="settings-content">
+    <BrandSection design={design} setDesign={setDesign} />
     {project.mode === "carousel" && <label>Apply changes to<select value={scope} onChange={event => setScope(event.target.value as typeof scope)}><option value="all">Project default</option><option value="page">This page only</option></select><small>Page overrides stay in place when the default changes.</small></label>}
     {scope === "page" && Object.keys(page.design).length > 0 && <button onClick={() => apply(current => ({ ...current, pages: current.pages.map((item, i) => i === index ? { ...item, design: {} } : item) }))}>Reset this page to project style</button>}
     <label>Canvas size<select value={design.presetId} onChange={event => setDesign({ presetId: event.target.value })}>{canvasPresets.map(item => <option key={item.id} value={item.id}>{item.label} · {item.width * design.renderScale} × {item.height ? item.height * design.renderScale : "auto"} px</option>)}</select></label>

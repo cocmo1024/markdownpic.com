@@ -4,6 +4,7 @@ import { isValidElement, memo, useEffect, useState, type CSSProperties, type Img
 import ReactMarkdown, { defaultUrlTransform, type Options } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { foregroundOn, presetFor, readableAccent, themeFor, type Design } from "@/lib/studio-model";
+import { hasBrand, type BrandKit } from "@/lib/brand-kit";
 
 // KaTeX is the heaviest renderer, so it loads only for documents that contain math ($).
 // Until it arrives the card carries a pending marker, which holds back measurement and export.
@@ -69,9 +70,22 @@ export interface CaptureProps {
   assetUrls: Record<string, string>;
   label?: string;
   articleRef?: Ref<HTMLElement>;
+  /** The person’s brand kit; rendered as a byline when the design allows it. */
+  brand?: BrandKit | null;
 }
 
-export const CaptureCard = memo(function CaptureCard({ markdown, design, assetUrls, label = "", articleRef }: CaptureProps) {
+/** Avatar, name and handle: who this image is from. */
+function Byline({ brand, position }: { brand: BrandKit; position: "top" | "bottom" }) {
+  return <div className={"card-byline byline-" + position}>
+    {/* The avatar is a local data URL, rendered as-is in preview and export. */}
+    {/* eslint-disable-next-line @next/next/no-img-element */}
+    {brand.avatar && <img src={brand.avatar} alt="" width={64} height={64} />}
+    <span>{brand.name && <strong>{brand.name}</strong>}{brand.handle && <em>{brand.handle}</em>}</span>
+  </div>;
+}
+
+export const CaptureCard = memo(function CaptureCard({ markdown, design, assetUrls, label = "", articleRef, brand }: CaptureProps) {
+  const byline = hasBrand(brand) && design.byline !== "none" ? design.byline : null;
   const preset = presetFor(design);
   const theme = themeFor(design.theme);
   const accent = readableAccent(design.accent, theme.background);
@@ -95,6 +109,7 @@ export const CaptureCard = memo(function CaptureCard({ markdown, design, assetUr
   const math = wantsMath ? mathPlugins : null;
   return <article ref={articleRef} className={`capture-card theme-${design.theme} font-${design.fontFamily}${theme.dark ? " is-dark" : ""}`} style={style}>
     {design.showHeader && <div className="card-rule"><span className="card-rule-mark" /><span>Markdown / Picture</span><span>{label}</span></div>}
+    {byline === "top" && <Byline brand={brand!} position="top" />}
     {wantsMath && !math && (mathError
       ? <span className="capture-error" data-capture-error="The math renderer could not load. Check your connection and try again.">Math could not load · check your connection</span>
       : <span hidden data-capture-pending="math" />)}
@@ -109,6 +124,7 @@ export const CaptureCard = memo(function CaptureCard({ markdown, design, assetUr
         {markdown}
       </ReactMarkdown>
     </div>
+    {byline === "bottom" && <Byline brand={brand!} position="bottom" />}
     {design.showBrand && <div className="card-brand"><span className="card-brand-mark" />Made with MarkdownPic</div>}
     {design.watermarkText && <div className={`card-watermark watermark-${design.watermarkPosition}`} style={{ opacity: design.watermarkOpacity / 100 }}>{design.watermarkText}</div>}
   </article>;

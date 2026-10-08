@@ -8,7 +8,7 @@ import { downloadBlob } from "@/lib/download";
 import { withDeadline } from "@/lib/async-deadline";
 import { Icon } from "./icons";
 
-export function ResultPanel({ result, onClose, onCopyLink, returnFocusRef }: { result: ExportResult; onClose: () => void; onCopyLink?: () => void; returnFocusRef?: RefObject<HTMLElement | null> }) {
+export function ResultPanel({ result, onClose, onCopyLink, onSetUpBrand, returnFocusRef }: { result: ExportResult; onClose: () => void; onCopyLink?: () => void; onSetUpBrand?: () => void; returnFocusRef?: RefObject<HTMLElement | null> }) {
   const [urls, setUrls] = useState<string[]>([]);
   const [index, setIndex] = useState(0);
   const [message, setMessage] = useState("");
@@ -37,6 +37,7 @@ export function ResultPanel({ result, onClose, onCopyLink, returnFocusRef }: { r
     <div className="result-meta">{image.width} × {image.height} px · {image.blob.size >= 1_000_000 ? (image.blob.size / 1_000_000).toFixed(1) + " MB" : Math.ceil(image.blob.size / 1000) + " KB"} · {image.name}</div>
     {result.images.length > 1 && <label className="result-page-label">Inspect exported page<select value={index} onChange={event => setIndex(Number(event.target.value))}>{result.images.map((item, i) => <option key={item.name} value={i}>Page {item.page}</option>)}</select></label>}
     {message && <p role="status" className="result-message">{message}</p>}
+    {onSetUpBrand && <div className="brand-nudge"><span>Sign every image with your name and avatar, automatically.</span><button onClick={onSetUpBrand}>Set up my brand</button></div>}
     <div className="modal-footer wrap"><button className="primary-button" onClick={() => downloadBlob(result.download, result.name)}><Icon name="download" />Download again</button><a className="button-link" href={urls[index]} target="_blank" rel="noopener noreferrer"><Icon name="arrow" />Open image</a><button onClick={share}><Icon name="share" />Share image</button><button onClick={copy}><Icon name="copy" />Copy PNG</button>{onCopyLink && <button onClick={onCopyLink}><Icon name="link" />Copy editable link</button>}<button onClick={() => {
       if (!navigator.clipboard?.writeText) { setMessage("Text copy is unavailable. Use Save Markdown below to download the source."); return; }
       setMessage("Copying source… Allow clipboard access if your browser asks.");

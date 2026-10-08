@@ -79,3 +79,25 @@ export function rehypeSmartTypography() {
     walk(tree);
   };
 }
+
+const textOf = (node: HastNode): string => node.type === "text" ? node.value ?? "" : (node.children ?? []).map(textOf).join("");
+/** A figure has a digit ("87%", "3×", "01") or no letters at all (an emoji or symbol). */
+const isFigure = (text: string) => /\d/.test(text) || !/\p{L}/u.test(text);
+/** Longest top-level heading (in characters) still set as a display figure. */
+export const DISPLAY_HEADING_MAX = 6;
+
+/**
+ * A very short top-level heading — a figure, a percentage, "01", an emoji — is a display
+ * element, not a headline: it gets the `display` class and is set several times larger.
+ */
+export function rehypeDisplayHeadings() {
+  return (tree: HastNode) => {
+    for (const node of tree.children ?? []) {
+      if (node.type !== "element" || node.tagName !== "h1") continue;
+      const text = textOf(node).trim();
+      if (!text || [...text].length > DISPLAY_HEADING_MAX || !isFigure(text)) continue;
+      const existing = (node.properties?.className as string[] | undefined) ?? [];
+      node.properties = { ...node.properties, className: [...existing, "display"] };
+    }
+  };
+}

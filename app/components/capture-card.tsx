@@ -7,7 +7,7 @@ import ReactMarkdown, { defaultUrlTransform, type Options } from "react-markdown
 import remarkGfm from "remark-gfm";
 import { foregroundOn, presetFor, readableAccent, themeFor, type Design } from "@/lib/studio-model";
 import { hasBrand, type BrandKit } from "@/lib/brand-kit";
-import { hasMath, normalizeMathDelimiters, rehypeSmartTypography } from "@/lib/render-markdown";
+import { hasMath, normalizeMathDelimiters, rehypeDisplayHeadings, rehypeSmartTypography } from "@/lib/render-markdown";
 
 // KaTeX is the heaviest renderer, so it loads only for documents that contain math ($).
 // Until it arrives the card carries a pending marker, which holds back measurement and export.
@@ -135,7 +135,7 @@ export const CaptureCard = memo(function CaptureCard({ markdown, design, assetUr
     return () => { active = false; };
   }, [wantsMath]);
   const math = wantsMath ? mathPlugins : null;
-  const rehypePlugins = useMemo(() => [...(math?.rehype ?? []), ...(design.smartTypography ? [rehypeSmartTypography] : [])], [math, design.smartTypography]);
+  const rehypePlugins = useMemo(() => [...(math?.rehype ?? []), rehypeDisplayHeadings, ...(design.smartTypography ? [rehypeSmartTypography] : [])], [math, design.smartTypography]);
   const body = <>
     {design.showHeader && <div className="card-rule"><span className="card-rule-mark" /><span>Markdown / Picture</span><span>{label}</span></div>}
     {byline === "top" && <Byline brand={brand!} position="top" align={design.bylineAlign} divider={design.bylineDivider} />}
@@ -157,7 +157,7 @@ export const CaptureCard = memo(function CaptureCard({ markdown, design, assetUr
     {design.showBrand && <div className="card-brand"><span className="card-brand-mark" />Made with MarkdownPic</div>}
     {design.watermarkText && <div className={`card-watermark watermark-${design.watermarkPosition}`} style={{ opacity: design.watermarkOpacity / 100 }}>{design.watermarkText}</div>}
   </>;
-  return <article ref={articleRef} className={`capture-card theme-${design.theme} font-${design.fontFamily}${theme.dark ? " is-dark" : ""}${framed ? " has-frame frame-" + design.frame : ""}`} style={style}>
+  return <article ref={articleRef} className={`capture-card theme-${design.theme} font-${design.fontFamily}${theme.dark ? " is-dark" : ""}${framed ? " has-frame frame-" + design.frame : ""}${design.textAlign === "center" ? " align-center" : ""}`} style={style}>
     {framed ? <div className="card-sheet">{body}</div> : body}
   </article>;
 });

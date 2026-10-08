@@ -22,3 +22,12 @@ test("smart typography: quotes, apostrophes, dashes and ellipses", () => {
   assert.equal(smartenText("rock 'n' roll in the '90s"), "rock ‘n’ roll in the ’90s");
   assert.equal(smartenText("\" after bold", "d"), "” after bold", "context carries across formatting");
 });
+
+test("short figure headings become display numerals; words and long headings do not", async () => {
+  const { rehypeDisplayHeadings } = await import("../lib/render-markdown.ts");
+  const h1 = text => ({ type: "element", tagName: "h1", properties: {}, children: [{ type: "text", value: text }] });
+  const tree = { type: "root", children: [h1("87%"), h1("3×"), h1("01"), h1("🎉"), h1("Myth"), h1("中文"), h1("2026 plan"), { type: "element", tagName: "h2", properties: {}, children: [{ type: "text", value: "42" }] }] };
+  rehypeDisplayHeadings()(tree);
+  const flagged = tree.children.map(node => (node.properties.className ?? []).includes("display"));
+  assert.deepEqual(flagged, [true, true, true, true, false, false, false, false]);
+});

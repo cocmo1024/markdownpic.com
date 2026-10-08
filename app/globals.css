@@ -792,3 +792,41 @@ summary{cursor:pointer;font-weight:600;min-height:30px;list-style-position:insid
 .theme-swatch.theme-editorial b,.theme-swatch.theme-ink b{font-family:var(--serif);font-weight:500;letter-spacing:-.02em}
 .theme-swatch.theme-swiss b,.theme-swatch.theme-citrus b{font-weight:800;letter-spacing:-.06em}
 .theme-swatch.theme-terminal b::before{content:"#";margin-right:.15em;color:#4ade80;opacity:.7}
+
+/* Centered cards: headings and paragraphs center; lists, tables and code keep a left edge
+   inside a centered block, and quotes trade the side bar for a mark above. */
+.align-center .capture-content{text-align:center}
+.align-center .capture-content :is(h1,h2,h3,h4,h5,h6,p){margin-inline:auto}
+.align-center .capture-content :is(ul,ol){display:table;margin-inline:auto;text-align:left}
+.align-center .capture-content :is(table,pre,.code-block,.mermaid-block,.katex-display){text-align:left}
+.align-center .capture-content blockquote{border-left:0;padding-inline:0}
+.align-center .capture-content blockquote::after{content:"";display:block;width:2.4em;margin:.7em auto 0;border-top:2px solid var(--card-accent)}
+.align-center.theme-editorial .capture-content blockquote::after,.align-center.theme-rose .capture-content blockquote::after,.align-center.theme-ink .capture-content blockquote::after{content:none}
+.align-center.theme-editorial .capture-content blockquote::before,.align-center.theme-rose .capture-content blockquote::before,.align-center.theme-ink .capture-content blockquote::before{position:static;display:block;height:.42em;margin-bottom:.15em}
+.align-center .capture-content blockquote{background:none}
+.align-center .capture-content hr{margin-inline:auto}
+.align-center.theme-swiss .capture-content h2{border-top:0;padding-top:0}
+.align-center.theme-harbor .capture-content h2{display:inline-block}
+
+/* Template library: category filter, grouped sections, whole-card thumbnails for fixed canvases. */
+.template-head{position:sticky;top:0;z-index:2;display:grid;gap:10px;padding:14px 24px 12px;background:var(--surface);border-bottom:1px solid var(--line)}
+.template-head .modal-intro{margin:0;padding:0}
+.template-filter{display:flex;flex-wrap:wrap;gap:6px}
+.template-filter button{min-height:32px;padding:.25rem .8rem;border-radius:999px;font-size:.8125rem;font-weight:550}
+.template-filter button[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.template-group>header{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;padding:22px 24px 0}
+.template-group>header h3{margin:0;font-family:var(--serif);font-size:1.3rem;font-weight:500;letter-spacing:-.01em}
+.template-group>header p{margin:0;font-size:.8125rem;color:var(--muted)}
+.template-sample.is-fixed{background-color:var(--paper-2);background-image:radial-gradient(rgb(var(--ink-rgb) / .07) .8px,transparent .8px);background-size:14px 14px}
+.template-sample.is-fixed>span{top:10px;box-shadow:0 10px 24px -14px rgb(var(--shadow-rgb) / .5)}
+.template-option>strong{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.template-option>strong small{font-family:var(--mono);font-size:.6875rem;font-weight:500;color:var(--muted)}
+@media(max-width:640px){.template-head{padding:12px 16px 10px}.template-head .modal-intro{display:none}.template-filter{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-inline:-16px;padding-inline:16px}.template-filter button{flex:none}.template-group>header{padding:18px 16px 0}}
+
+/* Display figures: a short h1 ("87%", "3×", "01") set as a large numeral. */
+.capture-content h1.display{font-size:4.6em;line-height:.92;letter-spacing:-.06em;font-weight:750;margin:.15em 0 .2em;font-variant-numeric:lining-nums;color:var(--card-accent)}
+.font-serif .capture-content h1.display{font-weight:400;letter-spacing:-.04em}
+.font-mono .capture-content h1.display{font-size:3.8em;letter-spacing:-.08em}
+.theme-swiss .capture-content h1.display,.theme-citrus .capture-content h1.display{font-weight:850;color:var(--card-ink)}
+.theme-terminal .capture-content h1.display::before{content:none}
+.align-center .capture-content h1.display{margin-inline:auto}

@@ -2,6 +2,9 @@ export type ThemeId = "editorial" | "mono" | "linen" | "mist" | "harbor" | "rose
 export type OutputMode = "single" | "carousel";
 export type ImageFormat = "png" | "jpeg" | "webp";
 export type FontFamily = "sans" | "serif" | "mono";
+export type TextAlign = "left" | "center";
+/** Image text size in percent. Short posts (one line on a card) need poster-sized type. */
+export const FONT_SCALE_MIN = 76, FONT_SCALE_MAX = 220;
 export type WatermarkPosition = "center" | "top-right" | "bottom-right";
 /** Where the brand-kit byline (avatar, name, handle) sits; it only renders once a brand kit exists. */
 export type BylinePosition = "bottom" | "top" | "none";
@@ -36,6 +39,8 @@ export interface Design {
   /** Curly quotes, en and em dashes, ellipses; never inside code or math. */
   smartTypography: boolean;
   frame: FrameStyle;
+  /** Body alignment; short cards (quotes, statements) are usually centered. */
+  textAlign: TextAlign;
 }
 
 export interface StudioPage {
@@ -105,7 +110,7 @@ export const defaultDesign: Design = {
   fontFamily: "sans", padding: 44, showBrand: false, showHeader: false,
   renderScale: 2, watermarkText: "", watermarkOpacity: 16,
   watermarkPosition: "bottom-right", imageMaxHeight: 480, byline: "bottom",
-  bylineAlign: "left", bylineDivider: false, smartTypography: true, frame: "none",
+  bylineAlign: "left", bylineDivider: false, smartTypography: true, frame: "none", textAlign: "left",
 };
 
 export const exampleMarkdown = `# Good ideas deserve a clear picture.
@@ -153,7 +158,7 @@ export function normalizeDesign(input: unknown): Design {
     presetId: canvasPresets.some((p) => p.id === value.presetId) ? String(value.presetId) : defaultDesign.presetId,
     theme: themes.some((t) => t.id === value.theme) ? value.theme as ThemeId : defaultDesign.theme,
     accent: typeof value.accent === "string" && /^#[\da-f]{6}$/i.test(value.accent) ? value.accent : defaultDesign.accent,
-    fontScale: number("fontScale", 76, 140) as number,
+    fontScale: number("fontScale", FONT_SCALE_MIN, FONT_SCALE_MAX) as number,
     padding: number("padding", 20, 80) as number,
     imageMaxHeight: number("imageMaxHeight", 100, 1200) as number,
     fontFamily: ["sans", "serif", "mono"].includes(String(value.fontFamily)) ? value.fontFamily as FontFamily : "sans",
@@ -168,6 +173,7 @@ export function normalizeDesign(input: unknown): Design {
     bylineDivider: typeof value.bylineDivider === "boolean" ? value.bylineDivider : false,
     smartTypography: typeof value.smartTypography === "boolean" ? value.smartTypography : true,
     frame: ["none", "gradient", "solid"].includes(String(value.frame)) ? value.frame as FrameStyle : "none",
+    textAlign: value.textAlign === "center" ? "center" : "left",
   };
 }
 

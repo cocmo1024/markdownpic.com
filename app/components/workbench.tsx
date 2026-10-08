@@ -1,15 +1,16 @@
 "use client";
 
-import { memo, useCallback, useDeferredValue, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { memo, useCallback, useDeferredValue, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import Link from "next/link";
 import { CaptureCard } from "./capture-card";
 import { Modal } from "./modal";
 import { useProject } from "./use-project";
-import { defaultDesign, effectiveDesign, MAX_IMAGE_BYTES, MAX_IMAGE_PIXELS, MAX_PAGES, MAX_TEXT_LENGTH, newPage, newProject, normalizeDesign, presetFor, slugify, themeLook, themes, type Design, type ImageFormat, type Project, type StudioPage, type ThemeId } from "@/lib/studio-model";
+import { defaultDesign, effectiveDesign, FONT_SCALE_MAX, FONT_SCALE_MIN, MAX_IMAGE_BYTES, MAX_IMAGE_PIXELS, MAX_PAGES, MAX_TEXT_LENGTH, newPage, newProject, normalizeDesign, presetFor, slugify, themeLook, themes, type Design, type ImageFormat, type Project, type StudioPage, type ThemeId } from "@/lib/studio-model";
 import { displayMarkdown, documentTitle, localAssetIds, pagesFromMarkdown, serializePages, splitMarkdownPages } from "@/lib/markdown-document";
 import { loadLocalImage, saveLocalImage } from "@/lib/local-image-store";
 import { deleteProject, listProjects, loadProject } from "@/lib/project-store";
 import { templateDesign, templates } from "@/lib/templates";
+import { TemplatePanel } from "./template-panel";
 import { inspectCard, type CaptureIssue } from "@/lib/capture-checks";
 import type { ExportResult } from "@/lib/capture-engine";
 import { StylePanel } from "./style-panel";
@@ -60,19 +61,6 @@ async function cleanInlineImages(source: string, signal?: AbortSignal) {
   return result;
 }
 
-/** Scales a fixed-width card to fill its fluid container. */
-function FitPreview({ width, children }: { width: number; children: ReactNode }) {
-  const frame = useRef<HTMLSpanElement>(null);
-  const [scale, setScale] = useState(.45);
-  useLayoutEffect(() => {
-    const element = frame.current;
-    if (!element) return;
-    const observer = new ResizeObserver(() => setScale(element.clientWidth / width));
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, [width]);
-  return <span ref={frame} className="template-sample" aria-hidden="true"><span style={{ transform: "scale(" + scale + ")" }}>{children}</span></span>;
-}
 
 /** Page strip miniature; memoized on content so typing on one page leaves the others untouched. */
 const PageThumb = memo(function PageThumb({ number, markdown, design, assetUrls, brand, current, disabled, onSelect }: { number: number; markdown: string; design: Design; assetUrls: Record<string, string>; brand: BrandKit | null; current: boolean; disabled: boolean; onSelect: () => void }) {
@@ -402,7 +390,7 @@ export default function Workbench() {
     if (!presetFor(base).height) throw new Error("Auto height already fits everything. Choose Card or Pages to fit text to a fixed size.");
     const markdown = snapshot.mode === "single" ? displayMarkdown(snapshot.pages) : current.markdown;
     const surface = captureSurface();
-    let low = 76, high = 140, best = 0;
+    let low = FONT_SCALE_MIN, high = FONT_SCALE_MAX, best = 0;
     try {
       while (low <= high) {
         const mid = Math.floor((low + high) / 2);
@@ -670,7 +658,7 @@ export default function Workbench() {
     <input ref={fileInput} type="file" aria-label="Open a Markdown or project file" className="sr-only" tabIndex={-1} accept=".md,.markdown,.mdown,.txt,.mdpic,.zip,image/png,image/jpeg,image/webp" onChange={event => { handleFiles(Array.from(event.target.files ?? [])); event.target.value = ""; }} />
     <input ref={imageInput} type="file" aria-label="Choose local images" className="sr-only" tabIndex={-1} multiple accept="image/png,image/jpeg,image/webp" onChange={event => { handleFiles(Array.from(event.target.files ?? [])); event.target.value = ""; }} />
     {panel === "styles" && <StylePanel project={project} index={index} apply={apply} onFit={fitText} onClose={() => setPanel(null)} onDone={() => { setPanel(null); setMobileView("preview"); }} />}
-    {panel === "templates" && <Modal title="Start from a template" wide onClose={() => setPanel(null)}><p className="modal-intro">Each template opens as a new project. Your current work is saved.</p><div className="template-grid">{templates.map(template => { const sampleDesign = templateDesign(defaultDesign, template); const width = presetFor(sampleDesign).width; return <button className="template-option" disabled={disabled} key={template.id} onClick={() => openTemplate(template.id)}><FitPreview width={width}><CaptureCard markdown={splitMarkdownPages(template.markdown)[0].markdown} design={sampleDesign} assetUrls={{}} brand={brand} /></FitPreview><strong>{template.name}</strong><span>{template.description}</span></button>; })}</div></Modal>}
+    {panel === "templates" && <TemplatePanel disabled={disabled} brand={brand} onOpen={openTemplate} onClose={() => setPanel(null)} />}
     {panel === "projects" && <Modal title="My projects" onClose={() => setPanel(null)} returnFocusRef={projectsButton}><p className="modal-intro">Saved only in this browser. Back up important work before clearing browser data or switching devices.</p><div className="project-list">{projects.map(item => <div className="project-row" key={item.id}><button disabled={disabled} onClick={() => void run("file", "Opening project…", async () => { const latest = await loadProject(item.id); if (!latest) throw new Error("This project was removed in another tab."); await openProject(latest, doc.saveState !== "conflict"); })}><strong>{item.name || "Untitled"}{item.id === project.id ? " · Current" : ""}</strong><span>{item.pages.length} {item.pages.length === 1 ? "page" : "pages"} · {new Date(item.updatedAt).toLocaleDateString("en")}</span></button><button className="icon-button" aria-label={"Delete " + (item.name || "Untitled")} onClick={() => setDeleteTarget(item)}>×</button></div>)}</div><div className="modal-footer wrap"><button disabled={disabled} onClick={backup}>Back up current project</button><button disabled={disabled} onClick={() => fileInput.current?.click()}>Restore .mdpic</button><button disabled={disabled} onClick={() => void saveMarkdown().catch(error => setNotice(errorText(error)))}>Save Markdown</button></div></Modal>}
     {deleteTarget && <Modal title="Delete this local project?" onClose={() => setDeleteTarget(null)}><p className="modal-intro">“{deleteTarget.name || "Untitled"}” will be removed from this browser. Download a backup first if you might need it again.</p><div className="modal-footer"><button onClick={() => setDeleteTarget(null)}>Keep project</button><button className="danger-button" disabled={disabled} onClick={() => void run("file", "Removing project…", async () => { if (deleteTarget.id === project.id) await openProject(freshProject()); await deleteProject(deleteTarget.id); setProjects(await listProjects()); setDeleteTarget(null); setPanel("projects"); })}>Delete project</button></div></Modal>}
     {panel === "export" && <Modal title="Export options" onClose={() => setPanel(null)}><div className="settings-content">

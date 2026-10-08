@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { InfoShell } from "../components/info-shell";
 import { AdSlot } from "../components/ad-slot";
 export const metadata: Metadata = { title: "How to convert Markdown to images", description: "Learn how to import Markdown, add local images, create multi-page carousels, and export PNG, JPEG, or WebP files with MarkdownPic.", alternates: { canonical: "/help" } };
 export default function Help() {
   return <InfoShell><h1>Markdown to image, without the extra steps.</h1><p>Write or paste Markdown, choose a canvas, and export a readable image. The editor runs in your browser. You do not need an account.</p>
+    <p className="guide-pointer">Working on something specific? The <Link href="/guides">guides</Link> cover <Link href="/guides/long-image">high-resolution long images</Link>, <Link href="/guides/markdown-table-to-image">tables</Link>, <Link href="/guides/mermaid-to-png">Mermaid diagrams</Link>, <Link href="/guides/latex-math-to-image">math</Link>, <Link href="/guides/code-to-image">code</Link> and <Link href="/guides/markdown-carousel">carousels</Link>.</p>
     <h2>Your first image</h2><ol><li>Paste your text into the editor, use <strong>Open file</strong> for a Markdown file, or choose a template.</li><li>Open <strong>Customize</strong> to set the size, colors, typeface, and padding. Auto height grows with your content.</li><li>Choose <strong>Export PNG</strong>. The result screen shows the actual exported file. Use Options for JPEG, WebP, or a different resolution.</li></ol>
     <h2>On a phone</h2><p>Use the Edit and Preview tabs to move between your words and your image. The export controls stay at the bottom. After export, use <strong>Share image</strong> when your browser supports file sharing, or <strong>Open image</strong> and your browser’s save action. A multi-page export downloads as a ZIP; you can also save each image individually from the result screen.</p>
     <h2>Supported Markdown</h2><p>Headings, bold and italic text, links, lists, task lists, block quotes, tables, and fenced code blocks are supported. Math uses KaTeX. Diagrams use Mermaid. Raw HTML and embedded scripts are not rendered.</p><pre><code>{"# A useful idea\n\nA sentence with **emphasis**.\n\n> One clear takeaway.\n\n- First detail\n- Second detail"}</code></pre>

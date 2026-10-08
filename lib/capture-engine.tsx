@@ -103,7 +103,7 @@ async function encodeImage(png: Blob, format: ImageFormat, width: number, height
 }
 
 export async function exportProject(project: Project, assetUrls: Record<string, string>, options: {
-  format: ImageFormat; pageIds?: string[]; signal?: AbortSignal; onProgress: (message: string) => void;
+  format: ImageFormat; pageIds?: string[]; signal?: AbortSignal; onProgress: (message: string, progress: number) => void;
 }): Promise<ExportResult> {
   // Own the exact content and design version at the start of the task.
   const snapshot = structuredClone(project);
@@ -117,7 +117,7 @@ export async function exportProject(project: Project, assetUrls: Record<string, 
     for (const [index, page] of pages.entries()) {
       checkAbort(options.signal);
       const pageNumber = snapshot.mode === "single" ? 1 : snapshot.pages.findIndex(p => p.id === page.id) + 1;
-      options.onProgress(`Rendering ${index + 1} of ${pages.length}…`);
+      options.onProgress(`Rendering ${index + 1} of ${pages.length}…`, index / pages.length);
       try {
         if (localAssetIds(page.markdown).some(id => !assets[id])) throw new Error("A local image is missing. Restore the project backup or replace the image.");
         const design = effectiveDesign(snapshot, page);
@@ -152,7 +152,7 @@ export async function exportProject(project: Project, assetUrls: Record<string, 
   // The editable companion must retain page breaks, unlike the visual single-image text.
   const markdown = serializePages(snapshot.pages);
   if (images.length === 1) return { images, download: images[0].blob, name: images[0].name, markdown };
-  options.onProgress("Preparing your ZIP…");
+  options.onProgress("Preparing your ZIP…", .96);
   const { zipSync, strToU8 } = await import("fflate");
   const entries: Record<string, Uint8Array> = { "source.md": strToU8(markdown) };
   for (const image of images) entries[image.name] = new Uint8Array(await image.blob.arrayBuffer());

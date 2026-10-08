@@ -60,3 +60,31 @@ test("homepage is the tool only: no promotional sections, one h1, and a sized sh
   assert.equal((html.match(/<h1 class="sr-only">/g)||[]).length,1);
   assert.ok(html.includes('og:image" content="https://markdownpic.com/og.png"'));
 });
+test("guides are real, linked, canonical pages listed in the sitemap",async()=>{
+  const index=await request("/guides");assert.equal(index.status,200);
+  const indexHtml=await index.text();
+  const slugs=[...indexHtml.matchAll(/href="\/guides\/([a-z0-9-]+)"/g)].map(match=>match[1]);
+  assert.ok(new Set(slugs).size>=7,"guide links on the index");
+  const xml=await (await request("/sitemap.xml")).text();
+  for(const slug of new Set(slugs)){
+    const response=await request("/guides/"+slug);assert.equal(response.status,200,slug);
+    const html=await response.text();
+    assert.ok(html.includes('rel="canonical" href="https://markdownpic.com/guides/'+slug+'"'),slug+" canonical");
+    assert.match(html,/href="\/\?template=[a-z]+"/,slug+" opens a template");
+    assert.ok(xml.includes("<loc>https://markdownpic.com/guides/"+slug+"</loc>"),slug+" in sitemap");
+  }
+  assert.equal((await request("/guides/not-a-guide")).status,404);
+});
+test("the tool links to guides from its Help menu, not from hidden markup",async()=>{
+  const html=await (await request()).text();
+  assert.match(html,/<details class="help-menu"/);
+  assert.ok(html.includes('href="/guides"'));
+});
+test("legacy reference-site URLs redirect only to matching pages",async()=>{
+  const check=async(path,target)=>{const response=await request(path);assert.equal(response.status,301,path);assert.equal(response.headers.get("location"),"https://markdownpic.com"+target,path);};
+  await check("/faq/why-is-my-mermaid-diagram-not-rendering-in-markdown/","/guides/mermaid-to-png");
+  await check("/syntax/markdown-tables-that-survive-mobile-pdf-and-image-export","/guides/markdown-table-to-image");
+  await check("/terms-of-use/","/terms");
+  await check("/sitemap-index.xml","/sitemap.xml");
+  assert.equal((await request("/syntax/markdown-wiki-links-vs-standard-links")).status,404,"unrelated articles stay gone");
+});

@@ -66,3 +66,37 @@ export function linkOnPaste(value: string, start: number, end: number, pasted: s
   const link = "[" + value.slice(start, end) + "](" + url + ")";
   return { value: value.slice(0, start) + link + value.slice(end), start: start + link.length, end: start + link.length };
 }
+
+/** Every literal occurrence of `query` as [start, end] offsets. */
+export function findMatches(value: string, query: string, matchCase = false): Array<[number, number]> {
+  if (!query) return [];
+  const haystack = matchCase ? value : value.toLowerCase(), needle = matchCase ? query : query.toLowerCase();
+  const found: Array<[number, number]> = [];
+  for (let at = haystack.indexOf(needle); at >= 0 && found.length < 10_000; at = haystack.indexOf(needle, at + needle.length)) found.push([at, at + needle.length]);
+  return found;
+}
+
+/** Replaces every literal occurrence; replacement text is used as-is (no pattern syntax). */
+export function replaceAll(value: string, query: string, replacement: string, matchCase = false) {
+  const matches = findMatches(value, query, matchCase);
+  let result = "", last = 0;
+  for (const [start, end] of matches) { result += value.slice(last, start) + replacement; last = end; }
+  return { value: result + value.slice(last), count: matches.length };
+}
+
+/** ATX headings outside code fences, for the outline. */
+export function outline(value: string): Array<{ level: number; text: string; offset: number }> {
+  const items: Array<{ level: number; text: string; offset: number }> = [];
+  let offset = 0, fence = "";
+  for (const line of value.split("\n")) {
+    const opener = /^\s*(`{3,}|~{3,})/.exec(line)?.[1];
+    if (fence) { if (opener && opener[0] === fence[0] && opener.length >= fence.length) fence = ""; }
+    else if (opener) fence = opener;
+    else {
+      const heading = /^(#{1,6})\s+(.+?)\s*#*\s*$/.exec(line);
+      if (heading) items.push({ level: heading[1].length, text: heading[2].replace(/[*_`]/g, ""), offset });
+    }
+    offset += line.length + 1;
+  }
+  return items;
+}

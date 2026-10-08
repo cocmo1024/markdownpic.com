@@ -44,3 +44,12 @@ test("pasting a URL over selected words creates a link", () => {
   assert.equal(linkOnPaste("read the docs", 13, 13, "https://example.com"), null, "no selection");
   assert.equal(linkOnPaste("read the docs", 9, 13, "not a url"), null);
 });
+
+test("find, replace and outline", async () => {
+  const { findMatches, replaceAll, outline } = await import("../lib/markdown-edits.ts");
+  assert.deepEqual(findMatches("A cat, a Cat.", "cat"), [[2, 5], [9, 12]]);
+  assert.deepEqual(findMatches("A cat, a Cat.", "cat", true), [[2, 5]]);
+  assert.deepEqual(findMatches("aaa", "aa"), [[0, 2]], "matches do not overlap");
+  assert.deepEqual(replaceAll("$1 and $1", "$1", "$$", true), { value: "$$ and $$", count: 2 }, "replacement is literal");
+  assert.deepEqual(outline("# One\ntext\n~~~\n# not a heading\n~~~\n## **Two** ##"), [{ level: 1, text: "One", offset: 0 }, { level: 2, text: "Two", offset: 35 }]);
+});

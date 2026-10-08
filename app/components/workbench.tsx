@@ -16,6 +16,7 @@ import { StylePanel } from "./style-panel";
 import { AdSlot } from "./ad-slot";
 import { BrandMark, Icon } from "./icons";
 import { MarkdownEditor } from "./markdown-editor";
+import { FindBar, OutlineMenu } from "./editor-tools";
 import { ResultPanel } from "./result-panel";
 
 const FORMATTING = [
@@ -29,7 +30,7 @@ const PREFS_KEY = "markdownpic.ui.v1";
 const RAIL_SIZES = [{ media: "(min-width: 1600px)", width: 300, height: 600 }, { media: "(min-width: 1280px)", width: 160, height: 600 }];
 
 type Panel = "styles" | "templates" | "projects" | "export" | "result" | null;
-type Task = { type: "export" | "layout" | "file"; message: string; cancellable?: boolean };
+type Task = { type: "export" | "layout" | "file"; message: string; cancellable?: boolean; progress?: number };
 const errorText = (error: unknown) => error instanceof Error ? error.message : "Something went wrong. Your original work is unchanged.";
 
 async function cleanInlineImages(source: string, signal?: AbortSignal) {
@@ -88,6 +89,12 @@ export default function Workbench() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [deleteTarget, setDeleteTarget] = useState<Project | null>(null);
   const [dragging, setDragging] = useState(false);
+  const [find, setFind] = useState<{ replace: boolean; key: number; query: string } | null>(null);
+  // Opening find prefills a single-line selection, read here in the event rather than during render.
+  const openFind = (replace: boolean) => {
+    const area = editor.current, selected = area ? area.value.slice(area.selectionStart, area.selectionEnd) : "";
+    setFind(previous => ({ replace, key: (previous?.key ?? 0) + 1, query: selected.includes("\n") ? "" : selected }));
+  };
   const editor = useRef<HTMLTextAreaElement>(null);
   const projectsButton = useRef<HTMLButtonElement>(null);
   const exportButton = useRef<HTMLButtonElement>(null);
@@ -324,9 +331,31 @@ export default function Workbench() {
   }, [run, doc]);
 
 
+  // Guide pages link to /?template=<id>; the template opens as a new project, then the URL is cleaned.
+  useEffect(() => {
+    if (!doc.ready) return;
+    const id = new URLSearchParams(location.search).get("template");
+    if (!id) return;
+    history.replaceState(null, "", location.pathname);
+    // Deferred out of the effect; not cancelled on re-render, because the URL is already cleaned.
+    setTimeout(() => openTemplate(id));
+  }, [doc.ready, openTemplate]);
+
+  // The Help menu is a <details>: close it on an outside press or Escape.
+  useEffect(() => {
+    const close = (event: Event) => {
+      for (const menu of document.querySelectorAll<HTMLDetailsElement>("details.help-menu[open]")) {
+        if (event instanceof KeyboardEvent ? event.key === "Escape" : !menu.contains(event.target as Node)) menu.open = false;
+      }
+    };
+    document.addEventListener("pointerdown", close);
+    document.addEventListener("keydown", close);
+    return () => { document.removeEventListener("pointerdown", close); document.removeEventListener("keydown", close); };
+  }, []);
+
   const startExport = useCallback(() => void run("export", "Preparing your image…", async signal => {
     const { exportProject, downloadBlob } = await import("@/lib/capture-engine");
-    const output = await exportProject(structuredClone(project), { ...assetUrls }, { format, pageIds: exportScope === "page" && project.mode === "carousel" ? [project.pages[index].id] : undefined, signal, onProgress: message => setTask({ type: "export", message }) });
+    const output = await exportProject(structuredClone(project), { ...assetUrls }, { format, pageIds: exportScope === "page" && project.mode === "carousel" ? [project.pages[index].id] : undefined, signal, onProgress: (message, progress) => setTask({ type: "export", message, progress }) });
     setResult(output); setPanel("result");
     downloadBlob(output.download, output.name);
   }), [run, project, format, assetUrls, exportScope, index]);
@@ -343,7 +372,7 @@ export default function Workbench() {
     void run("export", "Copying image…", async signal => {
       try {
         const { exportProject } = await import("@/lib/capture-engine");
-        const output = await exportProject(structuredClone(project), { ...assetUrls }, { format: "png", pageIds: project.mode === "carousel" ? [project.pages[index].id] : undefined, signal, onProgress: message => setTask({ type: "export", message }) });
+        const output = await exportProject(structuredClone(project), { ...assetUrls }, { format: "png", pageIds: project.mode === "carousel" ? [project.pages[index].id] : undefined, signal, onProgress: (message, progress) => setTask({ type: "export", message, progress }) });
         resolveImage(output.images[0].blob);
       } catch (error) { rejectImage(error); throw error; }
       try { await writing; } catch { throw new Error("The browser blocked clipboard access. Use Export instead."); }
@@ -419,7 +448,7 @@ export default function Workbench() {
   };
 
   const statusMessage = task?.message ?? (oversize ? "Shorten this draft to preview and export." : metrics.issue?.code === "loading" ? "" : metrics.issue?.message ?? "");
-  const exportLabel = task?.type === "export" ? "Exporting…" : project.mode === "carousel" && exportScope === "all" && project.pages.length > 1 ? "Export " + project.pages.length + " images" : "Export " + format.toUpperCase();
+  const exportLabel = task?.type === "export" ? (task.progress !== undefined ? "Exporting " + Math.round(task.progress * 100) + "%" : "Exporting…") : project.mode === "carousel" && exportScope === "all" && project.pages.length > 1 ? "Export " + project.pages.length + " images" : "Export " + format.toUpperCase();
   // Long image = one auto-height image; Card = one fixed canvas; Pages = several fixed canvases.
   // Leaving a mode never discards content: pages are joined or kept, and Undo restores the previous layout.
   const setOutput = (output: "long" | "card" | "pages") => apply(current => {
@@ -447,7 +476,7 @@ export default function Workbench() {
           setMobileView(next); event.currentTarget.querySelectorAll<HTMLButtonElement>("[role=tab]")[next === "edit" ? 0 : 1]?.focus();
         }
       }}><button role="tab" tabIndex={mobileView === "edit" ? 0 : -1} aria-selected={mobileView === "edit"} aria-controls="editor-pane" onClick={() => setMobileView("edit")}>Edit</button><button role="tab" tabIndex={mobileView === "preview" ? 0 : -1} aria-selected={mobileView === "preview"} aria-controls="preview-pane" onClick={() => setMobileView("preview")}>Preview</button></div>
-      <nav className="header-actions" aria-label="Projects and help"><button className="ghost-button" title="New project" disabled={disabled} onClick={() => void run("file", "Creating a project…", () => openProject(newProject()))}><Icon name="plus" /><span>New</span></button><button className="ghost-button" title="My projects" ref={projectsButton} disabled={disabled} onClick={showProjects}><Icon name="folder" /><span>My projects</span></button><a className="ghost-button" href="/help" title="Help"><Icon name="help" /><span>Help</span></a></nav>
+      <nav className="header-actions" aria-label="Projects and help"><button className="ghost-button" title="New project" disabled={disabled} onClick={() => void run("file", "Creating a project…", () => openProject(newProject()))}><Icon name="plus" /><span>New</span></button><button className="ghost-button" title="My projects" ref={projectsButton} disabled={disabled} onClick={showProjects}><Icon name="folder" /><span>My projects</span></button><details className="help-menu"><summary className="ghost-button" title="Help and guides"><Icon name="help" /><span>Help</span></summary><div className="help-popover" role="menu"><Link role="menuitem" href="/help">Help</Link><Link role="menuitem" href="/guides">Guides</Link><Link role="menuitem" href="/privacy">Privacy</Link><Link role="menuitem" href="/terms">Terms</Link></div></details></nav>
       <div className="export-actions">
         {task ? <button disabled={!canCancel} onClick={() => controller.current?.abort()}>{canCancel ? "Cancel" : "Working…"}</button> : <button className="icon-only" title="Export options: format, resolution, pages" aria-label="Export options" disabled={!doc.ready} onClick={() => setPanel("export")}><Icon name="more" /></button>}
         <button className="icon-only" title="Copy image to clipboard" aria-label="Copy image" disabled={disabled || oversize} onClick={copyImage}><Icon name="copy" /></button>
@@ -464,13 +493,17 @@ export default function Workbench() {
             <button className="tool-button" disabled={disabled} title="Add image (or paste / drop one)" aria-label="Add image" onClick={() => imageInput.current?.click()}><Icon name="image" /></button>
             <span className="toolbar-divider" />
             <button className="tool-button" disabled={disabled || !doc.canUndo} aria-label="Undo" title="Undo (Ctrl/⌘ Z)" onClick={doc.undo}><Icon name="undo" /></button><button className="tool-button" disabled={disabled || !doc.canRedo} aria-label="Redo" title="Redo (Ctrl/⌘ Shift Z)" onClick={doc.redo}><Icon name="redo" /></button>
+            <span className="toolbar-divider" />
+            <button className="tool-button" disabled={disabled} title="Find and replace (Ctrl/⌘ F)" aria-label="Find and replace" aria-pressed={Boolean(find)} onClick={() => find ? setFind(null) : openFind(false)}><Icon name="search" /></button>
+            <OutlineMenu value={editorSource} textareaRef={editor} disabled={disabled} />
             <span className="bar-spacer" />
             <button className="ghost-button" title="Open a Markdown or .mdpic file (Ctrl/⌘ O)" disabled={disabled} onClick={() => fileInput.current?.click()}><Icon name="file" /><span>Open file</span></button>
             <button className="ghost-button" title="Templates" disabled={disabled} onClick={() => setPanel("templates")}><Icon name="grid" /><span>Templates</span></button>
             <select className="size-select" aria-label="Editor text size" title="Editor text size" value={editorSize} onChange={event => setEditorSize(Number(event.target.value))}>{[14, 15, 16, 17, 18, 20, 22].map(size => <option key={size} value={size}>{size}px</option>)}</select>
           </div>
           <div className={"editor-body " + (dragging ? "is-dragging" : "")} onDragOver={event => { if (event.dataTransfer.types.includes("Files")) { event.preventDefault(); setDragging(true); } }} onDragLeave={() => setDragging(false)} onDrop={event => { if (event.dataTransfer.files.length) { event.preventDefault(); setDragging(false); handleFiles(Array.from(event.dataTransfer.files)); } }}>
-            <MarkdownEditor textareaRef={editor} label={project.mode === "carousel" ? "Markdown for page " + (index + 1) : "Markdown source"} value={editorSource} disabled={disabled} fontSize={editorSize} placeholder={"# Start with your words\n\nPaste Markdown, drop a file or image, or open a template.\nPut <!-- page --> on its own line to start a new page."} onChange={value => changeSource(value)} onEdit={value => changeSource(value, false)} onScrollRatio={syncPreviewScroll} onPaste={event => { const files = Array.from(event.clipboardData.files); if (files.length) { event.preventDefault(); handleFiles(files); } }} />
+            <MarkdownEditor textareaRef={editor} label={project.mode === "carousel" ? "Markdown for page " + (index + 1) : "Markdown source"} value={editorSource} disabled={disabled} fontSize={editorSize} placeholder={"# Start with your words\n\nPaste Markdown, drop a file or image, or open a template.\nPut <!-- page --> on its own line to start a new page."} onChange={value => changeSource(value)} onEdit={value => changeSource(value, false)} onScrollRatio={syncPreviewScroll} onFind={openFind} onPaste={event => { const files = Array.from(event.clipboardData.files); if (files.length) { event.preventDefault(); handleFiles(files); } }} />
+            {find && <FindBar key={find.key} value={editorSource} textareaRef={editor} initialQuery={find.query} startWithReplace={find.replace} onReplace={value => changeSource(value, false)} onClose={() => { setFind(null); editor.current?.focus(); }} />}
             {dragging && <div className="drop-hint"><Icon name="download" size={28} /><span>Drop Markdown, a project, or images</span></div>}
             <span className="editor-meta" aria-live="off">{editorSource.length.toLocaleString()} chars{project.mode === "carousel" ? " · page " + (index + 1) : ""}</span>
           </div>
@@ -485,6 +518,7 @@ export default function Workbench() {
             <button className="style-button" disabled={disabled} onClick={() => setPanel("styles")}><Icon name="sliders" /><span>Customize</span></button>
           </div>
           <div className="preview-frame">
+            {task?.progress !== undefined && <div className="export-progress" role="progressbar" aria-label="Export progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(task.progress * 100)}><i style={{ transform: "scaleX(" + Math.max(.04, task.progress) + ")" }} /></div>}
             <div className="preview-stage" ref={stage} aria-busy={previewSource !== deferredPreview}>
               {oversize ? <div className="empty-message">This draft exceeds 120,000 characters. Its source has been preserved. Remove some content or save the Markdown and split it into smaller projects.</div> :
                 <div className="canvas-placement" style={{ width: metrics.width * scale, height: metrics.height * scale }}><div style={{ transform: "scale(" + scale + ")", transformOrigin: "top left" }}>
@@ -509,7 +543,7 @@ export default function Workbench() {
     {panel === "export" && <Modal title="Export options" onClose={() => setPanel(null)}><div className="settings-content">
       <label>File name<input maxLength={120} value={project.name} onChange={event => apply(current => ({ ...current, name: event.target.value }))} /></label>
       <fieldset><legend>Format</legend><div className="choice-row">{(["png", "jpeg", "webp"] as const).map(item => <button key={item} aria-pressed={format === item} onClick={() => setFormat(item)}><strong>{item.toUpperCase()}</strong><small>{item === "png" ? "Sharp text · copyable" : item === "jpeg" ? "Smaller photos" : "Compact, modern"}</small></button>)}</div></fieldset>
-      <fieldset><legend>Resolution</legend><div className="choice-row">{([1, 2, 3] as const).map(renderScale => <button key={renderScale} aria-pressed={project.design.renderScale === renderScale} onClick={() => apply(current => ({ ...current, design: { ...current.design, renderScale }, pages: current.pages.map(item => { const overrides = { ...item.design }; delete overrides.renderScale; return { ...item, design: overrides }; }) }))}><strong>{renderScale}×</strong><small>{preset.width * renderScale} px wide{renderScale === 2 ? " · best" : ""}</small></button>)}</div><small>{outputHeight === null ? `Auto height is measured when you export.` : `Current image: ${outputWidth} × ${outputHeight} pixels.`}</small></fieldset>
+      <fieldset><legend>Resolution</legend><div className="choice-row">{([1, 2, 3] as const).map(renderScale => <button key={renderScale} aria-pressed={project.design.renderScale === renderScale} onClick={() => apply(current => ({ ...current, design: { ...current.design, renderScale }, pages: current.pages.map(item => { const overrides = { ...item.design }; delete overrides.renderScale; return { ...item, design: overrides }; }) }))}><strong>{renderScale}×</strong><small>{preset.width * renderScale} px wide{renderScale === 2 ? " · best" : ""}</small></button>)}</div><small className="size-readout">{outputHeight === null ? "Auto height is measured when you export." : <>{outputWidth.toLocaleString()} × {outputHeight.toLocaleString()} px · {(outputWidth * outputHeight / 1e6).toFixed(1)} MP{outputWidth * outputHeight > 24e6 || Math.max(outputWidth, outputHeight) > 16384 ? <span className="size-warning"> · Large image: needs a desktop browser. Choose 2× or Pages if export fails.</span> : null}</>}</small></fieldset>
       {project.mode === "carousel" && <label>Pages<select value={exportScope} onChange={event => setExportScope(event.target.value as typeof exportScope)}><option value="all">All {project.pages.length} pages · ZIP when multiple</option><option value="page">Current page only · page {index + 1}</option></select></label>}
       <p className="field-note">Every page is checked before download. If content does not fit, the export stops and tells you which page needs attention.</p>
     </div><div className="modal-footer"><button onClick={() => setPanel(null)}>Back</button><button className="primary-button" disabled={disabled} onClick={() => { setPanel(null); startExport(); }}>{exportLabel}<Icon name="arrow" /></button></div></Modal>}

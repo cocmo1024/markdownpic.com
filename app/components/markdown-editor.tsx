@@ -4,10 +4,54 @@ import { useMemo, useRef, type ClipboardEvent, type CSSProperties, type Keyboard
 import { highlightMarkdown } from "@/lib/markdown-highlight";
 import { continueBlock, indentLines, linkOnPaste, wrapSelection, type Edit } from "@/lib/markdown-edits";
 
+/** DOM Ranges over the mirror's text for character offsets (the mirror holds exactly the editor's text). */
+export function mirrorRanges(area: HTMLTextAreaElement | null, spans: Array<[number, number]>): Range[] {
+  const mirror = area?.parentElement?.querySelector<HTMLElement>(".md-mirror");
+  if (!mirror || !spans.length) return [];
+  const nodes: Array<{ node: Text; start: number }> = [];
+  const walker = document.createTreeWalker(mirror, NodeFilter.SHOW_TEXT);
+  for (let node = walker.nextNode() as Text | null, offset = 0; node; offset += node.length, node = walker.nextNode() as Text | null) nodes.push({ node, start: offset });
+  const locate = (offset: number) => {
+    let low = 0, high = nodes.length - 1;
+    while (low < high) { const mid = (low + high + 1) >> 1; if (nodes[mid].start <= offset) low = mid; else high = mid - 1; }
+    const item = nodes[low];
+    return item ? { node: item.node, offset: Math.min(offset - item.start, item.node.length) } : null;
+  };
+  return spans.flatMap(([start, end]) => {
+    const from = locate(start), to = locate(end);
+    if (!from || !to) return [];
+    const range = document.createRange();
+    range.setStart(from.node, from.offset); range.setEnd(to.node, to.offset);
+    return [range];
+  });
+}
+
+/** Selects [start, end) and scrolls it into view, measuring wrapped lines through the mirror. */
+export function revealRange(area: HTMLTextAreaElement | null, start: number, end = start, focus = true) {
+  if (!area) return;
+  if (focus) area.focus({ preventScroll: true });
+  area.setSelectionRange(start, end);
+  const mirror = area.parentElement?.querySelector<HTMLElement>(".md-mirror");
+  if (!mirror) return;
+  const walker = document.createTreeWalker(mirror, NodeFilter.SHOW_TEXT);
+  let remaining = start;
+  for (let node = walker.nextNode() as Text | null; node; node = walker.nextNode() as Text | null) {
+    if (remaining <= node.length) {
+      const range = document.createRange();
+      range.setStart(node, Math.min(remaining, node.length));
+      const box = range.getClientRects()[0] ?? range.getBoundingClientRect();
+      const top = box.top - mirror.getBoundingClientRect().top + mirror.scrollTop;
+      area.scrollTop = Math.max(0, top - area.clientHeight / 3);
+      return;
+    }
+    remaining -= node.length;
+  }
+}
+
 const WRAPS: Record<string, [string, string, string]> = { b: ["**", "**", "bold text"], i: ["*", "*", "italic text"], e: ["`", "`", "code"], k: ["[", "](https://)", "link text"] };
 
-export function MarkdownEditor({ value, onChange, onEdit, onPaste, onScrollRatio, textareaRef, fontSize, disabled, label, placeholder }: {
-  value: string; onChange: (value: string) => void; onEdit: (value: string) => void; onPaste: (event: ClipboardEvent<HTMLTextAreaElement>) => void;
+export function MarkdownEditor({ value, onChange, onEdit, onPaste, onScrollRatio, onFind, textareaRef, fontSize, disabled, label, placeholder }: {
+  value: string; onChange: (value: string) => void; onEdit: (value: string) => void; onPaste: (event: ClipboardEvent<HTMLTextAreaElement>) => void; onFind?: (replace: boolean) => void;
   onScrollRatio?: (ratio: number) => void; textareaRef: RefObject<HTMLTextAreaElement | null>; fontSize: number; disabled: boolean; label: string; placeholder: string;
 }) {
   const mirror = useRef<HTMLDivElement>(null);
@@ -26,6 +70,8 @@ export function MarkdownEditor({ value, onChange, onEdit, onPaste, onScrollRatio
 
   const keyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.nativeEvent.isComposing) return;
+    const key = event.key.toLowerCase();
+    if ((event.ctrlKey || event.metaKey) && !event.altKey && (key === "f" || key === "h") && onFind) { event.preventDefault(); event.stopPropagation(); onFind(key === "h"); return; }
     const { selectionStart: start, selectionEnd: end } = event.currentTarget;
     const wrap = (event.ctrlKey || event.metaKey) && !event.altKey && !event.shiftKey ? WRAPS[event.key.toLowerCase()] : undefined;
     if (wrap) { event.stopPropagation(); commit(wrapSelection(value, start, end, ...wrap), event); }

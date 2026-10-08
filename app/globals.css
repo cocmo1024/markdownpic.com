@@ -830,3 +830,11 @@ summary{cursor:pointer;font-weight:600;min-height:30px;list-style-position:insid
 .theme-swiss .capture-content h1.display,.theme-citrus .capture-content h1.display{font-weight:850;color:var(--card-ink)}
 .theme-terminal .capture-content h1.display::before{content:none}
 .align-center .capture-content h1.display{margin-inline:auto}
+
+/* Kickers: an h3 placed directly above a headline becomes a small tracked label in every theme. */
+.capture-content h3:has(+h1),.capture-content h3:has(+h2){margin:0 0 .7em;font-family:var(--font-geist-sans,"Geist"),var(--font-noto-sans-sc,"Noto Sans SC"),Arial,sans-serif;font-size:.72em;font-weight:650;font-style:normal;font-variant:normal;letter-spacing:.15em;line-height:1.3;text-transform:uppercase;color:var(--card-accent)}
+.capture-content h3:has(+h1)+h1,.capture-content h3:has(+h2)+h2{margin-top:0}
+.font-mono .capture-content h3:has(+h1),.font-mono .capture-content h3:has(+h2){font-family:var(--mono);letter-spacing:.06em;text-transform:none}
+.theme-swiss .capture-content h3:has(+h1),.theme-swiss .capture-content h3:has(+h2){color:var(--card-ink);font-weight:750}
+.theme-swiss .capture-content h3:has(+h2)+h2{border-top:0;padding-top:0}
+.theme-terminal .capture-content h3:has(+h1)::before,.theme-terminal .capture-content h3:has(+h2)::before{content:"// ";opacity:.6}

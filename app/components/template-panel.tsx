@@ -12,6 +12,15 @@ import type { BrandKit } from "@/lib/brand-kit";
 function FitPreview({ width, height, children }: { width: number; height: number | null; children: ReactNode }) {
   const frame = useRef<HTMLSpanElement>(null);
   const [box, setBox] = useState({ scale: .45, left: 0 });
+  // Cards render only near the viewport: the library holds dozens of them.
+  const [visible, setVisible] = useState(false);
+  useLayoutEffect(() => {
+    const element = frame.current;
+    if (!element || visible) return;
+    const observer = new IntersectionObserver(entries => { if (entries.some(entry => entry.isIntersecting)) setVisible(true); }, { rootMargin: "300px 0px" });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [visible]);
   useLayoutEffect(() => {
     const element = frame.current;
     if (!element) return;
@@ -23,7 +32,7 @@ function FitPreview({ width, height, children }: { width: number; height: number
     observer.observe(element);
     return () => observer.disconnect();
   }, [width, height]);
-  return <span ref={frame} className={"template-sample" + (height ? " is-fixed" : "")} aria-hidden="true"><span style={{ transform: "scale(" + box.scale + ")", left: box.left }}>{children}</span></span>;
+  return <span ref={frame} className={"template-sample" + (height ? " is-fixed" : "")} aria-hidden="true">{visible && <span style={{ transform: "scale(" + box.scale + ")", left: box.left }}>{children}</span>}</span>;
 }
 
 export function TemplatePanel({ disabled, brand, onOpen, onClose }: { disabled: boolean; brand: BrandKit | null; onOpen: (id: string) => void; onClose: () => void }) {

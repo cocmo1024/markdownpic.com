@@ -1,6 +1,7 @@
 import { exampleMarkdown, PAGE_BREAK_MARKER, themeLook, type Design, type FontFamily, type ThemeId } from "./studio-model.ts";
+import { proTemplates } from "./templates-pro.ts";
 
-export type TemplateCategory = "short" | "long" | "carousel" | "lists" | "work";
+export type TemplateCategory = "short" | "long" | "carousel" | "lists" | "business" | "learning" | "life" | "work";
 
 /** The ways people post text as images on social platforms, in the order they are shown. */
 export const templateCategories: Array<{ id: TemplateCategory; label: string; note: string }> = [
@@ -8,7 +9,10 @@ export const templateCategories: Array<{ id: TemplateCategory; label: string; no
   { id: "long", label: "Long posts", note: "Essays, threads and notes as one readable image." },
   { id: "carousel", label: "Carousels", note: "Swipeable slides for Instagram and LinkedIn." },
   { id: "lists", label: "Lists & comparisons", note: "Steps, checklists, pros and cons, do and don’t." },
-  { id: "work", label: "Work & tech", note: "Release notes, code, diagrams, formulas, summaries." },
+  { id: "business", label: "Business & marketing", note: "Launches, results, events, hiring and customer stories." },
+  { id: "learning", label: "Education & research", note: "Flashcards, quizzes, lesson plans, paper summaries, cheat sheets." },
+  { id: "life", label: "Lifestyle", note: "Recipes, workouts, travel plans, book notes and personal news." },
+  { id: "work", label: "Work & tech", note: "Release notes, code, APIs, shortcuts, diagrams and standups." },
 ];
 
 export interface Template {
@@ -29,7 +33,7 @@ export interface Template {
 const pages = (...parts: string[]) => parts.join(`\n\n${PAGE_BREAK_MARKER}\n\n`);
 const centered: Partial<Design> = { textAlign: "center" };
 
-export const templates: Template[] = [
+const coreTemplates: Template[] = [
   // Short posts
   { id: "quote", category: "short", name: "Quote card", description: "A short thought with an attribution.", theme: "ink", size: "square", design: { ...centered, fontScale: 112, frame: "gradient" },
     markdown: "# Clarity is a form of respect.\n\nGive the reader the conclusion, the reason, and enough space to think.\n\n— **Your name**" },
@@ -95,6 +99,8 @@ export const templates: Template[] = [
   { id: "math", category: "work", name: "Formula", description: "Math with a clear explanation.", theme: "linen", size: "square",
     markdown: "# Small improvements compound\n\n$$\nA = P(1 + r)^t\n$$\n\n- **P** — starting value\n- **r** — rate of improvement\n- **t** — time\n\nSmall changes become meaningful when they accumulate." },
 ];
+
+export const templates: Template[] = [...coreTemplates, ...proTemplates];
 
 /** A template opens in its theme's full look (accent and typeface) plus its own settings. */
 export const templateDesign = (base: Design, template: Template): Design => ({

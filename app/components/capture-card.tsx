@@ -1,10 +1,13 @@
 "use client";
 
-import { isValidElement, memo, useEffect, useState, type CSSProperties, type ImgHTMLAttributes, type ReactNode, type Ref } from "react";
+import { Fragment, isValidElement, memo, useEffect, useMemo, useState, type CSSProperties, type ImgHTMLAttributes, type ReactNode, type Ref } from "react";
+import { jsx, jsxs } from "react/jsx-runtime";
+import { toJsxRuntime } from "hast-util-to-jsx-runtime";
 import ReactMarkdown, { defaultUrlTransform, type Options } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { foregroundOn, presetFor, readableAccent, themeFor, type Design } from "@/lib/studio-model";
 import { hasBrand, type BrandKit } from "@/lib/brand-kit";
+import { hasMath, normalizeMathDelimiters, rehypeSmartTypography } from "@/lib/render-markdown";
 
 // KaTeX is the heaviest renderer, so it loads only for documents that contain math ($).
 // Until it arrives the card carries a pending marker, which holds back measurement and export.
@@ -55,13 +58,36 @@ function MarkdownImage(props: ImgHTMLAttributes<HTMLImageElement>) {
   return <img {...props} alt={props.alt ?? ""} crossOrigin="anonymous" referrerPolicy="no-referrer" onError={() => setFailed(true)} />;
 }
 
+// Syntax highlighting loads only when a document contains a fenced block with a language.
+type Highlighter = { highlight: (language: string, value: string) => Parameters<typeof toJsxRuntime>[0]; registered: (language: string) => boolean };
+let highlighter: Highlighter | null = null;
+let highlighterLoading: Promise<void> | null = null;
+const loadHighlighter = () => highlighterLoading ??= import("lowlight")
+  .then(({ createLowlight, common }) => { highlighter = createLowlight(common) as unknown as Highlighter; })
+  .catch(error => { highlighterLoading = null; throw error; });
+
+function HighlightedCode({ language, code }: { language: string; code: string }) {
+  const [, setReady] = useState(Boolean(highlighter));
+  const [failed, setFailed] = useState(false);
+  useEffect(() => {
+    if (highlighter) return;
+    let active = true;
+    loadHighlighter().then(() => { if (active) setReady(true); }, () => { if (active) setFailed(true); });
+    return () => { active = false; };
+  }, []);
+  if (!highlighter) return <><code>{code}</code>{!failed && <span hidden data-capture-pending="code" />}</>;
+  if (!highlighter.registered(language)) return <code>{code}</code>;
+  return <code className={"hljs language-" + language}>{toJsxRuntime(highlighter.highlight(language, code), { Fragment, jsx, jsxs })}</code>;
+}
+
 function CodeBlock({ children, dark }: { children?: ReactNode; dark: boolean }) {
   if (isValidElement<{ className?: string; children?: ReactNode }>(children) && children.props.className?.split(" ").includes("language-mermaid")) {
     const source = String(children.props.children).replace(/\n$/, "");
     return <Diagram key={`${dark}:${source}`} source={source} dark={dark} />;
   }
-  const language = isValidElement<{ className?: string }>(children) ? children.props.className?.replace("language-", "") : "";
-  return <div className="code-block"><div className="code-chrome" aria-hidden="true"><i /><i /><i />{language && <span>{language}</span>}</div><pre>{children}</pre></div>;
+  const language = isValidElement<{ className?: string }>(children) ? children.props.className?.replace("language-", "") ?? "" : "";
+  const code = isValidElement<{ children?: ReactNode }>(children) ? String(children.props.children ?? "").replace(/\n$/, "") : "";
+  return <div className="code-block"><div className="code-chrome" aria-hidden="true"><i /><i /><i />{language && <span>{language}</span>}</div><pre>{language ? <HighlightedCode language={language.toLowerCase()} code={code} /> : children}</pre></div>;
 }
 
 export interface CaptureProps {
@@ -75,8 +101,8 @@ export interface CaptureProps {
 }
 
 /** Avatar, name and handle: who this image is from. */
-function Byline({ brand, position }: { brand: BrandKit; position: "top" | "bottom" }) {
-  return <div className={"card-byline byline-" + position}>
+function Byline({ brand, position, align, divider }: { brand: BrandKit; position: "top" | "bottom"; align: Design["bylineAlign"]; divider: boolean }) {
+  return <div className={`card-byline byline-${position} byline-align-${align}${divider ? " has-divider" : ""}`}>
     {/* The avatar is a local data URL, rendered as-is in preview and export. */}
     {/* eslint-disable-next-line @next/next/no-img-element */}
     {brand.avatar && <img src={brand.avatar} alt="" width={64} height={64} />}
@@ -89,15 +115,17 @@ export const CaptureCard = memo(function CaptureCard({ markdown, design, assetUr
   const preset = presetFor(design);
   const theme = themeFor(design.theme);
   const accent = readableAccent(design.accent, theme.background);
+  const framed = design.frame !== "none";
   const style = {
     "--card-accent": accent, "--card-on-accent": foregroundOn(accent),
     "--card-bg": theme.background, "--card-ink": theme.color,
     "--card-padding": `${design.padding}px`, "--card-scale": design.fontScale / 100,
     "--image-max-height": `${design.imageMaxHeight}px`,
     width: preset.width, height: preset.height ?? undefined,
-    backgroundColor: theme.background, color: theme.color,
+    backgroundColor: framed ? undefined : theme.background, color: theme.color,
   } as CSSProperties;
-  const wantsMath = markdown.includes("$");
+  const source = useMemo(() => normalizeMathDelimiters(markdown), [markdown]);
+  const wantsMath = hasMath(source);
   const [, setMathReady] = useState(Boolean(mathPlugins));
   const [mathError, setMathError] = useState(false);
   useEffect(() => {
@@ -107,25 +135,29 @@ export const CaptureCard = memo(function CaptureCard({ markdown, design, assetUr
     return () => { active = false; };
   }, [wantsMath]);
   const math = wantsMath ? mathPlugins : null;
-  return <article ref={articleRef} className={`capture-card theme-${design.theme} font-${design.fontFamily}${theme.dark ? " is-dark" : ""}`} style={style}>
+  const rehypePlugins = useMemo(() => [...(math?.rehype ?? []), ...(design.smartTypography ? [rehypeSmartTypography] : [])], [math, design.smartTypography]);
+  const body = <>
     {design.showHeader && <div className="card-rule"><span className="card-rule-mark" /><span>Markdown / Picture</span><span>{label}</span></div>}
-    {byline === "top" && <Byline brand={brand!} position="top" />}
+    {byline === "top" && <Byline brand={brand!} position="top" align={design.bylineAlign} divider={design.bylineDivider} />}
     {wantsMath && !math && (mathError
       ? <span className="capture-error" data-capture-error="The math renderer could not load. Check your connection and try again.">Math could not load · check your connection</span>
       : <span hidden data-capture-pending="math" />)}
     <div className="capture-content">
-      <ReactMarkdown remarkPlugins={math?.remark ?? basePlugins} rehypePlugins={math?.rehype}
+      <ReactMarkdown remarkPlugins={math?.remark ?? basePlugins} rehypePlugins={rehypePlugins as Plugins}
         urlTransform={url => url.startsWith("asset:") ? assetUrls[url.slice(6)] ?? "" : defaultUrlTransform(url)}
         components={{
           img: props => <MarkdownImage key={String(props.src)} {...props} />,
           pre: ({ children }) => <CodeBlock dark={theme.dark}>{children}</CodeBlock>,
           a: ({ children, href }) => <a href={href} target="_blank" rel="noopener noreferrer">{children}</a>,
         }}>
-        {markdown}
+        {source}
       </ReactMarkdown>
     </div>
-    {byline === "bottom" && <Byline brand={brand!} position="bottom" />}
+    {byline === "bottom" && <Byline brand={brand!} position="bottom" align={design.bylineAlign} divider={design.bylineDivider} />}
     {design.showBrand && <div className="card-brand"><span className="card-brand-mark" />Made with MarkdownPic</div>}
     {design.watermarkText && <div className={`card-watermark watermark-${design.watermarkPosition}`} style={{ opacity: design.watermarkOpacity / 100 }}>{design.watermarkText}</div>}
+  </>;
+  return <article ref={articleRef} className={`capture-card theme-${design.theme} font-${design.fontFamily}${theme.dark ? " is-dark" : ""}${framed ? " has-frame frame-" + design.frame : ""}`} style={style}>
+    {framed ? <div className="card-sheet">{body}</div> : body}
   </article>;
 });

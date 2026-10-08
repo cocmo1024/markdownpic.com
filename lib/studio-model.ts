@@ -5,6 +5,9 @@ export type FontFamily = "sans" | "serif" | "mono";
 export type WatermarkPosition = "center" | "top-right" | "bottom-right";
 /** Where the brand-kit byline (avatar, name, handle) sits; it only renders once a brand kit exists. */
 export type BylinePosition = "bottom" | "top" | "none";
+export type BylineAlign = "left" | "center" | "right";
+/** A colored backdrop around the card, with rounded corners and a soft shadow. */
+export type FrameStyle = "none" | "gradient" | "solid";
 
 export interface CanvasPreset {
   id: string;
@@ -28,6 +31,11 @@ export interface Design {
   watermarkPosition: WatermarkPosition;
   imageMaxHeight: number;
   byline: BylinePosition;
+  bylineAlign: BylineAlign;
+  bylineDivider: boolean;
+  /** Curly quotes, en and em dashes, ellipses; never inside code or math. */
+  smartTypography: boolean;
+  frame: FrameStyle;
 }
 
 export interface StudioPage {
@@ -63,6 +71,8 @@ export const canvasPresets: CanvasPreset[] = [
   { id: "portrait", label: "Portrait", width: 540, height: 675 },
   { id: "story", label: "Story", width: 540, height: 960 },
   { id: "social", label: "Landscape", width: 600, height: 315 },
+  { id: "wide", label: "Wide 16:9", width: 640, height: 360 },
+  { id: "tall", label: "Tall 3:4", width: 540, height: 720 },
 ];
 
 export interface Theme { id: ThemeId; label: string; background: string; color: string; dark: boolean }
@@ -83,6 +93,7 @@ export const defaultDesign: Design = {
   fontFamily: "sans", padding: 44, showBrand: false, showHeader: false,
   renderScale: 2, watermarkText: "", watermarkOpacity: 16,
   watermarkPosition: "bottom-right", imageMaxHeight: 480, byline: "bottom",
+  bylineAlign: "left", bylineDivider: false, smartTypography: true, frame: "none",
 };
 
 export const exampleMarkdown = `# Good ideas deserve a clear picture.
@@ -141,6 +152,10 @@ export function normalizeDesign(input: unknown): Design {
     watermarkOpacity: number("watermarkOpacity", 6, 36) as number,
     watermarkPosition: ["center", "top-right", "bottom-right"].includes(String(value.watermarkPosition)) ? value.watermarkPosition as WatermarkPosition : "bottom-right",
     byline: ["bottom", "top", "none"].includes(String(value.byline)) ? value.byline as BylinePosition : "bottom",
+    bylineAlign: ["left", "center", "right"].includes(String(value.bylineAlign)) ? value.bylineAlign as BylineAlign : "left",
+    bylineDivider: typeof value.bylineDivider === "boolean" ? value.bylineDivider : false,
+    smartTypography: typeof value.smartTypography === "boolean" ? value.smartTypography : true,
+    frame: ["none", "gradient", "solid"].includes(String(value.frame)) ? value.frame as FrameStyle : "none",
   };
 }
 

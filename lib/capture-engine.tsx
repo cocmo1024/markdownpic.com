@@ -4,13 +4,14 @@ import { createRoot } from "react-dom/client";
 import { flushSync } from "react-dom";
 import { toBlob } from "html-to-image";
 import { CaptureCard, type CaptureProps } from "@/app/components/capture-card";
-import { displayMarkdown, localAssetIds, serializePages } from "./markdown-document";
+import { displayMarkdown, documentTitle, localAssetIds, serializePages } from "./markdown-document";
+import { markdownToAltText } from "./alt-text";
 import { effectiveDesign, MAX_PAGES, presetFor, slugify, type Project, type ImageFormat } from "./studio-model";
 import type { BrandKit } from "./brand-kit";
 import { assertExportSize, EXTENDED_LIMITS, inspectCard, STANDARD_LIMITS } from "./capture-checks";
 import { withDeadline } from "./async-deadline";
 
-export interface ExportedImage { blob: Blob; name: string; width: number; height: number; page: number }
+export interface ExportedImage { blob: Blob; name: string; width: number; height: number; page: number; alt: string }
 export interface ExportResult { images: ExportedImage[]; download: Blob; name: string; markdown: string }
 
 function checkAbort(signal?: AbortSignal) {
@@ -111,6 +112,9 @@ export async function exportProject(project: Project, assetUrls: Record<string, 
   const assets = { ...assetUrls };
   const pages = snapshot.mode === "single" ? [{ id: "single", markdown: displayMarkdown(snapshot.pages), design: {} }] : snapshot.pages.filter(p => !options.pageIds || options.pageIds.includes(p.id));
   if (!pages.length || pages.length > MAX_PAGES) throw new Error(`Choose between 1 and ${MAX_PAGES} pages.`);
+  // An unnamed project takes its file name from the first heading, not "untitled".
+  const named = snapshot.name.trim() && !/^untitled$/i.test(snapshot.name.trim());
+  const baseName = slugify(named ? snapshot.name : documentTitle(snapshot.pages[0]?.markdown ?? "") || snapshot.name);
   const surface = captureSurface();
   const images: ExportedImage[] = [];
   let totalPixels = 0;
@@ -142,7 +146,7 @@ export async function exportProject(project: Project, assetUrls: Record<string, 
         const blob = await encodeImage(png, options.format, width, height, options.signal);
         totalPixels += width * height;
         const extension = options.format === "jpeg" ? "jpg" : options.format;
-        images.push({ blob, name: `${slugify(snapshot.name)}${snapshot.mode === "carousel" ? `-${String(pageNumber).padStart(2, "0")}` : ""}.${extension}`, width, height, page: pageNumber });
+        images.push({ blob, alt: markdownToAltText(page.markdown), name: `${baseName}${snapshot.mode === "carousel" ? `-${String(pageNumber).padStart(2, "0")}` : ""}.${extension}`, width, height, page: pageNumber });
       } catch (error) {
         if (error instanceof DOMException && error.name === "AbortError") throw error;
         throw new Error(`Page ${pageNumber}: ${error instanceof Error ? error.message : "Export failed. Please try again."}`);
@@ -159,7 +163,7 @@ export async function exportProject(project: Project, assetUrls: Record<string, 
   for (const image of images) entries[image.name] = new Uint8Array(await image.blob.arrayBuffer());
   checkAbort(options.signal);
   const zip = zipSync(entries, { level: 0 });
-  return { images, download: new Blob([new Uint8Array(zip)], { type: "application/zip" }), name: `${slugify(snapshot.name)}-images.zip`, markdown };
+  return { images, download: new Blob([new Uint8Array(zip)], { type: "application/zip" }), name: `${baseName}-images.zip`, markdown };
 }
 
 export { downloadBlob } from "./download";

@@ -6,7 +6,7 @@ import { paginateMarkdown } from "../lib/pagination.ts";
 import { assertExportSize, EXTENDED_LIMITS, inspectCard } from "../lib/capture-checks.ts";
 
 test("all fixed presets match promised output dimensions at 2x", () => {
-  assert.deepEqual(canvasPresets.filter(p => p.height).map(p => [p.id,p.width*2,p.height*2]), [["square",1080,1080],["portrait",1080,1350],["story",1080,1920],["social",1200,630]]);
+  assert.deepEqual(canvasPresets.filter(p => p.height).map(p => [p.id,p.width*2,p.height*2]), [["square",1080,1080],["portrait",1080,1350],["story",1080,1920],["social",1200,630],["wide",1280,720],["tall",1080,1440]]);
 });
 test("page-specific design follows the page through reorder and is ignored in single mode", () => {
   const project = newProject("A");

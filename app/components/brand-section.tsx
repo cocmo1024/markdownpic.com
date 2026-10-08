@@ -39,6 +39,10 @@ export function BrandSection({ design, setDesign }: { design: Design; setDesign:
     }} />
     {hasBrand(draft) && <>
       <fieldset><legend>Byline on this image</legend><div className="choice-row compact">{(["top", "bottom", "none"] as const).map(position => <button key={position} aria-pressed={design.byline === position} onClick={() => setDesign({ byline: position })}>{position === "top" ? "Top" : position === "bottom" ? "Bottom" : "Hidden"}</button>)}</div></fieldset>
+      {design.byline !== "none" && <div className="byline-options">
+        <div className="choice-row compact" role="group" aria-label="Byline alignment">{(["left", "center", "right"] as const).map(align => <button key={align} aria-pressed={design.bylineAlign === align} aria-label={"Align " + align} title={"Align " + align} onClick={() => setDesign({ bylineAlign: align })}><Icon name={("align-" + align) as "align-left"} /></button>)}</div>
+        <label className="check-label"><input type="checkbox" checked={design.bylineDivider} onChange={event => setDesign({ bylineDivider: event.target.checked })} />Divider line</label>
+      </div>}
       <div className="brand-style">
         <span className="brand-swatch" style={{ background: draft.accent }} aria-hidden="true" />
         <span>Brand style: {draft.theme === emptyBrand.theme && draft.accent === emptyBrand.accent && draft.font === emptyBrand.font ? "not saved yet" : "color, theme and typeface"}</span>

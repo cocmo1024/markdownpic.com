@@ -17,6 +17,10 @@ Build commands never push or deploy. Pushing to main deploys through Cloudflare 
 - Use single-image mode or up to 20 pages. Add/reorder/remove pages, retain page-specific overrides, or measure and auto-split semantic content.
 - Export PNG/JPEG/WebP at 1×/2×/3×. Multi-page output is a ZIP with source.md. Preflight stops incomplete or oversized output.
 - Inspect the actual resulting image, download again, open the image, share through supported device UI, copy PNG/source, or download Markdown directly without clipboard permission.
+- Paste rich text from web pages, Notion or Docs and it arrives as Markdown (lib/smart-paste.ts); Ctrl/⌘ Shift V pastes plain text.
+- New projects inherit the last style used. Fit text sizes a card’s text to its canvas.
+- Copy editable link: the draft is compressed into the URL fragment (lib/share-link.ts), never uploaded; local images are excluded.
+- Installable PWA with offline support (public/manifest.webmanifest, public/sw.js: network-first pages, cache-first hashed assets, third-party requests untouched).
 - Save multiple browser-local projects, undo/redo during a session, recover older drafts, and avoid stale-tab overwrites.
 - Back up complete .mdpic projects with Markdown, styles and local image assets; restore as a new project. Save reusable styles locally.
 

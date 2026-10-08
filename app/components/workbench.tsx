@@ -5,7 +5,7 @@ import Link from "next/link";
 import { CaptureCard } from "./capture-card";
 import { Modal } from "./modal";
 import { useProject } from "./use-project";
-import { defaultDesign, effectiveDesign, MAX_IMAGE_BYTES, MAX_IMAGE_PIXELS, MAX_PAGES, MAX_TEXT_LENGTH, newPage, newProject, presetFor, slugify, themes, type Design, type ImageFormat, type Project, type ThemeId } from "@/lib/studio-model";
+import { defaultDesign, effectiveDesign, MAX_IMAGE_BYTES, MAX_IMAGE_PIXELS, MAX_PAGES, MAX_TEXT_LENGTH, newPage, newProject, normalizeDesign, presetFor, slugify, themes, type Design, type ImageFormat, type Project, type ThemeId } from "@/lib/studio-model";
 import { displayMarkdown, documentTitle, localAssetIds, pagesFromMarkdown, serializePages, splitMarkdownPages } from "@/lib/markdown-document";
 import { loadLocalImage, saveLocalImage } from "@/lib/local-image-store";
 import { deleteProject, listProjects, loadProject } from "@/lib/project-store";
@@ -16,6 +16,7 @@ import { StylePanel } from "./style-panel";
 import { AdSlot } from "./ad-slot";
 import { BrandMark, Icon } from "./icons";
 import { MarkdownEditor } from "./markdown-editor";
+import { decodeShare, encodeShare } from "@/lib/share-link";
 import { FindBar, OutlineMenu } from "./editor-tools";
 import { ResultPanel } from "./result-panel";
 
@@ -26,6 +27,12 @@ const FORMATTING = [
   ["link", "Insert link", "link text", "[", "](https://)", "Ctrl/⌘ K"],
 ] as const;
 const PREFS_KEY = "markdownpic.ui.v1";
+const STYLE_KEY = "markdownpic.style.v1";
+/** New projects start in the style the person used last: it should feel like their tool. */
+function freshProject() {
+  try { const saved = localStorage.getItem(STYLE_KEY); if (saved) return newProject("", "Untitled", normalizeDesign(JSON.parse(saved))); } catch { /* defaults */ }
+  return newProject();
+}
 // Fixed-size rail units: a responsive unit would resize the workbench around it.
 const RAIL_SIZES = [{ media: "(min-width: 1600px)", width: 300, height: 600 }, { media: "(min-width: 1280px)", width: 160, height: 600 }];
 
@@ -331,6 +338,79 @@ export default function Workbench() {
   }, [run, doc]);
 
 
+  useEffect(() => {
+    if (!doc.ready) return;
+    const timer = setTimeout(() => { try { localStorage.setItem(STYLE_KEY, JSON.stringify(project.design)); } catch { /* storage unavailable */ } }, 600);
+    return () => clearTimeout(timer);
+  }, [doc.ready, project.design]);
+
+  // A shared link (#s=…) opens as a new local project; the fragment is then removed from the address bar.
+  useEffect(() => {
+    if (!doc.ready || !location.hash.startsWith("#s=")) return;
+    const fragment = location.hash;
+    history.replaceState(null, "", location.pathname + location.search);
+    setTimeout(() => void run("file", "Opening shared draft…", async () => {
+      const shared = decodeShare(fragment);
+      await openProject(shared);
+      setNotice("Shared draft opened and saved in this browser. Edits stay on your device.");
+    }));
+  // openProject reads the latest project through doc; it is recreated every render.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [doc.ready, run]);
+
+  const copyShareLink = async () => {
+    const { fragment, tooLong, localImages } = encodeShare(project);
+    if (tooLong) { setNotice("This draft is too long for a link. Use Back up project to share a .mdpic file instead."); return; }
+    const url = location.origin + "/" + fragment;
+    try { await navigator.clipboard.writeText(url); }
+    catch { setNotice("Clipboard access was blocked. Try again, or use Back up project to share a file."); return; }
+    setNotice(localImages ? "Editable link copied. Local images are not included; share a .mdpic backup to include them." : "Editable link copied. Anyone with the link gets their own copy to edit.");
+  };
+
+  // Largest image text size (76–140%) at which the current card fits its fixed canvas.
+  const fitText = () => void run("layout", "Fitting text to the canvas…", async signal => {
+    const { captureSurface } = await import("@/lib/capture-engine");
+    const snapshot = structuredClone(project);
+    const current = snapshot.pages[index];
+    const base = effectiveDesign(snapshot, current);
+    if (!presetFor(base).height) throw new Error("Auto height already fits everything. Choose Card or Pages to fit text to a fixed size.");
+    const markdown = snapshot.mode === "single" ? displayMarkdown(snapshot.pages) : current.markdown;
+    const surface = captureSurface();
+    let low = 76, high = 140, best = 0;
+    try {
+      while (low <= high) {
+        const mid = Math.floor((low + high) / 2);
+        const element = await surface.render({ markdown, design: { ...base, fontScale: mid }, assetUrls: { ...assetUrls } }, signal);
+        const issue = inspectCard(element);
+        if (issue && issue.code !== "height" && issue.code !== "width") throw new Error(issue.message);
+        if (issue) high = mid - 1; else { best = mid; low = mid + 1; }
+      }
+    } finally { surface.dispose(); }
+    if (!best) throw new Error("This is too much text for one canvas, even at the smallest size. Use Auto split or Long image.");
+    apply(project => project.mode === "carousel"
+      ? { ...project, pages: project.pages.map((item, i) => i === index ? { ...item, design: { ...item.design, fontScale: best } } : item) }
+      : { ...project, design: { ...project.design, fontScale: best } });
+    setNotice("Text sized to " + best + "% to fill the canvas. Undo restores the previous size.");
+  });
+
+  // Installable and offline: register the worker on the live site and hand it the assets already loaded.
+  useEffect(() => {
+    if (!("serviceWorker" in navigator) || /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)) return;
+    navigator.serviceWorker.register("/sw.js").then(() => navigator.serviceWorker.ready).then(registration => {
+      const loaded = performance.getEntriesByType("resource").map(entry => entry.name).filter(name => name.startsWith(location.origin + "/_next/static/"));
+      registration.active?.postMessage({ cache: loaded });
+    }).catch(() => { /* offline support is a bonus, never a requirement */ });
+  }, []);
+
+  // Opening a .md file with the installed app (File Handling API) loads it here.
+  useEffect(() => {
+    const queue = (window as unknown as { launchQueue?: { setConsumer: (consumer: (params: { files: Array<{ getFile(): Promise<File> }> }) => void) => void } }).launchQueue;
+    if (!doc.ready || !queue) return;
+    queue.setConsumer(params => { if (params.files.length) void Promise.all(params.files.map(handle => handle.getFile())).then(files => handleFiles(files.slice(0, 1))); });
+  // handleFiles reads the latest project; the consumer is registered once the draft is ready.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [doc.ready]);
+
   // Guide pages link to /?template=<id>; the template opens as a new project, then the URL is cleaned.
   useEffect(() => {
     if (!doc.ready) return;
@@ -406,7 +486,7 @@ export default function Workbench() {
 
   // Confirmations fade on their own; problems stay until dismissed.
   useEffect(() => {
-    if (!notice || /fail|could not|error|blocked|too large|not supported|missing|exceed|limit/i.test(notice)) return;
+    if (!notice || /fail|could not|cannot|can.t|error|blocked|too (large|long|much|wide|tall)|not (supported|valid)|invalid|damaged|incomplete|missing|exceed|limit|unavailable|use auto split|choose /i.test(notice)) return;
     const timer = setTimeout(() => setNotice(current => current === notice ? "" : current), 5200);
     return () => clearTimeout(timer);
   }, [notice]);
@@ -476,7 +556,7 @@ export default function Workbench() {
           setMobileView(next); event.currentTarget.querySelectorAll<HTMLButtonElement>("[role=tab]")[next === "edit" ? 0 : 1]?.focus();
         }
       }}><button role="tab" tabIndex={mobileView === "edit" ? 0 : -1} aria-selected={mobileView === "edit"} aria-controls="editor-pane" onClick={() => setMobileView("edit")}>Edit</button><button role="tab" tabIndex={mobileView === "preview" ? 0 : -1} aria-selected={mobileView === "preview"} aria-controls="preview-pane" onClick={() => setMobileView("preview")}>Preview</button></div>
-      <nav className="header-actions" aria-label="Projects and help"><button className="ghost-button" title="New project" disabled={disabled} onClick={() => void run("file", "Creating a project…", () => openProject(newProject()))}><Icon name="plus" /><span>New</span></button><button className="ghost-button" title="My projects" ref={projectsButton} disabled={disabled} onClick={showProjects}><Icon name="folder" /><span>My projects</span></button><details className="help-menu"><summary className="ghost-button" title="Help and guides"><Icon name="help" /><span>Help</span></summary><div className="help-popover" role="menu"><Link role="menuitem" href="/help">Help</Link><Link role="menuitem" href="/guides">Guides</Link><Link role="menuitem" href="/privacy">Privacy</Link><Link role="menuitem" href="/terms">Terms</Link></div></details></nav>
+      <nav className="header-actions" aria-label="Projects and help"><button className="ghost-button" title="New project" disabled={disabled} onClick={() => void run("file", "Creating a project…", () => openProject(freshProject()))}><Icon name="plus" /><span>New</span></button><button className="ghost-button" title="My projects" ref={projectsButton} disabled={disabled} onClick={showProjects}><Icon name="folder" /><span>My projects</span></button><details className="help-menu"><summary className="ghost-button" title="Help and guides"><Icon name="help" /><span>Help</span></summary><div className="help-popover" role="menu"><Link role="menuitem" href="/help">Help</Link><Link role="menuitem" href="/guides">Guides</Link><Link role="menuitem" href="/privacy">Privacy</Link><Link role="menuitem" href="/terms">Terms</Link></div></details></nav>
       <div className="export-actions">
         {task ? <button disabled={!canCancel} onClick={() => controller.current?.abort()}>{canCancel ? "Cancel" : "Working…"}</button> : <button className="icon-only" title="Export options: format, resolution, pages" aria-label="Export options" disabled={!doc.ready} onClick={() => setPanel("export")}><Icon name="more" /></button>}
         <button className="icon-only" title="Copy image to clipboard" aria-label="Copy image" disabled={disabled || oversize} onClick={copyImage}><Icon name="copy" /></button>
@@ -502,7 +582,7 @@ export default function Workbench() {
             <select className="size-select" aria-label="Editor text size" title="Editor text size" value={editorSize} onChange={event => setEditorSize(Number(event.target.value))}>{[14, 15, 16, 17, 18, 20, 22].map(size => <option key={size} value={size}>{size}px</option>)}</select>
           </div>
           <div className={"editor-body " + (dragging ? "is-dragging" : "")} onDragOver={event => { if (event.dataTransfer.types.includes("Files")) { event.preventDefault(); setDragging(true); } }} onDragLeave={() => setDragging(false)} onDrop={event => { if (event.dataTransfer.files.length) { event.preventDefault(); setDragging(false); handleFiles(Array.from(event.dataTransfer.files)); } }}>
-            <MarkdownEditor textareaRef={editor} label={project.mode === "carousel" ? "Markdown for page " + (index + 1) : "Markdown source"} value={editorSource} disabled={disabled} fontSize={editorSize} placeholder={"# Start with your words\n\nPaste Markdown, drop a file or image, or open a template.\nPut <!-- page --> on its own line to start a new page."} onChange={value => changeSource(value)} onEdit={value => changeSource(value, false)} onScrollRatio={syncPreviewScroll} onFind={openFind} onPaste={event => { const files = Array.from(event.clipboardData.files); if (files.length) { event.preventDefault(); handleFiles(files); } }} />
+            <MarkdownEditor textareaRef={editor} label={project.mode === "carousel" ? "Markdown for page " + (index + 1) : "Markdown source"} value={editorSource} disabled={disabled} fontSize={editorSize} placeholder={"# Start with your words\n\nPaste Markdown, drop a file or image, or open a template.\nPut <!-- page --> on its own line to start a new page."} onChange={value => changeSource(value)} onEdit={value => changeSource(value, false)} onScrollRatio={syncPreviewScroll} onFind={openFind} onNotice={setNotice} onPaste={event => { const files = Array.from(event.clipboardData.files); if (files.length) { event.preventDefault(); handleFiles(files); } }} />
             {find && <FindBar key={find.key} value={editorSource} textareaRef={editor} initialQuery={find.query} startWithReplace={find.replace} onReplace={value => changeSource(value, false)} onClose={() => { setFind(null); editor.current?.focus(); }} />}
             {dragging && <div className="drop-hint"><Icon name="download" size={28} /><span>Drop Markdown, a project, or images</span></div>}
             <span className="editor-meta" aria-live="off">{editorSource.length.toLocaleString()} chars{project.mode === "carousel" ? " · page " + (index + 1) : ""}</span>
@@ -525,7 +605,7 @@ export default function Workbench() {
                   <CaptureCard markdown={deferredPreview} design={design} assetUrls={assetUrls} label={project.mode === "carousel" ? (index + 1) + " / " + project.pages.length : preset.label} articleRef={card} />
                 </div></div>}
             </div>
-            <div className={"stage-status" + (statusMessage ? "" : " is-quiet") + (metrics.issue && !task ? " has-issue" : "") + (task ? " is-busy" : "")} role="status"><i aria-hidden="true" /><span>{statusMessage || (project.mode === "carousel" ? "Current page fits" : "Ready to export")}</span>{metrics.issue?.code === "height" && !task && <button onClick={() => apply(current => ({ ...current, design: { ...current.design, presetId: "long" }, pages: current.pages.map((item, i) => i === index ? { ...item, design: { ...item.design, presetId: "long" } } : item) }))}>Use auto height</button>}</div>
+            <div className={"stage-status" + (statusMessage ? "" : " is-quiet") + (metrics.issue && !task ? " has-issue" : "") + (task ? " is-busy" : "")} role="status"><i aria-hidden="true" /><span>{statusMessage || (project.mode === "carousel" ? "Current page fits" : "Ready to export")}</span>{metrics.issue?.code === "height" && !task && preset.height && <button onClick={fitText}>Fit text</button>}{metrics.issue?.code === "height" && !task && <button onClick={() => apply(current => ({ ...current, design: { ...current.design, presetId: "long" }, pages: current.pages.map((item, i) => i === index ? { ...item, design: { ...item.design, presetId: "long" } } : item) }))}>Use auto height</button>}</div>
             <span className="stage-meta">{preset.label} · {outputWidth} × {outputHeight ?? "auto"}{project.mode === "carousel" && Object.keys(page.design).length ? " · page style" : ""}</span>
             <div className="zoom-control" role="group" aria-label="Preview zoom"><button aria-pressed={zoom === "fit"} onClick={() => setZoom("fit")}>Fit</button><button aria-pressed={zoom === 1} onClick={() => setZoom(1)}>100%</button><span>{Math.round(scale * 100)}%</span></div>
           </div>
@@ -536,17 +616,18 @@ export default function Workbench() {
     </div>
     <input ref={fileInput} type="file" aria-label="Open a Markdown or project file" className="sr-only" tabIndex={-1} accept=".md,.markdown,.mdown,.txt,.mdpic,.zip,image/png,image/jpeg,image/webp" onChange={event => { handleFiles(Array.from(event.target.files ?? [])); event.target.value = ""; }} />
     <input ref={imageInput} type="file" aria-label="Choose local images" className="sr-only" tabIndex={-1} multiple accept="image/png,image/jpeg,image/webp" onChange={event => { handleFiles(Array.from(event.target.files ?? [])); event.target.value = ""; }} />
-    {panel === "styles" && <StylePanel project={project} index={index} apply={apply} onClose={() => setPanel(null)} onDone={() => { setPanel(null); setMobileView("preview"); }} />}
+    {panel === "styles" && <StylePanel project={project} index={index} apply={apply} onFit={fitText} onClose={() => setPanel(null)} onDone={() => { setPanel(null); setMobileView("preview"); }} />}
     {panel === "templates" && <Modal title="Start from a template" wide onClose={() => setPanel(null)}><p className="modal-intro">Each template opens as a new project. Your current work is saved.</p><div className="template-grid">{templates.map(template => { const sampleDesign = templateDesign(defaultDesign, template); const width = presetFor(sampleDesign).width; return <button className="template-option" disabled={disabled} key={template.id} onClick={() => openTemplate(template.id)}><FitPreview width={width}><CaptureCard markdown={splitMarkdownPages(template.markdown)[0].markdown} design={sampleDesign} assetUrls={{}} /></FitPreview><strong>{template.name}</strong><span>{template.description}</span></button>; })}</div></Modal>}
     {panel === "projects" && <Modal title="My projects" onClose={() => setPanel(null)} returnFocusRef={projectsButton}><p className="modal-intro">Saved only in this browser. Back up important work before clearing browser data or switching devices.</p><div className="project-list">{projects.map(item => <div className="project-row" key={item.id}><button disabled={disabled} onClick={() => void run("file", "Opening project…", async () => { const latest = await loadProject(item.id); if (!latest) throw new Error("This project was removed in another tab."); await openProject(latest, doc.saveState !== "conflict"); })}><strong>{item.name || "Untitled"}{item.id === project.id ? " · Current" : ""}</strong><span>{item.pages.length} {item.pages.length === 1 ? "page" : "pages"} · {new Date(item.updatedAt).toLocaleDateString("en")}</span></button><button className="icon-button" aria-label={"Delete " + (item.name || "Untitled")} onClick={() => setDeleteTarget(item)}>×</button></div>)}</div><div className="modal-footer wrap"><button disabled={disabled} onClick={backup}>Back up current project</button><button disabled={disabled} onClick={() => fileInput.current?.click()}>Restore .mdpic</button><button disabled={disabled} onClick={() => void saveMarkdown().catch(error => setNotice(errorText(error)))}>Save Markdown</button></div></Modal>}
-    {deleteTarget && <Modal title="Delete this local project?" onClose={() => setDeleteTarget(null)}><p className="modal-intro">“{deleteTarget.name || "Untitled"}” will be removed from this browser. Download a backup first if you might need it again.</p><div className="modal-footer"><button onClick={() => setDeleteTarget(null)}>Keep project</button><button className="danger-button" disabled={disabled} onClick={() => void run("file", "Removing project…", async () => { if (deleteTarget.id === project.id) await openProject(newProject()); await deleteProject(deleteTarget.id); setProjects(await listProjects()); setDeleteTarget(null); setPanel("projects"); })}>Delete project</button></div></Modal>}
+    {deleteTarget && <Modal title="Delete this local project?" onClose={() => setDeleteTarget(null)}><p className="modal-intro">“{deleteTarget.name || "Untitled"}” will be removed from this browser. Download a backup first if you might need it again.</p><div className="modal-footer"><button onClick={() => setDeleteTarget(null)}>Keep project</button><button className="danger-button" disabled={disabled} onClick={() => void run("file", "Removing project…", async () => { if (deleteTarget.id === project.id) await openProject(freshProject()); await deleteProject(deleteTarget.id); setProjects(await listProjects()); setDeleteTarget(null); setPanel("projects"); })}>Delete project</button></div></Modal>}
     {panel === "export" && <Modal title="Export options" onClose={() => setPanel(null)}><div className="settings-content">
       <label>File name<input maxLength={120} value={project.name} onChange={event => apply(current => ({ ...current, name: event.target.value }))} /></label>
       <fieldset><legend>Format</legend><div className="choice-row">{(["png", "jpeg", "webp"] as const).map(item => <button key={item} aria-pressed={format === item} onClick={() => setFormat(item)}><strong>{item.toUpperCase()}</strong><small>{item === "png" ? "Sharp text · copyable" : item === "jpeg" ? "Smaller photos" : "Compact, modern"}</small></button>)}</div></fieldset>
       <fieldset><legend>Resolution</legend><div className="choice-row">{([1, 2, 3] as const).map(renderScale => <button key={renderScale} aria-pressed={project.design.renderScale === renderScale} onClick={() => apply(current => ({ ...current, design: { ...current.design, renderScale }, pages: current.pages.map(item => { const overrides = { ...item.design }; delete overrides.renderScale; return { ...item, design: overrides }; }) }))}><strong>{renderScale}×</strong><small>{preset.width * renderScale} px wide{renderScale === 2 ? " · best" : ""}</small></button>)}</div><small className="size-readout">{outputHeight === null ? "Auto height is measured when you export." : <>{outputWidth.toLocaleString()} × {outputHeight.toLocaleString()} px · {(outputWidth * outputHeight / 1e6).toFixed(1)} MP{outputWidth * outputHeight > 24e6 || Math.max(outputWidth, outputHeight) > 16384 ? <span className="size-warning"> · Large image: needs a desktop browser. Choose 2× or Pages if export fails.</span> : null}</>}</small></fieldset>
       {project.mode === "carousel" && <label>Pages<select value={exportScope} onChange={event => setExportScope(event.target.value as typeof exportScope)}><option value="all">All {project.pages.length} pages · ZIP when multiple</option><option value="page">Current page only · page {index + 1}</option></select></label>}
+      <fieldset><legend>Share</legend><div className="share-row"><button onClick={() => void copyShareLink()}><Icon name="link" />Copy editable link</button><small>The draft travels inside the link itself and is never uploaded. Local images are not included.</small></div></fieldset>
       <p className="field-note">Every page is checked before download. If content does not fit, the export stops and tells you which page needs attention.</p>
     </div><div className="modal-footer"><button onClick={() => setPanel(null)}>Back</button><button className="primary-button" disabled={disabled} onClick={() => { setPanel(null); startExport(); }}>{exportLabel}<Icon name="arrow" /></button></div></Modal>}
-    {panel === "result" && result && <ResultPanel result={result} onClose={() => setPanel(null)} returnFocusRef={exportButton} />}
+    {panel === "result" && result && <ResultPanel result={result} onClose={() => setPanel(null)} returnFocusRef={exportButton} onCopyLink={() => void copyShareLink()} />}
   </main>;
 }

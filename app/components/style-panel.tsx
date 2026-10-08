@@ -4,7 +4,7 @@ import { Modal } from "./modal";
 import { accents, canvasPresets, effectiveDesign, newId, readableAccent, themes, type BrandProfile, type Design, type Project } from "@/lib/studio-model";
 import { listProfiles, saveProfile } from "@/lib/project-store";
 
-export function StylePanel({ project, index, apply, onClose, onDone }: { project: Project; index: number; apply: (updater: (current: Project) => Project) => void; onClose: () => void; onDone: () => void }) {
+export function StylePanel({ project, index, apply, onFit, onClose, onDone }: { project: Project; index: number; apply: (updater: (current: Project) => Project) => void; onFit?: () => void; onClose: () => void; onDone: () => void }) {
   const [scope, setScope] = useState<"all" | "page">("all");
   const [profiles, setProfiles] = useState<BrandProfile[]>([]);
   const [name, setName] = useState("");
@@ -23,6 +23,7 @@ export function StylePanel({ project, index, apply, onClose, onDone }: { project
     <fieldset><legend>Accent</legend><div className="accent-row">{accents.map(accent => <button key={accent} className="accent-swatch" style={{ background: accent }} aria-label={"Accent " + accent} aria-pressed={design.accent === accent} onClick={() => setDesign({ accent })} />)}<label className="custom-color">Custom<input type="color" aria-label="Custom accent color" value={design.accent} onChange={event => setDesign({ accent: event.target.value })} /></label></div><small>Text contrast is adjusted automatically for readability.</small></fieldset>
     <fieldset><legend>Typeface</legend><div className="font-grid">{([["sans", "Sans", "Clear, modern"], ["serif", "Serif", "Editorial"], ["mono", "Mono", "Technical"]] as const).map(([id, label, note]) => <button key={id} aria-pressed={design.fontFamily === id} aria-label={label + " typeface"} onClick={() => setDesign({ fontFamily: id })}><span className={"font-sample font-" + id}>Ag</span><strong>{label}</strong><small>{note}</small></button>)}</div></fieldset>
     {([{ key: "fontScale", name: "Image text size", min: 76, max: 140, unit: "%" }, { key: "padding", name: "Canvas padding", min: 20, max: 80, unit: "px" }, { key: "imageMaxHeight", name: "Maximum image height", min: 100, max: 1200, unit: "px" }] as const).map(setting => <label key={setting.key} className="range-label" htmlFor={"design-" + setting.key}><span>{setting.name}<output>{design[setting.key]}{setting.unit}</output></span><input id={"design-" + setting.key} aria-label={setting.name} type="range" min={setting.min} max={setting.max} value={design[setting.key]} onChange={event => setDesign({ [setting.key]: Number(event.target.value) })} /></label>)}
+    {onFit && design.presetId !== "long" && <button className="fit-button" onClick={() => { onClose(); onFit(); }}>Fit text to canvas</button>}
     <details><summary>Signature & finishing touches</summary><div className="detail-content">
       <label className="check-label"><input type="checkbox" checked={design.showHeader} onChange={event => setDesign({ showHeader: event.target.checked })} />Editorial header</label>
       <label className="check-label"><input type="checkbox" checked={design.showBrand} onChange={event => setDesign({ showBrand: event.target.checked })} />Made with MarkdownPic</label>

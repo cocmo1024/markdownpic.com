@@ -1,0 +1,19 @@
+{
+  "name": "MarkdownPic — Markdown to image",
+  "short_name": "MarkdownPic",
+  "description": "Turn Markdown into PNG, JPEG or WebP images on your device. Works offline.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f4f2ec",
+  "theme_color": "#f4f2ec",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icon-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "file_handlers": [
+    { "action": "/", "accept": { "text/markdown": [".md", ".markdown"] } }
+  ]
+}

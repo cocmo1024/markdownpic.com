@@ -482,3 +482,6 @@ summary{cursor:pointer;font-weight:600;min-height:30px;list-style-position:insid
 .find-bar .tool-button{width:30px;min-height:30px}
 ::highlight(md-find){background-color:rgb(217 255 61 / .22);color:#fff}
 ::highlight(md-find-current){background-color:var(--signal);color:var(--ink)}
+.share-row{display:grid;gap:8px;justify-items:start}
+.share-row button{min-height:38px}
+.fit-button{justify-self:start;min-height:36px;font-size:.8125rem}

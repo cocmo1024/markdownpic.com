@@ -47,9 +47,12 @@ export const metadata: Metadata = {
     title: "Markdown to Image | MarkdownPic",
     description: siteDescription,
   },
+  manifest: "/manifest.webmanifest",
+  appleWebApp: { capable: true, title: "MarkdownPic", statusBarStyle: "default" },
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
+    apple: "/apple-touch-icon.png",
   },
 };
 

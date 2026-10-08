@@ -3,6 +3,7 @@
 import { useMemo, useRef, type ClipboardEvent, type CSSProperties, type KeyboardEvent, type RefObject } from "react";
 import { highlightMarkdown } from "@/lib/markdown-highlight";
 import { continueBlock, indentLines, linkOnPaste, wrapSelection, type Edit } from "@/lib/markdown-edits";
+import { htmlToMarkdown, shouldConvertHtml } from "@/lib/smart-paste";
 
 /** DOM Ranges over the mirror's text for character offsets (the mirror holds exactly the editor's text). */
 export function mirrorRanges(area: HTMLTextAreaElement | null, spans: Array<[number, number]>): Range[] {
@@ -50,8 +51,8 @@ export function revealRange(area: HTMLTextAreaElement | null, start: number, end
 
 const WRAPS: Record<string, [string, string, string]> = { b: ["**", "**", "bold text"], i: ["*", "*", "italic text"], e: ["`", "`", "code"], k: ["[", "](https://)", "link text"] };
 
-export function MarkdownEditor({ value, onChange, onEdit, onPaste, onScrollRatio, onFind, textareaRef, fontSize, disabled, label, placeholder }: {
-  value: string; onChange: (value: string) => void; onEdit: (value: string) => void; onPaste: (event: ClipboardEvent<HTMLTextAreaElement>) => void; onFind?: (replace: boolean) => void;
+export function MarkdownEditor({ value, onChange, onEdit, onPaste, onScrollRatio, onFind, onNotice, textareaRef, fontSize, disabled, label, placeholder }: {
+  value: string; onChange: (value: string) => void; onEdit: (value: string) => void; onPaste: (event: ClipboardEvent<HTMLTextAreaElement>) => void; onFind?: (replace: boolean) => void; onNotice?: (message: string) => void;
   onScrollRatio?: (ratio: number) => void; textareaRef: RefObject<HTMLTextAreaElement | null>; fontSize: number; disabled: boolean; label: string; placeholder: string;
 }) {
   const mirror = useRef<HTMLDivElement>(null);
@@ -83,7 +84,19 @@ export function MarkdownEditor({ value, onChange, onEdit, onPaste, onScrollRatio
     onPaste(event);
     if (event.defaultPrevented) return;
     const { selectionStart: start, selectionEnd: end } = event.currentTarget;
-    commit(linkOnPaste(value, start, end, event.clipboardData.getData("text/plain")), event);
+    const plain = event.clipboardData.getData("text/plain"), html = event.clipboardData.getData("text/html");
+    commit(linkOnPaste(value, start, end, plain), event);
+    if (event.defaultPrevented || !shouldConvertHtml(html, plain)) return;
+    // Rich text from web pages, Notion or Docs: convert its formatting instead of losing it.
+    event.preventDefault();
+    const base = value, area = event.currentTarget;
+    const insert = (text: string, converted: boolean) => {
+      const next = base.slice(0, start) + text + base.slice(end);
+      onEdit(next);
+      requestAnimationFrame(() => { if (area.value === next) area.setSelectionRange(start + text.length, start + text.length); });
+      if (converted) onNotice?.("Formatting pasted as Markdown. For plain text, paste with Ctrl/⌘ Shift V.");
+    };
+    htmlToMarkdown(html).then(markdown => insert(markdown || plain, Boolean(markdown)), () => insert(plain, false));
   };
 
   return <div className="md-editor" style={style}>

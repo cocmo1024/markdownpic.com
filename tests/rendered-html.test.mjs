@@ -91,3 +91,12 @@ test("legacy reference-site URLs redirect only to matching pages",async()=>{
   assert.equal(www.status,301);assert.equal(www.headers.get("location"),"https://markdownpic.com/guides?x=1");
   assert.equal((await request("/syntax/markdown-wiki-links-vs-standard-links")).status,404,"unrelated articles stay gone");
 });
+test("the app is installable: manifest, icons and an offline worker",async()=>{
+  const html=await (await request()).text();
+  assert.match(html,/rel="manifest" href="\/manifest.webmanifest"/);
+  const manifest=JSON.parse(await readFile(new URL("../public/manifest.webmanifest",import.meta.url),"utf8"));
+  assert.equal(manifest.start_url,"/");assert.equal(manifest.display,"standalone");
+  for(const icon of manifest.icons){const bytes=await readFile(new URL("../public"+icon.src,import.meta.url));assert.equal(bytes.readUInt32BE(16)+"x"+bytes.readUInt32BE(20),icon.sizes,icon.src);}
+  const worker=await readFile(new URL("../public/sw.js",import.meta.url),"utf8");
+  assert.match(worker,/request\.mode === "navigate"/);assert.match(worker,/url\.origin !== self\.location\.origin\) return/,"third-party requests (ads) are never intercepted");
+});

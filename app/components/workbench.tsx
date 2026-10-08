@@ -94,6 +94,7 @@ export default function Workbench() {
   const [stageSize, setStageSize] = useState({ width: 720, height: 660 });
   const [zoom, setZoom] = useState<"fit" | number>("fit");
   const [editorSize, setEditorSize] = useState(17);
+  const [editorTheme, setEditorTheme] = useState<"dark" | "light" | "match">("dark");
   const [split, setSplit] = useState(50);
   const [format, setFormat] = useState<ImageFormat>("png");
   const [exportScope, setExportScope] = useState<"all" | "page">("all");
@@ -497,13 +498,14 @@ export default function Workbench() {
       if ([14, 15, 16, 17, 18, 20, 22].includes(saved.editorSize)) setEditorSize(saved.editorSize);
       if (typeof saved.split === "number") setSplit(Math.max(30, Math.min(70, saved.split)));
       if (["png", "jpeg", "webp"].includes(saved.format)) setFormat(saved.format);
+      if (["dark", "light", "match"].includes(saved.editorTheme)) setEditorTheme(saved.editorTheme);
       /* eslint-enable react-hooks/set-state-in-effect */
     } catch { /* storage unavailable: defaults apply */ }
   }, []);
   useEffect(() => {
-    const timer = setTimeout(() => { try { localStorage.setItem(PREFS_KEY, JSON.stringify({ editorSize, split, format })); } catch { /* ignore */ } }, 400);
+    const timer = setTimeout(() => { try { localStorage.setItem(PREFS_KEY, JSON.stringify({ editorSize, split, format, editorTheme })); } catch { /* ignore */ } }, 400);
     return () => clearTimeout(timer);
-  }, [editorSize, split, format]);
+  }, [editorSize, split, format, editorTheme]);
 
   // Confirmations fade on their own; problems stay until dismissed.
   useEffect(() => {
@@ -577,7 +579,7 @@ export default function Workbench() {
           setMobileView(next); event.currentTarget.querySelectorAll<HTMLButtonElement>("[role=tab]")[next === "edit" ? 0 : 1]?.focus();
         }
       }}><button role="tab" tabIndex={mobileView === "edit" ? 0 : -1} aria-selected={mobileView === "edit"} aria-controls="editor-pane" onClick={() => setMobileView("edit")}>Edit</button><button role="tab" tabIndex={mobileView === "preview" ? 0 : -1} aria-selected={mobileView === "preview"} aria-controls="preview-pane" onClick={() => setMobileView("preview")}>Preview</button></div>
-      <nav className="header-actions" aria-label="Projects and help"><button className="ghost-button" title="New project" disabled={disabled} onClick={() => void run("file", "Creating a project…", () => openProject(freshProject()))}><Icon name="plus" /><span>New</span></button><button className="ghost-button" title="My projects" ref={projectsButton} disabled={disabled} onClick={showProjects}><Icon name="folder" /><span>My projects</span></button><details className="help-menu"><summary className="ghost-button" title="Help and guides"><Icon name="help" /><span>Help</span></summary><div className="help-popover" role="menu"><Link role="menuitem" href="/help">Help</Link><Link role="menuitem" href="/guides">Guides</Link><Link role="menuitem" href="/privacy">Privacy</Link><Link role="menuitem" href="/terms">Terms</Link><div className="popover-section"><span>Appearance</span><AppearanceSwitch /></div></div></details></nav>
+      <nav className="header-actions" aria-label="Projects and help"><button className="ghost-button" title="New project" disabled={disabled} onClick={() => void run("file", "Creating a project…", () => openProject(freshProject()))}><Icon name="plus" /><span>New</span></button><button className="ghost-button" title="My projects" ref={projectsButton} disabled={disabled} onClick={showProjects}><Icon name="folder" /><span>My projects</span></button><details className="help-menu"><summary className="ghost-button" title="Help and guides"><Icon name="help" /><span>Help</span></summary><div className="help-popover" role="menu"><Link role="menuitem" href="/help">Help</Link><Link role="menuitem" href="/guides">Guides</Link><Link role="menuitem" href="/privacy">Privacy</Link><Link role="menuitem" href="/terms">Terms</Link><div className="popover-section"><span>Appearance</span><AppearanceSwitch /><span>Editor</span><div className="appearance-switch" role="group" aria-label="Editor colors">{(["dark", "light", "match"] as const).map(value => <button key={value} aria-pressed={editorTheme === value} onClick={() => setEditorTheme(value)}>{value === "dark" ? "Dark" : value === "light" ? "Light" : "Match"}</button>)}</div></div></div></details></nav>
       <div className="export-actions">
         {task ? <button disabled={!canCancel} onClick={() => controller.current?.abort()}>{canCancel ? "Cancel" : "Working…"}</button> : <button className="icon-only" title="Export options: format, resolution, pages" aria-label="Export options" disabled={!doc.ready} onClick={() => setPanel("export")}><Icon name="more" /></button>}
         <button className="icon-only" title="Copy image to clipboard" aria-label="Copy image" disabled={disabled || oversize} onClick={copyImage}><Icon name="copy" /></button>
@@ -588,7 +590,7 @@ export default function Workbench() {
     {doc.saveError && <div className="notice notice-error" role="alert"><span>{doc.saveError}</span><button onClick={() => void doc.saveCopy().catch(error => setNotice(errorText(error)))}>Save a copy</button><button onClick={backup}>Back up</button>{doc.saveState === "error" && <button onClick={() => void doc.flush().catch(() => {})}>Retry save</button>}</div>}
     <div className="studio-body">
       <div ref={grid} className="workbench" style={{ "--editor-share": split + "%" } as CSSProperties}>
-        <section id="editor-pane" className="editor-pane" aria-label="Markdown editor">
+        <section id="editor-pane" className="editor-pane" data-editor={editorTheme} aria-label="Markdown editor">
           <div className="pane-bar editor-toolbar" role="toolbar" aria-label="Formatting">
             {FORMATTING.map(([icon, label, text, prefix, suffix, keys]) => <button key={icon} className="tool-button" disabled={disabled} title={label + (keys ? " (" + keys + ")" : "")} aria-label={label} onClick={() => insertText(text, prefix, suffix)}><Icon name={icon} /></button>)}
             <button className="tool-button" disabled={disabled} title="Add image (or paste / drop one)" aria-label="Add image" onClick={() => imageInput.current?.click()}><Icon name="image" /></button>
@@ -601,6 +603,7 @@ export default function Workbench() {
             <button className="ghost-button" title="Open a Markdown or .mdpic file (Ctrl/⌘ O)" disabled={disabled} onClick={() => fileInput.current?.click()}><Icon name="file" /><span>Open file</span></button>
             <button className="ghost-button" title="Templates" disabled={disabled} onClick={() => setPanel("templates")}><Icon name="grid" /><span>Templates</span></button>
             <select className="size-select" aria-label="Editor text size" title="Editor text size" value={editorSize} onChange={event => setEditorSize(Number(event.target.value))}>{[14, 15, 16, 17, 18, 20, 22].map(size => <option key={size} value={size}>{size}px</option>)}</select>
+            <select className="size-select theme-select" aria-label="Editor colors" title="Editor colors" value={editorTheme} onChange={event => setEditorTheme(event.target.value as typeof editorTheme)}><option value="dark">Dark</option><option value="light">Light</option><option value="match">Match</option></select>
           </div>
           <div className={"editor-body " + (dragging ? "is-dragging" : "")} onDragOver={event => { if (event.dataTransfer.types.includes("Files")) { event.preventDefault(); setDragging(true); } }} onDragLeave={() => setDragging(false)} onDrop={event => { if (event.dataTransfer.files.length) { event.preventDefault(); setDragging(false); handleFiles(Array.from(event.dataTransfer.files)); } }}>
             <MarkdownEditor textareaRef={editor} label={project.mode === "carousel" ? "Markdown for page " + (index + 1) : "Markdown source"} value={editorSource} disabled={disabled} fontSize={editorSize} placeholder={"# Start with your words\n\nPaste Markdown, drop a file or image, or open a template.\nPut <!-- page --> on its own line to start a new page."} onChange={value => changeSource(value)} onEdit={value => changeSource(value, false)} onScrollRatio={syncPreviewScroll} onFind={openFind} onNotice={setNotice} onPaste={event => { const files = Array.from(event.clipboardData.files); if (files.length) { event.preventDefault(); handleFiles(files); } }} />
